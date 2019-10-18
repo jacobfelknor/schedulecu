@@ -4,3 +4,5 @@ sterlingenv/
 db.sqlite3
 __pycache__/
 keys.py
+hackits/
+venv.instructions
