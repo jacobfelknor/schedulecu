@@ -1,0 +1,43 @@
+
+
+/* Modifier for Sticky footer */
+html {
+  position: relative;
+  min-height: 100%;
+}
+body {
+  /* Margin bottom by footer height */
+  margin-bottom: 75px;
+  background-color: whitesmoke;
+}
+
+.navbar .navbar-nav > li > a:hover{
+  border-radius: 25px;
+  color: black !important;
+  background-color:#f1f3f4;
+}
+/* #current{
+  border-radius: 25px;
+  color: blue !important;
+  background-color: #e8f0fe;
+} */
+#navbar{
+  background-color:black;
+}
+
+#schedulecu_footer {
+  background-color: black;
+  /* background-color: white */
+}
+
+
+/* Add some formatting for cards */
+div.card {
+  margin-bottom: 1em;
+  margin-top: 1em;
+  border-width: 2px;
+}
+.card {
+	background: #fff;
+	/* box-shadow: 0 3px 10px rgba(0,0,0,0.1); */
+}
