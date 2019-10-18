@@ -33,6 +33,8 @@ def login_redirect(request):
 
 @login_required
 def view_profile(request, username):
+    if request.user.username != username:
+        raise PermissionDenied()
     ctx = {}
     user = request.user
     if user.empty_fields():
