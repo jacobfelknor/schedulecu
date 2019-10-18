@@ -106,6 +106,14 @@
 
     <div class="container">
           <div id="content">
+
+          {% if messages %}
+          <div class="alert alert-info" role="alert">
+                  {% for message in messages %}
+                  <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                  {% endfor %}
+          </div>
+          {% endif %}
     
           {% block content %}
           {% endblock content %}

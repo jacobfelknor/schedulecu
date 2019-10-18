@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<title>{% block title %}Your Account{% endblock title %}</title>
+{% endblock %}
+
+{% block content %}
+
+{% if not profile_complete %}
+<div class="alert alert-danger" role="alert">
+    Your profile is not complete! Fill in missing information for the best experience
+</div>
+{% endif %}
+
+<div class="card border-dark mb-3">
+    <h2 class="card-header">Your Profile</h2>
+    <div class="card-body">
+        <table class="table dt-responsive" cellspacing="0" width="100%">
+            <!-- <thead class="thead" id="material">
+                <tr>
+                    <th></th>
+                    <th></th>
+                </tr>
+            </thead> -->
+            <tbody>
+                <tr>
+                    <td><b>Name:</b> <br>{{ user.get_full_name }}</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td><b>Username:</b> <br>{{ user.username }}</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td><b>Email:</b> <br>{{ user.email }}</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td><b>Phone Number:</b> <br>{{ user.phone }}</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td><b>Password:</b> <br>**********</td>
+                    <td><a href="{% url 'users:change_password' %}"><button class="btn btn-outline-info">Change Password</button></a></td>
+                </tr>
+                {% if user.is_superuser %}
+                <tr>
+                    <td><b>Account Type:</b> <br>
+                    Superuser/Admin
+                    </td>
+                    <td></td>
+                </tr>
+                {% endif %}
+            </tbody>
+        </table>
+        <a href="{% url 'users:edit_info' user.username %}"><button class="btn btn-outline-dark">Edit</button></a>
+    </div>
+</div>
+
+{% endblock %}
