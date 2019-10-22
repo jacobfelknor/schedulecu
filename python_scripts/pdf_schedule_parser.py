@@ -2,6 +2,8 @@ import PyPDF2
 import re
 from itertools import combinations
 
+from timeit import default_timer as timer
+
 class Course:
 
     print_format = "{:<15}" * 2
@@ -132,6 +134,9 @@ for i in range(1, len(weekdays) + 1):
 # Parses the information in a raw row and creates a class object. 
 # Complains about any error in the process
 def create_course(raw_row):
+
+    start = timer()
+
     class_data = []
     # Less than 5 means I can't guarentee I have all the required data
     if len(raw_row) < 5:
@@ -173,15 +178,47 @@ def create_course(raw_row):
         class_data += [full_time.group()[:8]]
         class_data += [full_time.group()[11:]]
 
-    for elem in raw_row_data.split(" "):
+    #for elem in raw_row_data.split(" "):
+    day_index = 0
+    for elem, day_index in zip(raw_row, range(len(raw_row))):
         if elem in weekday_list:
             class_data += [elem]
             break
     else:
         print("No days found")
         class_data += [""]
+    
+    # Using day to align the building column
+    if day_index < len(raw_row):
+        class_data += [raw_row[day_index + 1]]
+    else:
+        print("No building as no day, other logic needed")
+    
+    # All instructors have a comma in their name
+    for elem in raw_row_data.split(" "):
+        if ',' in elem:
+            class_data += [elem]
+            break
+    else:
+        print("No instructor found")
+        class_data += [""]
+    
+    enrollment_campus_split = raw_row[-1].split(" ", 1)
+    # Check enrollment is an integer
+    try:
+        int(enrollment_campus_split[0])
+    except:
+        print("Max enrollment is not an int")
+        print(enrollment_campus_split)
+    
+    class_data += [enrollment_campus_split[0]]
+    class_data += [enrollment_campus_split[1]]
 
+    print(raw_row)
     print(class_data)
+    # ...
+    end = timer()
+    print(end - start) 
 
 
 
@@ -204,8 +241,8 @@ def parse_rows(ext_page):
             loop = 0
     return rows
 
-create_course(parse_rows(extr)[0])
-
+testrow = parse_rows(extr)[0]
+create_course(testrow)
 #print(extr[:13])
 #print(adj_row)
 
