@@ -1,5 +1,43 @@
 import PyPDF2
 
+class Course:
+
+    def __init__(self, data):
+        self.department = data[0]
+        self.course_subject = data[1]
+        self.section_number = data[2]
+        self.session = data[3]
+        self.class_number = data[4]
+        self.credit = data[5]
+        self.course_title = data[6]
+        self.class_component = data[7]
+        self.start_time = data[8]
+        self.end_time = data[9]
+        self.days = data[10]
+        self.building_room = data[11]
+        self.instructor_name = data[12]
+        self.max_enroll = data[13]
+        self.campus = data[14]
+
+
+    department = ""
+    course_subject = ""
+    section_number = 0
+    session = ""
+    class_number = 0
+    credit = 0
+    course_title = ""
+    class_component = ""
+    start_time = 0
+    end_time = 0
+    days = ""
+    building_room = ""
+    instructor_name = ""
+    max_enroll = 0
+    campus = ""
+
+
+
 pdf_doc = open('fall2019class_schedule.pdf', 'rb')
 pdf_reader = PyPDF2.PdfFileReader(pdf_doc)
 pdf_pages = pdf_reader.pages
@@ -70,15 +108,57 @@ def remove_header_footer(extracted_text):
     #Removing generic footer
     del extracted_text[len(extracted_text) - 3:]
 
-#print(pdf_reader.outlines[1][0]['/Page'])
+# Outlines can be used for headers to organize
+#print(pdf_reader.outlines[0]['/Title'])
 
-extr = extract_text(pdf_pages[2])
+
+extr = extract_text(pdf_pages[3])
 #for i in range(10):
 #    extr = extract_text(pdf_pages[i + 2])
 #    print((extr[0], extr[len(extr) - 4:len(extr)]))
 remove_header_footer(extr)
 
-print(extr)
+#print(extr)
 
 def combine_pages(page1, page2):
     pass
+
+
+#Pull out 13 elements, split last two into max enrollment and campus
+index = 0
+loop = 1
+while loop:
+    cur_row = extr[index:index + 13]
+    for i in range(len(cur_row)):
+        if "Main Campus" in cur_row[i]:
+            adj_row = cur_row[:i + 1]
+            index += i + 1
+            print(len(adj_row))
+            print(adj_row)
+            #logic to handle row
+            break
+    else:
+        print(cur_row)
+        loop = 0
+
+
+#print(extr[:13])
+#print(adj_row)
+
+
+# Row logic
+# 0: Class code
+# 1: Course subject
+# 2: Section number, session, and class number (space separated)
+# 3: Credit and Course Title
+# 4: Class component
+# 5: (USUALLY) time
+# Followed by days, building/room, professor, enrollment, campus
+
+# take len to know if its a little fucky
+# kinda changes from page to page so 
+# 10 means its working right
+# 9 probably means no professor
+
+# First 8 components always required
+# inconsistent with/after meeting time
