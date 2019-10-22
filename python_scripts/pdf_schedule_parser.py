@@ -1,7 +1,15 @@
 import PyPDF2
+import re
+from itertools import combinations
 
 class Course:
 
+    print_format = "{:<15}" * 2
+    print_headers = ["Department", "Course Subject", "Section Number", "Session", "Class Number", \
+        "Credit", "Course Title", "Class Component", "Start Time", "End Time", "Days", "Building Room", \
+        "Instructor", "Max Enrollment", "Campus"]
+
+    # Constructor. Saving data and each item specifically
     def __init__(self, data):
         self.department = data[0]
         self.course_subject = data[1]
@@ -18,23 +26,14 @@ class Course:
         self.instructor_name = data[12]
         self.max_enroll = data[13]
         self.campus = data[14]
+        self.data = data
 
-
-    department = ""
-    course_subject = ""
-    section_number = 0
-    session = ""
-    class_number = 0
-    credit = 0
-    course_title = ""
-    class_component = ""
-    start_time = 0
-    end_time = 0
-    days = ""
-    building_room = ""
-    instructor_name = ""
-    max_enroll = 0
-    campus = ""
+    # String conversion for printing
+    def __str__(self):
+        output = ""
+        for i in range(len(self.print_headers)):
+            output += self.print_format.format(self.print_headers[i], *self.data[i]) + '\n'
+        return output
 
 
 
@@ -123,36 +122,101 @@ remove_header_footer(extr)
 def combine_pages(page1, page2):
     pass
 
+# Generating all possible weekday codes
+weekdays = ["M", "T", "W", "TH", "F"]
+weekday_list = []
+for i in range(1, len(weekdays) + 1):
+    weekday_list += [''.join(x) for x in combinations(weekdays, i)]
 
-#Pull out 13 elements, split last two into max enrollment and campus
-index = 0
-loop = 1
-while loop:
-    cur_row = extr[index:index + 13]
-    for i in range(len(cur_row)):
-        if "Main Campus" in cur_row[i]:
-            adj_row = cur_row[:i + 1]
-            index += i + 1
-            print(len(adj_row))
-            print(adj_row)
-            #logic to handle row
+# Raw row pulled from below loop
+# Parses the information in a raw row and creates a class object. 
+# Complains about any error in the process
+def create_course(raw_row):
+    class_data = []
+    # Less than 5 means I can't guarentee I have all the required data
+    if len(raw_row) < 5:
+        print("Really bad row")
+        return -1
+    # Add class code and course subject
+    class_data += [x for x in raw_row[0:2]]
+    section_session_number_split = raw_row[2].split(" ")
+    if len(section_session_number_split) != 3:
+        print("Weird section_session_number split")
+        print(raw_row)
+        return -1
+    # Add section, session, and class number
+    class_data += [x for x in section_session_number_split]
+
+    credit_title_split = raw_row[3].split(" ", 1)
+    try:
+        int(credit_title_split[0])
+    except:
+        print("Credit found as not an integer")
+        print(credit_title_split)
+        return -1
+    
+    # Add credit and class title
+    class_data += [x for x in credit_title_split]
+    # Add class component
+    class_data += [raw_row[4]]
+
+    # These components are not required, using Regex to find them
+    raw_row_data = " ".join(raw_row[5:])
+    # Pull out class time
+    full_time = re.search("[0-9]{2}:[0-9]{2} [PA][M] - [0-9]{2}:[0-9]{2} [PA][M]", raw_row_data)
+    if full_time == None:
+        # This is expected to happen in quite a few cases
+        print("No class time found")
+        class_data += [""]
+        class_data += [""]
+    else:
+        class_data += [full_time.group()[:8]]
+        class_data += [full_time.group()[11:]]
+
+    for elem in raw_row_data.split(" "):
+        if elem in weekday_list:
+            class_data += [elem]
             break
     else:
-        print(cur_row)
-        loop = 0
+        print("No days found")
+        class_data += [""]
 
+    print(class_data)
+
+
+
+#Pull out 13 elements, split last two into max enrollment and campus
+def parse_rows(ext_page):
+    rows = []
+    index = 0
+    loop = 1
+    while loop:
+        cur_row = ext_page[index:index + 13]
+        for i in range(len(cur_row)):
+            if "Main Campus" in cur_row[i]:
+                adj_row = cur_row[:i + 1]
+                index += i + 1
+                rows += [adj_row]
+                #logic to handle row
+                break
+        else:
+            #irregular row found, need logic to handle this and swap to next dept/college
+            loop = 0
+    return rows
+
+create_course(parse_rows(extr)[0])
 
 #print(extr[:13])
 #print(adj_row)
 
 
 # Row logic
-# 0: Class code
-# 1: Course subject
-# 2: Section number, session, and class number (space separated)
-# 3: Credit and Course Title
-# 4: Class component
-# 5: (USUALLY) time
+# 0: Class code  'APPM'
+# 1: Course subject   '3310'
+# 2: Section number, session, and class number (space separated) '001 B 20735'
+# 3: Credit and Course Title '3 Chaos in Dynamical Systems'
+# 4: Class component 'Lec'
+# 5: (USUALLY) time '12:00 PM - 12:50 PM'
 # Followed by days, building/room, professor, enrollment, campus
 
 # take len to know if its a little fucky
