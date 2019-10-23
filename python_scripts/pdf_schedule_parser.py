@@ -135,7 +135,9 @@ for i in range(1, len(weekdays) + 1):
 # Complains about any error in the process
 def create_course(raw_row):
 
-    start = timer()
+    #start = timer()
+    # Beginning at 2 since the 0 and 1 element are guarenteed
+    data_iterator = 2
 
     class_data = []
     # Less than 5 means I can't guarentee I have all the required data
@@ -143,35 +145,54 @@ def create_course(raw_row):
         print("Really bad row")
         return -1
     # Add class code and course subject
-    class_data += [x for x in raw_row[0:2]]
-    section_session_number_split = raw_row[2].split(" ")
-    if len(section_session_number_split) != 3:
+    class_data += [x for x in raw_row[:data_iterator]]
+    section_session_number_split = raw_row[data_iterator].split(" ")
+    if len(section_session_number_split) == 3:
+        # Add section, session, and class number
+        class_data += [x for x in section_session_number_split]
+        data_iterator += 1
+    elif len(section_session_number_split) == 1:
+        # split only contains section (e.g. special section with num and letter creates this)
+        class_data += [x for x in section_session_number_split]
+        data_iterator += 1
+        # Assuming the remaining data is correct. It 'should' always be there
+        class_data += [x for x in raw_row[data_iterator].split(" ")]
+        data_iterator += 1
+    else:
         print("Weird section_session_number split")
         print(raw_row)
         return -1
-    # Add section, session, and class number
-    class_data += [x for x in section_session_number_split]
 
-    credit_title_split = raw_row[3].split(" ", 1)
+    credit_title_split = raw_row[data_iterator].split(" ", 1)
+    data_iterator += 1
     try:
         int(credit_title_split[0])
     except:
         print("Credit found as not an integer")
         print(credit_title_split)
+        print(raw_row)
         return -1
     
     # Add credit and class title
     class_data += [x for x in credit_title_split]
     # Add class component
-    class_data += [raw_row[4]]
+    if len(raw_row[data_iterator]) > 3:
+        # class component got lumped in with something else
+        class_data += [raw_row[data_iterator][0:4]]
+        raw_row[data_iterator] = raw_row[data_iterator][4:]
+    else:
+        class_data += [raw_row[data_iterator]]
+        data_iterator += 1
+
 
     # These components are not required, using Regex to find them
-    raw_row_data = " ".join(raw_row[5:])
+    raw_row_data = " ".join(raw_row[data_iterator:])
     # Pull out class time
     full_time = re.search("[0-9]{2}:[0-9]{2} [PA][M] - [0-9]{2}:[0-9]{2} [PA][M]", raw_row_data)
     if full_time == None:
         # This is expected to happen in quite a few cases
         print("No class time found")
+        print(raw_row_data)
         class_data += [""]
         class_data += [""]
     else:
@@ -180,19 +201,48 @@ def create_course(raw_row):
 
     #for elem in raw_row_data.split(" "):
     day_index = 0
-    for elem, day_index in zip(raw_row, range(len(raw_row))):
-        if elem in weekday_list:
-            class_data += [elem]
+    #for elem, day_index in zip(raw_row, range(len(raw_row))):
+    #    if elem in weekday_list:
+    #        class_data += [elem]
+    #        break
+    for day_index in range(len(raw_row)):
+        if raw_row[day_index] in weekday_list:
+            class_data += [raw_row[day_index]]
             break
     else:
-        print("No days found")
-        class_data += [""]
-    
+        # Possible day is lumped in with some other element (probably class)
+        for elem in raw_row_data.split(" "):
+            if elem in weekday_list:
+                class_data += [elem]
+                day_index = 0
+                break
+        else:
+            # Definitely not there
+            print("No days found")
+            day_index = len(raw_row)
+            class_data += [""]
+            
     # Using day to align the building column
-    if day_index < len(raw_row):
+    # Pretty horrible coding practice here, I'm using day_index as an error code
+    # to know how I found the days before to avoid declaring more variables....
+    if day_index == 0:
+        # Splits everything in raw_row and flattens it
+        flattened_subdata = [y for x in raw_row for y in x.split()]
+        for i in range(len(flattened_subdata)):
+            if class_data[-1] == flattened_subdata[i]:
+                # Day is probably lumped in with the class
+                # Need to know if the next element is entire building and room or only the building
+                if re.search("[0-9]", flattened_subdata[i + 1]) == None:
+                    class_data += [flattened_subdata[i + 1] + flattened_subdata[i + 2]]
+                else:
+                    class_data += [flattened_subdata[i + 1]]
+                break
+        else:
+            print("Unable to find building off day")
+    elif day_index < len(raw_row):
         class_data += [raw_row[day_index + 1]]
     else:
-        print("No building as no day, other logic needed")
+        print("No building found")
     
     # All instructors have a comma in their name
     for elem in raw_row_data.split(" "):
@@ -214,11 +264,11 @@ def create_course(raw_row):
     class_data += [enrollment_campus_split[0]]
     class_data += [enrollment_campus_split[1]]
 
-    print(raw_row)
+    #print(raw_row)
     print(class_data)
-    # ...
-    end = timer()
-    print(end - start) 
+
+    #end = timer()
+    #print(end - start) 
 
 
 
@@ -229,6 +279,12 @@ def parse_rows(ext_page):
     loop = 1
     while loop:
         cur_row = ext_page[index:index + 13]
+        # Make sure we're starting on a class code, make a dictionary if this trick doesn't work
+        if cur_row:
+            while len(cur_row[0]) > 4 or len(cur_row[0]) < 3:
+                cur_row = cur_row[1:]
+                index += 1
+
         for i in range(len(cur_row)):
             if "Main Campus" in cur_row[i]:
                 adj_row = cur_row[:i + 1]
@@ -241,8 +297,10 @@ def parse_rows(ext_page):
             loop = 0
     return rows
 
-testrow = parse_rows(extr)[0]
-create_course(testrow)
+#testrow = parse_rows(extr)[1]
+for row in parse_rows(extr):
+    create_course(row)
+#create_course(testrow)
 #print(extr[:13])
 #print(adj_row)
 
