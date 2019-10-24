@@ -113,11 +113,6 @@ def remove_header_footer(extracted_text):
 #print(pdf_reader.outlines[0]['/Title'])
 
 
-extr = extract_text(pdf_pages[3])
-#for i in range(10):
-#    extr = extract_text(pdf_pages[i + 2])
-#    print((extr[0], extr[len(extr) - 4:len(extr)]))
-remove_header_footer(extr)
 
 #print(extr)
 
@@ -129,6 +124,8 @@ weekdays = ["M", "T", "W", "TH", "F"]
 weekday_list = []
 for i in range(1, len(weekdays) + 1):
     weekday_list += [''.join(x) for x in combinations(weekdays, i)]
+weekday_list += ["TBA"]
+
 
 # Raw row pulled from below loop
 # Parses the information in a raw row and creates a class object. 
@@ -140,10 +137,10 @@ def create_course(raw_row):
     data_iterator = 2
 
     class_data = []
-    # Less than 5 means I can't guarentee I have all the required data
-    if len(raw_row) < 5:
+    # Less than 6 means I can't guarentee I have all the required data
+    if len(raw_row) < 6:
         print("Really bad row")
-        return -1
+        return 1
     # Add class code and course subject
     class_data += [x for x in raw_row[:data_iterator]]
     section_session_number_split = raw_row[data_iterator].split(" ")
@@ -161,17 +158,18 @@ def create_course(raw_row):
     else:
         print("Weird section_session_number split")
         print(raw_row)
-        return -1
+        return 1
 
     credit_title_split = raw_row[data_iterator].split(" ", 1)
     data_iterator += 1
     try:
-        int(credit_title_split[0])
+        #possible for multiple credits (i.e. 3-6)
+        int(credit_title_split[0].replace("-", ""))
     except:
         print("Credit found as not an integer")
         print(credit_title_split)
         print(raw_row)
-        return -1
+        return 1
     
     # Add credit and class title
     class_data += [x for x in credit_title_split]
@@ -186,9 +184,9 @@ def create_course(raw_row):
 
 
     # These components are not required, using Regex to find them
-    raw_row_data = " ".join(raw_row[data_iterator:])
+    raw_row_data = " ".join(raw_row[data_iterator:]).replace("-", "")
     # Pull out class time
-    full_time = re.search("[0-9]{2}:[0-9]{2} [PA][M] - [0-9]{2}:[0-9]{2} [PA][M]", raw_row_data)
+    full_time = re.search("[0-9]{2}:[0-9]{2} [PA][M]  [0-9]{2}:[0-9]{2} [PA][M]", raw_row_data)
     if full_time == None:
         # This is expected to happen in quite a few cases
         print("No class time found")
@@ -197,7 +195,7 @@ def create_course(raw_row):
         class_data += [""]
     else:
         class_data += [full_time.group()[:8]]
-        class_data += [full_time.group()[11:]]
+        class_data += [full_time.group()[10:]]
 
     #for elem in raw_row_data.split(" "):
     day_index = 0
@@ -229,7 +227,7 @@ def create_course(raw_row):
         # Splits everything in raw_row and flattens it
         flattened_subdata = [y for x in raw_row for y in x.split()]
         for i in range(len(flattened_subdata)):
-            if class_data[-1] == flattened_subdata[i]:
+            if class_data[-1] == flattened_subdata[i].replace("-", ""):
                 # Day is probably lumped in with the class
                 # Need to know if the next element is entire building and room or only the building
                 if re.search("[0-9]", flattened_subdata[i + 1]) == None:
@@ -239,9 +237,11 @@ def create_course(raw_row):
                 break
         else:
             print("Unable to find building off day")
+            class_data += [""]
     elif day_index < len(raw_row):
         class_data += [raw_row[day_index + 1]]
     else:
+        class_data += [""]
         print("No building found")
     
     # All instructors have a comma in their name
@@ -257,15 +257,22 @@ def create_course(raw_row):
     # Check enrollment is an integer
     try:
         int(enrollment_campus_split[0])
+        class_data += [enrollment_campus_split[0].replace("-", "")]
+        class_data += [enrollment_campus_split[1]]
+
     except:
-        print("Max enrollment is not an int")
-        print(enrollment_campus_split)
+        # If this fails this means the enrollment is something weird. It should be req though.
+        int(enrollment_campus_split[1].split()[0])
+        class_data += [enrollment_campus_split[1].replace("-", "").split()[0]]
+        class_data += [enrollment_campus_split[1].split()[1]]
+
     
-    class_data += [enrollment_campus_split[0]]
-    class_data += [enrollment_campus_split[1]]
 
     #print(raw_row)
-    print(class_data)
+    if (len(class_data)) < 15:
+        return 1
+
+    return 0
 
     #end = timer()
     #print(end - start) 
@@ -281,7 +288,7 @@ def parse_rows(ext_page):
         cur_row = ext_page[index:index + 13]
         # Make sure we're starting on a class code, make a dictionary if this trick doesn't work
         if cur_row:
-            while len(cur_row[0]) > 4 or len(cur_row[0]) < 3:
+            while cur_row and (len(cur_row[0]) > 4 or len(cur_row[0]) < 3):
                 cur_row = cur_row[1:]
                 index += 1
 
@@ -293,17 +300,47 @@ def parse_rows(ext_page):
                 #logic to handle row
                 break
         else:
-            #irregular row found, need logic to handle this and swap to next dept/college
+            index += 13
+            # Irregular row found, using "Main Campus" to align where the next row begins            
+            while index < len(ext_page) and "Main Campus" not in ext_page[index]:
+                index += 1
+
+        if (index > len(ext_page)):
             loop = 0
     return rows
 
+
+#extr = extract_text(pdf_pages[1])
+
+#for i in range(10):
+#    extr = extract_text(pdf_pages[i + 2])
+#    print((extr[0], extr[len(extr) - 4:len(extr)]))
+#remove_header_footer(extr)
+
 #testrow = parse_rows(extr)[1]
-for row in parse_rows(extr):
-    create_course(row)
+#for row in parse_rows(extr):
+#    create_course(row)
+
+
 #create_course(testrow)
 #print(extr[:13])
 #print(adj_row)
 
+
+
+# ---------------------- Attempting all pages --------------------- #
+
+
+failed_class_counter = 0
+
+for page in pdf_pages[1:]:
+    extr = extract_text(page)
+    remove_header_footer(extr)
+    for row in parse_rows(extr):
+        failed_class_counter += create_course(row)
+
+
+print("Failed", failed_class_counter, "classes")
 
 # Row logic
 # 0: Class code  'APPM'
