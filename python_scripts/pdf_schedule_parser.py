@@ -33,9 +33,11 @@ class Course:
     # String conversion for printing
     def __str__(self):
         output = ""
-        for i in range(len(self.print_headers)):
-            output += self.print_format.format(self.print_headers[i], *self.data[i]) + '\n'
-        return output
+        for elem in data:
+            output += str(elem).replace(",", ";") + ","
+        #for i in range(len(self.print_headers)):
+        #    output += self.print_format.format(self.print_headers[i], *self.data[i]) + '\n'
+        return output[:len(output) - 1]
 
 
 
@@ -383,12 +385,12 @@ def create_course(raw_row):
     # fixing 'SeeClass' building / room bug
     if class_data[11] == "SeeClass":
         # See classroom notes for room
-        class_data[11] = "Classroom Notes for Room"
+        class_data[11] = "See Classroom Notes for Room"
     elif "SeeAca" in class_data[11]:
-        class_data[11] = " Academic Dept for Room Info"
+        class_data[11] = "See Academic Dept for Room Info"
 
     #print(class_data)
-    return 0
+    return 0, class_data
 
     #end = timer()
     #print(end - start) 
@@ -447,20 +449,22 @@ def parse_rows(ext_page):
 
 # ---------------------- Attempting all pages --------------------- #
 
-#SeeClass bug still exists in performing arts
-
 failed_class_counter = 0
 
 
 #for page in pdf_pages[137:138]:
 #for page in pdf_pages[1:2]:
+f = open("class_schedule.csv", "w")
 for page in pdf_pages:
     extr = extract_text(page)
     remove_header_footer(extr)
     for row in parse_rows(extr):
         #print(row)
-        failed_class_counter += create_course(row)
-
+        failure, data = create_course(row)
+        failed_class_counter += failure
+        course = Course(data)
+        f.write(str(course) + "\n")
+f.close()
 
 print("Failed", failed_class_counter, "classes")
 
