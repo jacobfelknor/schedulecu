@@ -135,7 +135,7 @@ for i in range(1, len(weekdays) + 1):
     weekday_list += [''.join(x) for x in combinations(weekdays, i)]
 weekday_list += ["TBA"]
 
-class_components = ["SEM", "LEC", "REC", "STU", "WKS", "MLS", "LAB", "PRA", "FLD"]
+class_components = ["SEM", "LEC", "REC", "STU", "WKS", "MLS", "LAB", "PRA", "FLD", "CLN"]
 
 # GRE and MUS duplicate keys
 department_codes = {
@@ -267,48 +267,8 @@ def create_course(raw_row):
         print("Really bad row")
         print(raw_row)
         return 1
-    # Add class code and course subject
-    '''
-    class_data += [x for x in raw_row[:data_iterator]]
-    section_session_number_split = raw_row[data_iterator].split(" ")
-    if len(section_session_number_split) == 3:
-        # Add section, session, and class number
-        class_data += [x for x in section_session_number_split]
-        data_iterator += 1
-    elif len(section_session_number_split) == 1:
-        # split only contains section (e.g. special section with num and letter creates this)
-        class_data += [x for x in section_session_number_split]
-        data_iterator += 1
-        # Assuming the remaining data is correct. It 'should' always be there
-        class_data += [x for x in raw_row[data_iterator].split(" ")]
-        data_iterator += 1
-    else:
-        print("Weird section_session_number split")
-        print(raw_row)
-        return 1
 
-    credit_title_split = raw_row[data_iterator].split(" ", 1)
-    data_iterator += 1
-    try:
-        #possible for multiple credits (i.e. 3-6)
-        int(credit_title_split[0].replace("-", ""))
-    except:
-        print("Credit found as not an integer")
-        print(credit_title_split)
-        print(raw_row)
-        return 1
-    
-    # Add credit and class title
-    class_data += [x for x in credit_title_split]
-    # Add class component
-    if len(raw_row[data_iterator]) > 3:
-        # class component got lumped in with something else
-        class_data += [raw_row[data_iterator][0:4]]
-        raw_row[data_iterator] = raw_row[data_iterator][4:]
-    else:
-        class_data += [raw_row[data_iterator]]
-        data_iterator += 1
-    '''
+    # Add class code and course subject
     # Grabs everything up to class 
     flattened_subdata = [y for x in raw_row for y in x.split()]
     class_data += [x for x in flattened_subdata[:6]]
@@ -323,12 +283,15 @@ def create_course(raw_row):
     if data_iterator == 6:
         print("Unable to find class name (i.e. maybe name is len(3))?")
     else:
-        class_data += [x for x in flattened_subdata[6:data_iterator]]
+        class_data += [" ".join([x for x in flattened_subdata[6:data_iterator]])]
+        class_data += [flattened_subdata[data_iterator]]
+        data_iterator += 1
     
 
 
     # These components are not required, using Regex to find them
-    raw_row_data = " ".join(raw_row[data_iterator:]).replace("-", "")
+    #raw_row_data = " ".join(flattened_subdata[data_iterator:]).replace("-", "")
+    raw_row_data = " ".join(flattened_subdata).replace("-", "")
     # Pull out class time
     full_time = re.search("[0-9]{2}:[0-9]{2} [PA][M]  [0-9]{2}:[0-9]{2} [PA][M]", raw_row_data)
     if full_time == None:
@@ -369,7 +332,7 @@ def create_course(raw_row):
     # to know how I found the days before to avoid declaring more variables....
     if day_index == 0:
         # Splits everything in raw_row and flattens it
-        flattened_subdata = [y for x in raw_row for y in x.split()]
+        #flattened_subdata = [y for x in raw_row for y in x.split()]
         for i in range(len(flattened_subdata)):
             if class_data[-1] == flattened_subdata[i].replace("-", ""):
                 # Day is probably lumped in with the class
@@ -412,11 +375,19 @@ def create_course(raw_row):
     
 
     #print(raw_row)
-    if (len(class_data)) < 15:
+    if (len(class_data)) != 15:
         print(class_data)
         print(flattened_subdata)
         return 1
 
+    # fixing 'SeeClass' building / room bug
+    if class_data[11] == "SeeClass":
+        # See classroom notes for room
+        class_data[11] = "Classroom Notes for Room"
+    elif "SeeAca" in class_data[11]:
+        class_data[11] = " Academic Dept for Room Info"
+
+    #print(class_data)
     return 0
 
     #end = timer()
@@ -476,10 +447,13 @@ def parse_rows(ext_page):
 
 # ---------------------- Attempting all pages --------------------- #
 
+#SeeClass bug still exists in performing arts
 
 failed_class_counter = 0
 
 
+#for page in pdf_pages[137:138]:
+#for page in pdf_pages[1:2]:
 for page in pdf_pages:
     extr = extract_text(page)
     remove_header_footer(extr)
