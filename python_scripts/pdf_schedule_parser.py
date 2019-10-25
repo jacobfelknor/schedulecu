@@ -112,12 +112,21 @@ def remove_header_footer(extracted_text):
 # Outlines can be used for headers to organize
 #print(pdf_reader.outlines[0]['/Title'])
 
+# Helper functions and otherwise
 
+def is_int(str_input):
+    try:
+        int(str_input)
+        return True
+    except:
+        return False
 
-#print(extr)
-
-def combine_pages(page1, page2):
-    pass
+numbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
+def has_numbers(str_input):
+    for number in numbers:
+        if number in str_input:
+            return False
+    return True
 
 # Generating all possible weekday codes
 weekdays = ["M", "T", "W", "TH", "F"]
@@ -126,6 +135,122 @@ for i in range(1, len(weekdays) + 1):
     weekday_list += [''.join(x) for x in combinations(weekdays, i)]
 weekday_list += ["TBA"]
 
+class_components = ["SEM", "LEC", "REC", "STU", "WKS", "MLS", "LAB", "PRA", "FLD"]
+
+# GRE and MUS duplicate keys
+department_codes = {
+    "ANTH" : 1,
+    "APPM" : 1,
+    "ARAB" : 1,
+    "ARTF" : 1,
+    "ARTH" : 1,
+    "ARTS" : 1,
+    "ARSC" : 1,
+    "ASIA" : 1,
+    "ASTR" : 1,
+    "ATOC" : 1,
+    "CWC" : 1,
+    "CHE" : 1,
+    "CAM" : 1,
+    "CHIN" : 1,
+    "CLAS" : 1,
+    "DNC" : 1,
+    "EBIO" : 1,
+    "ECO" : 1,
+    "ENGL" : 1,
+    "ENVS" : 1,
+    "ETHN" : 1,
+    "FRSI" : 1,
+    "FREN" : 1,
+    "GEO" : 1,
+    "GEOL" : 1,
+    "GRM" : 1,
+    "GSLL" : 1,
+    "HEBR" : 1,
+    "HIND" : 1,
+    "HIST" : 1,
+    "HON" : 1,
+    "HUM" : 1,
+    "INDO" : 1,
+    "IPHY" : 1,
+    "IAFS": 1,
+    "ITAL": 1,
+    "JPNS" : 1,
+    "JWST" : 1,
+    "KREN" : 1,
+    "LGBT" : 1,
+    "LIBB" : 1,
+    "LING" : 1,
+    "MATH" : 1,
+    "MEM" : 1,
+    "MCD" : 1,
+    "MUS" : 1,
+    "NRS" : 1,
+    "PACS" : 1,
+    "PHIL" : 1,
+    "PHYS" : 1,
+    "PSCI" : 1,
+    "PORT" : 1,
+    "PSYC" : 1,
+    "RLST" : 1,
+    "RUSS" : 1,
+    "SCAN" : 1,
+    "SOCY" : 1,
+    "SPAN" : 1,
+    "SLHS" : 1,
+    "SWE" : 1,
+    "THTR" : 1,
+    "WRT" : 1,
+    "ASEN" : 1,
+    "AREN" : 1,
+    "ATLS" : 1,
+    "CVEN" : 1,
+    "CSCI" : 1,
+    "ECEN" : 1,
+    "EHO" : 1,
+    "EME" : 1,
+    "EVEN" : 1,
+    "GRE" : 1,
+    "HUE" : 1,
+    "MCE" : 1,
+    "TLEN" : 1,
+    "APRD" : 1,
+    "COM" : 1,
+    "CMD" : 1,
+    "INFO" : 1,
+    "JRNL" : 1,
+    "MDST" : 1,
+    "CMCI" : 1,
+    "MUEL" : 1,
+    "EMU" : 1,
+    "PMU" : 1,
+    "TMUS" : 1,
+    "AIRR" : 1,
+    "MILR" : 1,
+    "NAVR" : 1,
+    "PRLC" : 1,
+    "ACCT" : 1,
+    "BAD" : 1,
+    "BCO" : 1,
+    "BSL" : 1,
+    "CSER" : 1,
+    "ESBM" : 1,
+    "FNCE" : 1,
+    "INBU" : 1,
+    "MGM" : 1,
+    "MKT" : 1,
+    "MBAX" : 1,
+    "MBA" : 1,
+    "MSB" : 1,
+    "MSBX" : 1, 
+    "ORM" : 1,
+    "REAL" : 1,
+    "ARC" : 1,
+    "ENVD" : 1,
+    "EDU" : 1,
+    "LEAD" : 1,
+    "LAW": 1,
+}
 
 # Raw row pulled from below loop
 # Parses the information in a raw row and creates a class object. 
@@ -137,11 +262,13 @@ def create_course(raw_row):
     data_iterator = 2
 
     class_data = []
-    # Less than 6 means I can't guarentee I have all the required data
-    if len(raw_row) < 6:
+    # Less than 5 means I can't guarentee I have all the required data
+    if len(raw_row) < 5:
         print("Really bad row")
+        print(raw_row)
         return 1
     # Add class code and course subject
+    '''
     class_data += [x for x in raw_row[:data_iterator]]
     section_session_number_split = raw_row[data_iterator].split(" ")
     if len(section_session_number_split) == 3:
@@ -181,6 +308,23 @@ def create_course(raw_row):
     else:
         class_data += [raw_row[data_iterator]]
         data_iterator += 1
+    '''
+    # Grabs everything up to class 
+    flattened_subdata = [y for x in raw_row for y in x.split()]
+    class_data += [x for x in flattened_subdata[:6]]
+    
+    # Might want a dictionary with class types, will make pulling class name easier
+    data_iterator = 6
+    while flattened_subdata[data_iterator] not in class_components:
+        data_iterator += 1
+        if (data_iterator >= len(flattened_subdata)):
+            data_iterator = 6
+            break
+    if data_iterator == 6:
+        print("Unable to find class name (i.e. maybe name is len(3))?")
+    else:
+        class_data += [x for x in flattened_subdata[6:data_iterator]]
+    
 
 
     # These components are not required, using Regex to find them
@@ -259,7 +403,6 @@ def create_course(raw_row):
         int(enrollment_campus_split[0])
         class_data += [enrollment_campus_split[0].replace("-", "")]
         class_data += [enrollment_campus_split[1]]
-
     except:
         # If this fails this means the enrollment is something weird. It should be req though.
         int(enrollment_campus_split[1].split()[0])
@@ -270,6 +413,8 @@ def create_course(raw_row):
 
     #print(raw_row)
     if (len(class_data)) < 15:
+        print(class_data)
+        print(flattened_subdata)
         return 1
 
     return 0
@@ -288,7 +433,8 @@ def parse_rows(ext_page):
         cur_row = ext_page[index:index + 13]
         # Make sure we're starting on a class code, make a dictionary if this trick doesn't work
         if cur_row:
-            while cur_row and (len(cur_row[0]) > 4 or len(cur_row[0]) < 3):
+            while cur_row and department_codes.get(cur_row[0]) == None:
+            #(len(cur_row[0]) > 4 or len(cur_row[0]) < 3) and not has_numbers(cur_row[0]):
                 cur_row = cur_row[1:]
                 index += 1
 
@@ -333,10 +479,12 @@ def parse_rows(ext_page):
 
 failed_class_counter = 0
 
-for page in pdf_pages[1:]:
+
+for page in pdf_pages:
     extr = extract_text(page)
     remove_header_footer(extr)
     for row in parse_rows(extr):
+        #print(row)
         failed_class_counter += create_course(row)
 
 
