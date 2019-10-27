@@ -272,8 +272,10 @@ def create_course(raw_row):
 
     # Add class code and course subject
     # Grabs everything up to class 
+
     flattened_subdata = [y for x in raw_row for y in x.split()]
     class_data += [x for x in flattened_subdata[:6]]
+
     
     # Might want a dictionary with class types, will make pulling class name easier
     data_iterator = 6
@@ -455,15 +457,27 @@ failed_class_counter = 0
 #for page in pdf_pages[137:138]:
 #for page in pdf_pages[1:2]:
 f = open("class_schedule.csv", "w")
+
+# fixing bio lab bug
+page_num = 0
+bio_lab_number = 6
+
 for page in pdf_pages:
     extr = extract_text(page)
     remove_header_footer(extr)
     for row in parse_rows(extr):
         #print(row)
+        # Specifically only page 26 has a weird bug where it cuts off the section number
+        if page_num == 26:
+            row.insert(2, str(bio_lab_number))
+            bio_lab_number += 1
+
         failure, data = create_course(row)
         failed_class_counter += failure
         course = Course(data)
         f.write(str(course) + "\n")
+    
+    page_num += 1
 f.close()
 
 print("Failed", failed_class_counter, "classes")
