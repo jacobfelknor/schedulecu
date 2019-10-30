@@ -11,7 +11,7 @@ class User(AbstractUser):
     last_name = models.CharField(max_length=100)
 
     def get_absolute_url(self):
-         return reverse('users:view_profile', args=(self.username,))
+        return reverse("users:view_profile", args=(self.username,))
 
     def empty_fields(self):
         empty = []

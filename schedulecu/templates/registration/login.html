@@ -7,13 +7,13 @@
 <div class="card border-dark mb-3">
     <h2 class="card-header">Login</h2>
     <div class="card-body">
-    <form method="post">
-    {% csrf_token %}
-    {{ form|crispy }}
-    <button type="submit" class="btn btn-outline-success">Sign In</button>
-    </form>
-    <p class="card-text">Don't have an account yet?</p>
-    <a href="{% url 'users:signup' %}"><button class="btn btn-outline-dark">Sign Up</button></a> 
+        <form method="post">
+            {% csrf_token %}
+            {{ form|crispy }}
+            <button type="submit" class="btn btn-outline-success">Sign In</button>
+        </form>
+        <p class="card-text">Don't have an account yet?</p>
+        <a href="{% url 'users:signup' %}"><button class="btn btn-outline-dark">Sign Up</button></a>
     </div>
 </div>
 

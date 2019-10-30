@@ -5,6 +5,7 @@ from django.db import models
 # Print helpers
 print_format = "{:<15}" * 2
 
+
 class Class(models.Model):
 
     # Database
@@ -23,7 +24,6 @@ class Class(models.Model):
     instructor_name = models.CharField(max_length=50, null=True, blank=True)
     max_enrollment = models.IntegerField()
     campus = models.CharField(max_length=15)
-
 
     def __str__(self):
         output = ""
