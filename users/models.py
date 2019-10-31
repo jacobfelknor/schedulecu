@@ -5,6 +5,11 @@ from django.urls import reverse
 
 class User(AbstractUser):
 
+    # TODO Populate majors with class code and degree from PDF 
+    majors = ["CSCI-BS", 
+              "ANTH-BA",
+              "other"]
+
     email = models.EmailField()
     phone = models.CharField(max_length=13, null=True, blank=True)
     first_name = models.CharField(max_length=100)

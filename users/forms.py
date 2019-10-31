@@ -13,14 +13,15 @@ from django.urls import reverse_lazy
 
 from .models import User
 
-
 class UserSignUpForm(UserCreationForm):
 
     # success_url = reverse_lazy('accounts:view_account', kwargs={"test":"test"}) # broken
 
     class Meta(UserCreationForm.Meta):
         model = User
-        fields = ("username", "email", "phone", "first_name", "last_name")
+        fields = ("username", "email", "phone", "first_name", "last_name", "major")
+        # Editing major
+        #fields[5].widget = forms.MultipleChoiceField(choices=User.majors)
 
     @transaction.atomic
     def save(self):
@@ -52,6 +53,7 @@ class UserAccountForm(forms.ModelForm):
             "last_name",
             "phone",
             "email",
+            "major",
         )  # Note that we didn't mention user field here.
 
     def save(self, user=None):
