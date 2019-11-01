@@ -26,7 +26,14 @@ def search_ajax(request):
     keyword = get("keyword", "")
     keyword = re.split("\W", keyword)
     keyword_query = reduce(
-        operator.and_, (Q(course_title__icontains=x) for x in keyword)
+        operator.and_,
+        (
+            (
+                Q(course_title__icontains=x)
+                | Q(instructor_name__icontains=x) | Q(course_subject__icontains=x)
+            )
+            for x in keyword
+        ),
     )
     department = get("department", "")
 
