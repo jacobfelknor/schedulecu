@@ -5,6 +5,7 @@ from functools import reduce
 from django.db.models import Q
 from django.http import JsonResponse
 from django.shortcuts import render
+from django.views.generic import CreateView, DetailView, ListView, UpdateView
 
 from classes.models import Class
 
@@ -30,7 +31,8 @@ def search_ajax(request):
         (
             (
                 Q(course_title__icontains=x)
-                | Q(instructor_name__icontains=x) | Q(course_subject__icontains=x)
+                | Q(instructor_name__icontains=x)
+                | Q(course_subject__icontains=x)
             )
             for x in keyword
         ),
@@ -42,3 +44,7 @@ def search_ajax(request):
     classes = Class.objects.filter(query).order_by("course_subject")
     response = ClassSerializer(classes, many=True)
     return JsonResponse(response.data, safe=False)
+
+
+class ClassView(DetailView):
+    model = Class

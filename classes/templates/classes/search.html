@@ -272,13 +272,13 @@
                 document.getElementById("result_table").innerHTML = "";
                 var html = "";
                 for (var i = 0; i < result.length; i++) {
-                    html += `<tr><td>${result[i].department} ${result[i].course_subject}</td>\
+                    html += `<tr><td><a href="{% url 'classes:view' 0703 %}">${result[i].department} ${result[i].course_subject}</a></td>\
                     <td>${result[i].course_title}</td>\
                     <td>${result[i].section_number}</td>\
                     <td>${result[i].instructor_name}</td>\
                     <td>${result[i].start_time}-${result[i].end_time}</td>\
                     <td>${result[i].building_room}</td>\
-                    </tr>`;
+                    </tr>`.replace(/0703/, result[i].id);
                 }
                 document.getElementById("result_table").innerHTML = html;
             })
