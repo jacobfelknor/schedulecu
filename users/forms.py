@@ -11,7 +11,12 @@ from django.forms.utils import ValidationError
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
 
+from ajax_select.fields import AutoCompleteField
+
 from .models import User
+
+class Form(forms.Form):
+    major = AutoCompleteField("major")
 
 class UserSignUpForm(UserCreationForm):
 
@@ -19,12 +24,28 @@ class UserSignUpForm(UserCreationForm):
 
     class Meta(UserCreationForm.Meta):
         model = User
-        fields = ("username", "email", "phone", "first_name", "last_name", "major")
+        fields = ("username", "email", "phone", "first_name", "last_name")
         # Editing major
         #fields[5].widget = forms.MultipleChoiceField(choices=User.majors)
 
+    major = AutoCompleteField("major")
+
+    #Validate major
+    def clean(self):
+
+        super(UserSignUpForm, self).clean()
+
+        major = self.cleaned_data.get("major")
+
+        # Any other fields to validate placed below
+        if len(model.objects.filter(department=major)) == 0:
+            pass
+            
+
+
     @transaction.atomic
     def save(self):
+        
         user = super().save(commit=False)
         user.save()
         return user
@@ -53,7 +74,6 @@ class UserAccountForm(forms.ModelForm):
             "last_name",
             "phone",
             "email",
-            "major",
         )  # Note that we didn't mention user field here.
 
     def save(self, user=None):

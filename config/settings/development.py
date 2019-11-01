@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     "users.apps.UsersConfig",
     "classes.apps.ClassesConfig",
     "crispy_forms",
+    "ajax_select",
 ]
 
 CRISPY_TEMPLATE_PACK = "bootstrap4"
@@ -103,6 +104,10 @@ AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
 ]
+
+AJAX_LOOKUP_CHANNELS = {
+    'major' : ('users.lookups', 'MajorLookup')
+}
 
 
 # Internationalization

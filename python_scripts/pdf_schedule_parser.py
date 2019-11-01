@@ -1,3 +1,11 @@
+# Consistency with building/room (space vs no space)
+# names occasionally appearing in building/room 
+# 
+
+
+
+
+
 import PyPDF2
 import re
 from itertools import combinations
@@ -426,6 +434,9 @@ def create_course(raw_row):
     # end = timer()
     # print(end - start)
 
+def get_in_department(element):
+    element = [x for x in element.split()]
+    return department_codes.get(element[0])
 
 # Pull out 13 elements, split last two into max enrollment and campus
 def parse_rows(ext_page):
@@ -436,7 +447,8 @@ def parse_rows(ext_page):
         cur_row = ext_page[index : index + 13]
         # Make sure we're starting on a class code, make a dictionary if this trick doesn't work
         if cur_row:
-            while cur_row and department_codes.get(cur_row[0]) == None:
+            
+            while cur_row and get_in_department(cur_row[0]) == None:
                 # (len(cur_row[0]) > 4 or len(cur_row[0]) < 3) and not has_numbers(cur_row[0]):
                 cur_row = cur_row[1:]
                 index += 1
@@ -489,11 +501,11 @@ f = open("class_schedule.csv", "w")
 page_num = 0
 bio_lab_number = 6
 
-for page in pdf_pages:
+for page in pdf_pages[105:107]:
     extr = extract_text(page)
-    remove_header_footer(extr)
+    #remove_header_footer(extr)
     for row in parse_rows(extr):
-        # print(row)
+        
         # Specifically only page 26 has a weird bug where it cuts off the section number
         if page_num == 26:
             row.insert(2, str(bio_lab_number))
@@ -502,6 +514,7 @@ for page in pdf_pages:
         failure, data = create_course(row)
         failed_class_counter += failure
         course = Course(data)
+        print(course)
         f.write(str(course) + "\n")
 
     page_num += 1

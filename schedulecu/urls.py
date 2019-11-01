@@ -17,12 +17,12 @@ from django.contrib import admin
 from django.urls import path, include
 from django.views.generic import RedirectView
 
-# from ajax_select import urls as ajax_select_urls
+from ajax_select import urls as ajax_select_urls
 
 urlpatterns = [
     path("", include("home.urls"), name="home"),
     path("admin/", admin.site.urls),
     path("users/", include("users.urls")),
     path("users/", include("django.contrib.auth.urls")),
-    # path('ajax_select/', include(ajax_select_urls)),
+    path("ajax_select/", include(ajax_select_urls)),
 ]
