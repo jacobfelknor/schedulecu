@@ -1,3 +1,7 @@
+import operator
+import re
+from functools import reduce
+
 from django.db.models import Q
 from django.http import JsonResponse
 from django.shortcuts import render
@@ -20,9 +24,13 @@ def search_ajax(request):
         get = request.POST.get
 
     keyword = get("keyword", "")
+    keyword = re.split(" ", keyword)
+    keyword_query = reduce(
+        operator.and_, (Q(course_title__icontains=x) for x in keyword)
+    )
     department = get("department", "")
 
-    query = Q(department__contains=department) & Q(course_title__icontains=keyword)
+    query = Q(department__contains=department) & keyword_query
 
     classes = Class.objects.filter(query).order_by("course_subject")
     response = ClassSerializer(classes, many=True)

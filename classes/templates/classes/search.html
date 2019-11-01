@@ -5,12 +5,12 @@
 
 <div class="container-fluid">
     <div class="row">
-        <div class="col-2">
+        <div class="col-4">
             <div class="card">
                 <h5 class="card-header bg-warning">
                     Class Search
                 </h5>
-                <div class="container">
+                <div class="container" id="search_div">
                     <br>
                     <!-- <form action="#" method="POST"> -->
                     <!-- {% csrf_token %} -->
@@ -202,14 +202,14 @@
                         <option value="WRTG">Writing and Rhetoric (WRTG)</option>
                     </select>
                     <br>
-                    <button class="btn btn-dark btn-block" onclick="search();">Search</button>
+                    <button class="btn btn-dark btn-block" id="search_button" onclick="search();">Search</button>
                     <!-- <input type="submit" class="btn btn-dark btn-block" value="Search"> -->
                     <!-- </form> -->
                     <br>
                 </div>
             </div>
         </div>
-        <div class="col-10 text-center">
+        <div class="col-8 text-center">
             <table class="table dt-responsive table-striped" cellspacing="0" width="100%">
                 <thead class="thead-dark">
                     <tr>
@@ -235,6 +235,15 @@
 
 {% block javascript %}
 <script>
+
+    $('#search_div').on('keydown', function (e) {
+        var key = e.which;
+        if (key == 13) {
+            // alert("enter");
+            $('#search_button').click();
+            return false;
+        }
+    });
     function csrfSafeMethod(method) {
         // these HTTP methods do not require CSRF protection
         return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
