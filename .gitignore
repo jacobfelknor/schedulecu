@@ -1,4 +1,5 @@
 .venv/
+venv/
 sterlingenv/
 .vscode/
 db.sqlite3
