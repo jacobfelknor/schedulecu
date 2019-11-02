@@ -12,11 +12,20 @@ def readWriteCSV():
 			add = True
 			if lineCount > 6:
 				for col in row:
+					if ',' in col:
+						#print(col)
+						col = col.replace(',',';')
+					if '"' in col:
+						col = col.replace('"','')
+						#print(col)
+					if index == 9:
+						if '/' in col:
+							add = False
 					if index == 13 and col == '':
 						rowData.append('N')
 					else:
 						rowData.append(col)
-					if col == '' and index != 13:
+					if ((col == '' or col == ' ') and index != 13) or (col == '#N/A') or (col == 'NA') or (col == '(Blank)') or (col == 'Anupama'):
 						add = False
 						break
 					index += 1
@@ -30,8 +39,10 @@ def readWriteCSV():
 			writer.writerow(i)
 
 
+
 def main():
 	readWriteCSV()
+
 
 
 main()
