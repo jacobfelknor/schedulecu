@@ -37,5 +37,8 @@ def PopulateClasses():
     print("Failed to add" , failures, "classes")
 
 class Command(BaseCommand):
+    print("Updating classes with class_schedule.csv found in classes/management/commands")
+    print("The Russian class that fails is expected, not planning on fixing the data more until spring 2020 pdf is available")
+
     def handle(self, *args, **options):
         PopulateClasses()
