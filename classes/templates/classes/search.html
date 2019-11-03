@@ -237,6 +237,10 @@
 {% block javascript %}
 <script>
 
+    $(document).ready(function () {
+        $('#search_button').click();
+    });
+
     $('#search_div').on('keydown', function (e) {
         var key = e.which;
         if (key == 13) {
@@ -245,6 +249,7 @@
             return false;
         }
     });
+
     function csrfSafeMethod(method) {
         // these HTTP methods do not require CSRF protection
         return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
@@ -272,13 +277,13 @@
                 document.getElementById("result_table").innerHTML = "";
                 var html = "";
                 for (var i = 0; i < result.length; i++) {
-                    html += `<tr><td><a href="{% url 'classes:view' 0703 %}">${result[i].department} ${result[i].course_subject}</a></td>\
+                    html += `<tr><td><a href="{% url 'classes:view' 0 %}">${result[i].department} ${result[i].course_subject}</a></td>\
                     <td>${result[i].course_title}</td>\
                     <td>${result[i].section_number}</td>\
                     <td>${result[i].instructor_name}</td>\
                     <td>${result[i].start_time}-${result[i].end_time}</td>\
                     <td>${result[i].building_room}</td>\
-                    </tr>`.replace(/0703/, result[i].id);
+                    </tr>`.replace(/0/, result[i].id);
                 }
                 document.getElementById("result_table").innerHTML = html;
             })

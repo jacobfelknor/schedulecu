@@ -2,4 +2,64 @@
 
 {% block content %}
 
+<div class="container">
+    <div class="card">
+        <h3 class="card-header">
+            {{ object.course_title }}
+        </h3>
+        <div class="card-body">
+            <table class="table dt-responsive" cellspacing="0" width="100%">
+                <!-- <thead class="thead" id="material">
+                            <tr>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                        </thead> -->
+                <!-- 
+                    session = models.CharField(max_length=5)
+                    class_number = models.IntegerField()
+                    credit = models.CharField(max_length=5)
+                    class_component = models.CharField(max_length=10)
+                     -->
+                <tbody>
+                    <tr>
+                        <td><b>Department/Number:</b> <br>{{ object.department }} {{ object.course_subject }}</td>
+                        <td><b>Section:</b> <br>{{ object.section_number }}</td>
+                        {% if object.instructor_name %}
+                        <td><b>Instructor:</b> <br>{{ object.instructor_name }}</td>
+                        {% else %}
+                        <td><b>Instructor:</b> <br>N/A</td>
+                        {% endif %}
+                    </tr>
+                    <tr>
+                        <td><b>Days:</b> <br>{{ object.days }}</td>
+                        <td><b>Time:</b> <br>{{ object.start_time }}-{{ object.end_time }}</td>
+                        {% if object.max_enrollment %}
+                        <td><b>Max Enrollment:</b><br> {{ object.max_enrollment }}</td>
+                        {% else %}
+                        <td><br></td>
+                        {% endif %}
+                    </tr>
+                    <tr>
+                        <td><b>Location:</b> <br>{{ object.building_room }}</td>
+                        <td><b>Campus:</b> <br>{{ object.campus }}</td>
+                        {% if object.credit %}
+                        <td><b>Credits:</b><br> {{ object.credit }}</td>
+                        {% else %}
+                        <td><br></td>
+                        {% endif %}
+                    </tr>
+                </tbody>
+            </table>
+            <button class="btn btn-outline-success"><i class="fa fa-plus-circle" aria-hidden="true"></i> Add to
+                Schedule</button>
+        </div>
+    </div> <!-- card -->
+    <div class="card">
+        <h5 class="card-header bg-warning">
+            Related Classes
+        </h5>
+    </div> <!-- card -->
+</div>
+
 {% endblock %}

@@ -2,6 +2,7 @@ from rest_framework import serializers
 
 
 class ClassSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
     department = serializers.CharField()
     course_subject = serializers.IntegerField()
     section_number = serializers.CharField()
