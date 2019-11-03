@@ -16,9 +16,6 @@ from ajax_select.fields import AutoCompleteField
 from .models import User
 from classes.models import Class
 
-class Form(forms.Form):
-    major = AutoCompleteField("major")
-
 class UserSignUpForm(UserCreationForm):
 
     # success_url = reverse_lazy('accounts:view_account', kwargs={"test":"test"}) # broken

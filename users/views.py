@@ -7,7 +7,7 @@ from django.urls import reverse, reverse_lazy
 from django.views import generic
 from django.views.generic import CreateView, DetailView, ListView, UpdateView
 
-from .forms import UserAccountForm, UserSignUpForm, Form
+from .forms import UserAccountForm, UserSignUpForm
 from .models import User
 
 # Create your views here.
@@ -20,7 +20,7 @@ class UserSignUpView(CreateView):
 
     def get_context_data(self, **kwargs):
         kwargs["user_type"] = ""
-        return  super().get_context_data(**kwargs)
+        return super().get_context_data(**kwargs)
 
     def form_valid(self, form):
         user = form.save()
