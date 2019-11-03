@@ -14,6 +14,7 @@ from django.urls import reverse_lazy
 from ajax_select.fields import AutoCompleteField
 
 from .models import User
+from classes.models import Class
 
 class Form(forms.Form):
     major = AutoCompleteField("major")
@@ -25,21 +26,21 @@ class UserSignUpForm(UserCreationForm):
     class Meta(UserCreationForm.Meta):
         model = User
         fields = ("username", "email", "phone", "first_name", "last_name")
-        # Editing major
-        #fields[5].widget = forms.MultipleChoiceField(choices=User.majors)
 
     major = AutoCompleteField("major")
 
     #Validate major
     def clean(self):
+        model = Class
 
         super(UserSignUpForm, self).clean()
 
         major = self.cleaned_data.get("major")
+        major_error_msg = "Please enter a valid major from the autocomplete."
 
         # Any other fields to validate placed below
         if len(model.objects.filter(department=major)) == 0:
-            pass
+            self.add_error("major", major_error_msg)
             
 
 
