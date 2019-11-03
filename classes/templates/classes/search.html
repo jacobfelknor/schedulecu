@@ -216,10 +216,10 @@
                     <tr>
                         <th>Course Number</th>
                         <th>Course Title</th>
-                        <th>Section #</th>
+                        <!-- <th>Section #</th>
                         <th>Instructor</th>
                         <th>Time</th>
-                        <th>Room</th>
+                        <th>Room</th> -->
                     </tr>
                 </thead>
                 <tbody id="result_table">
@@ -274,17 +274,23 @@
             };
             $.ajax(args).then(function (result) {
                 console.log(result);
+                var duplicate_check = {}
                 // Code depending on result
                 document.getElementById("result_table").innerHTML = "";
                 var html = "";
                 for (var i = 0; i < result.length; i++) {
-                    html += `<tr><td><a href="{% url 'classes:view' 0 %}">${result[i].department} ${result[i].course_subject}</a></td>\
-                    <td>${result[i].course_title}</td>\
-                    <td>${result[i].section_number}</td>\
-                    <td>${result[i].instructor_name}</td>\
-                    <td>${result[i].start_time}-${result[i].end_time}</td>\
-                    <td>${result[i].building_room}</td>\
-                    </tr>`.replace(/0/, result[i].id);
+                    if (duplicate_check[result[i].department] !== result[i].course_subject) {
+                        // html += `<tr><td><a href="{% url 'classes:view' 0 %}">${result[i].department} ${result[i].course_subject}</a></td>\
+                        // <td>${result[i].course_title}</td>\
+                        // <td>${result[i].section_number}</td>\
+                        // <td>${result[i].instructor_name}</td>\
+                        // <td>${result[i].start_time}-${result[i].end_time}</td>\
+                        // <td>${result[i].building_room}</td>\
+                        // </tr>`.replace(/0/, result[i].id);
+                        html += `<tr><td><a href="{% url 'classes:view' 0 %}">${result[i].department} ${result[i].course_subject}</a></td>\
+                        <td>${result[i].course_title}</td>`.replace(/0/, result[i].id);
+                        duplicate_check[result[i].department] = result[i].course_subject;
+                    }
                 }
                 document.getElementById("result_table").innerHTML = html;
             })
