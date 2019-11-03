@@ -216,6 +216,7 @@
                     <tr>
                         <th>Course Number</th>
                         <th>Course Title</th>
+                        <th>Credits</th>
                         <!-- <th>Section #</th>
                         <th>Instructor</th>
                         <th>Time</th>
@@ -288,7 +289,7 @@
                         // <td>${result[i].building_room}</td>\
                         // </tr>`.replace(/0/, result[i].id);
                         html += `<tr><td><a href="{% url 'classes:view' 0 %}">${result[i].department} ${result[i].course_subject}</a></td>\
-                        <td>${result[i].course_title}</td>`.replace(/0/, result[i].id);
+                        <td>${result[i].course_title}</td><td>${result[i].credit}</td></tr>`.replace(/0/, result[i].id);
                         duplicate_check[result[i].department] = result[i].course_subject;
                     }
                 }
