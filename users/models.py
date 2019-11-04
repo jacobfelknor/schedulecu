@@ -5,10 +5,12 @@ from django.urls import reverse
 
 class User(AbstractUser):
 
+
     email = models.EmailField()
     phone = models.CharField(max_length=13, null=True, blank=True)
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
+    major = models.CharField(max_length=15)
 
     def get_absolute_url(self):
         return reverse("users:view_profile", args=(self.username,))

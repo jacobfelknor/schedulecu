@@ -25,12 +25,6 @@ class Class(models.Model):
     max_enrollment = models.IntegerField()
     campus = models.CharField(max_length=15)
 
-    def __str__(self):
-        output = ""
-        for field in self.__dict__:
-            output += print_format.format(field, *self.__dict__[field])
-        return output
-
     def empty_fields(self):
         empty = []
         for field in self.__dict__:

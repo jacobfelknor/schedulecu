@@ -1,6 +1,5 @@
 .venv/
 venv/
-sterlingenv/
 .vscode/
 db.sqlite3
 __pycache__/

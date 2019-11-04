@@ -5,18 +5,18 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-<div class="container">
-    <div class="card border-dark mb-3">
-        <h2 class="card-header">Sign Up</h2>
-        <div class="col-md-8 col-sm-10 col-12">
-            <form method="post" novalidate>
-                {% csrf_token %}
-                <input type="hidden" name="next" value="{{ next }}">
-                {{ form|crispy }}
-                <button type="submit" class="btn btn-outline-success">Sign up</button>
-            </form>
-            <br>
-        </div>
+
+<div class="card border-dark mb-3">
+    <h2 class="card-header">Sign Up</h2>
+    <div class="col-md-8 col-sm-10 col-12">
+        <form method="post" novalidate>
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ next }}">
+            {{ form.media }}
+            {{ form|crispy }}
+            <button type="submit" class="btn btn-outline-success">Sign up</button>
+        </form>
+        <br>
     </div>
 </div>
 {% endblock %}

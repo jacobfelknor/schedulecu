@@ -11,7 +11,10 @@ from django.forms.utils import ValidationError
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
 
+from ajax_select.fields import AutoCompleteField
+
 from .models import User
+from classes.models import Class
 
 
 class UserSignUpForm(UserCreationForm):
@@ -20,10 +23,26 @@ class UserSignUpForm(UserCreationForm):
 
     class Meta(UserCreationForm.Meta):
         model = User
-        fields = ("username", "email", "phone", "first_name", "last_name")
+        fields = ("username", "email", "phone", "first_name", "last_name", "major")
+
+    major = AutoCompleteField("major")
+
+    # Validate major
+    def clean(self):
+        model = Class
+
+        super().clean()
+
+        major = self.cleaned_data.get("major")
+        major_error_msg = "Please enter a valid major from the autocomplete."
+
+        # Any other fields to validate placed below
+        if len(model.objects.filter(department=major)) == 0:
+            self.add_error("major", major_error_msg)
 
     @transaction.atomic
     def save(self):
+
         user = super().save(commit=False)
         user.save()
         return user
@@ -52,10 +71,27 @@ class UserAccountForm(forms.ModelForm):
             "last_name",
             "phone",
             "email",
+            "major",
         )  # Note that we didn't mention user field here.
 
+    major = AutoCompleteField("major")
+
+    # Validate major
+    def clean(self):
+        model = Class
+
+        super().clean()
+
+        major = self.cleaned_data.get("major")
+        major_error_msg = "Please enter a valid major from the autocomplete."
+
+        # Any other fields to validate placed below
+        if len(model.objects.filter(department=major)) == 0:
+            self.add_error("major", major_error_msg)
+
+    @transaction.atomic
     def save(self, user=None):
-        user_info = super(UserAccountForm, self).save(commit=False)
+        user_info = super().save(commit=False)
         # if user:
         #     user_profile.user = user
         user_info.save()

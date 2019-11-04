@@ -17,11 +17,11 @@
         <div class="card-body">
             <table class="table dt-responsive" cellspacing="0" width="100%">
                 <!-- <thead class="thead" id="material">
-                    <tr>
-                        <th></th>
-                        <th></th>
-                    </tr>
-                </thead> -->
+                <tr>
+                    <th></th>
+                    <th></th>
+                </tr>
+            </thead> -->
                 <tbody>
                     <tr>
                         <td><b>Name:</b> <br>{{ user.get_full_name }}</td>
@@ -38,6 +38,9 @@
                     <tr>
                         <td><b>Phone Number:</b> <br>{{ user.phone }}</td>
                         <td></td>
+                    </tr>
+                    <tr>
+                        <td><b>Major:</b> <br>{{ user.major }}</td>
                     </tr>
                     <tr>
                         <td><b>Password:</b> <br>**********</td>
@@ -57,6 +60,5 @@
             <a href="{% url 'users:edit_info' user.username %}"><button class="btn btn-outline-dark">Edit</button></a>
         </div>
     </div>
-</div>
 
-{% endblock %}
+    {% endblock %}
