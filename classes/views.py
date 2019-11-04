@@ -48,3 +48,13 @@ def search_ajax(request):
 
 class ClassView(DetailView):
     model = Class
+    context_object_name = "class"
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        related = Class.objects.filter(
+            course_subject=self.object.course_subject, department=self.object.department
+        ).exclude(id=self.object.id)
+        ctx["related"] = related
+
+        return ctx
