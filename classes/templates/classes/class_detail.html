@@ -23,7 +23,8 @@
                      -->
                 <tbody>
                     <tr>
-                        <td><b>Department/Number:</b> <br>{{ class.department }} {{ class.course_subject }}</td>
+                        <td><b>Department/Number:</b> <br>{{ class.department }} {{ class.course_subject }}
+                            ({{ class.class_component }})</td>
                         <td><b>Section:</b> <br>{{ class.section_number }}</td>
                         {% if class.instructor_name %}
                         <td><b>Instructor:</b> <br>{{ class.instructor_name }}</td>
@@ -51,8 +52,10 @@
                     </tr>
                 </tbody>
             </table>
+            {% if user.is_authenticated %}
             <button class="btn btn-outline-success"><i class="fa fa-plus-circle" aria-hidden="true"></i> Add to
                 Schedule</button>
+            {% endif %}
         </div>
     </div> <!-- card -->
     <div class="card">
@@ -68,13 +71,14 @@
                     <th>Instructor</th>
                     <th>Time</th>
                     <th>Room</th>
+                    <th>Credit</th>
                 </tr>
             </thead>
             <tbody id="result_table">
                 {% for class in related %}
                 <tr>
                     <td><a href="{% url 'classes:view' class.id %}">{{ class.department }}
-                            {{ class.course_subject }}</a></td>
+                            {{ class.course_subject }} ({{ class.class_component }})</a></td>
                     <td>{{ class.course_title }}</td>
                     <td>{{ class.section_number }}</td>
                     {% if class.instructor_name %}
@@ -84,6 +88,7 @@
                     {% endif %}
                     <td>{{ class.start_time }}-{{ class.end_time }}</td>
                     <td>{{ class.building_room }}</td>
+                    <td>{{ class.credit }}</td>
                 </tr>
 
                 {% endfor %}

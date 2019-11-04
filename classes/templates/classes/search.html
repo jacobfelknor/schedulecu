@@ -280,7 +280,7 @@
                 document.getElementById("result_table").innerHTML = "";
                 var html = "";
                 for (var i = 0; i < result.length; i++) {
-                    if (duplicate_check[result[i].department] !== result[i].course_subject) {
+                    if (duplicate_check[result[i].department] !== result[i].course_subject && result[i].credit != 0) {
                         // html += `<tr><td><a href="{% url 'classes:view' 0 %}">${result[i].department} ${result[i].course_subject}</a></td>\
                         // <td>${result[i].course_title}</td>\
                         // <td>${result[i].section_number}</td>\
