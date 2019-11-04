@@ -3,3 +3,4 @@ psycopg2==2.8.3
 django-crispy-forms==1.7.2
 PyPDF2==1.26.0
 django-ajax-selects==1.7.1
+djangorestframework==3.10.2

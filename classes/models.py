@@ -21,7 +21,7 @@ class Class(models.Model):
     end_time = models.CharField(max_length=10, null=True, blank=True)
     days = models.CharField(max_length=10, null=True, blank=True)
     building_room = models.CharField(max_length=40, null=True, blank=True)
-    instructor_name = models.CharField(max_length=50, null=True, blank=True)
+    instructor_name = models.CharField(max_length=50, null=True, blank=True) # change to primary_key
     max_enrollment = models.IntegerField()
     campus = models.CharField(max_length=15)
 
