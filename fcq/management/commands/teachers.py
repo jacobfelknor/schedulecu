@@ -1,9 +1,12 @@
+import os
 import csv
 import math
 
 class Teacher:
 	def __init__(self, n): #initiate class member (a teacher)
 		self.name = n
+		self.firstName = ''
+		self.lastName = ''
 
 		self.mainDepartment = ''
 
@@ -28,7 +31,9 @@ def createTeachers():
 	names = []
 	classList = []
 	numLine = 0
-	with open('clean_fcq.csv') as csv_file:
+	directory = os.path.dirname(os.path.abspath(__file__))
+	filename = os.path.join(directory, 'clean_fcq.csv')
+	with open(filename) as csv_file:
 		csv_reader = csv.reader(csv_file, delimiter=',')
 		for row in csv_reader:
 			index = 0
@@ -36,9 +41,13 @@ def createTeachers():
 				if index == 9:
 					if info not in names: #if a class exists for the teacher
 						t = Teacher(info)
+						info = info.split(';')
+						info[1] = info[1][1:]
+						t.firstName = info[1]
+						t.lastName = info[0]
 						t.numClasses += 1
 						t.classIndex.append(numLine)
-						names.append(info)
+						names.append(t.name)
 						teachers.append(t)
 					else:
 						t = teachers[names.index(info)]
@@ -51,7 +60,9 @@ def createTeachers():
 
 
 def fillInfo(teachers): #fills avg rating, main subject, and num semesters
-	file = open('clean_fcq.csv')
+	directory = os.path.dirname(os.path.abspath(__file__))
+	filename = os.path.join(directory, 'clean_fcq.csv')
+	file = open(filename)
 	classFile = file.readlines()
 	for t in teachers:
 		classSize = 0
@@ -119,12 +130,15 @@ def fillInfo(teachers): #fills avg rating, main subject, and num semesters
 
 
 def writeCSV(teachers):
-	with open('teachers.csv', mode='w', newline = '') as clean_fcq:
+	directory = os.path.dirname(os.path.abspath(__file__))
+	filename = os.path.join(directory, 'teachers.csv')
+	with open(filename, mode='w', newline = '') as clean_fcq:
 		writer = csv.writer(clean_fcq, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
 		count = 0
 		for t in teachers:
 			data = []
-			data.append(t.name)
+			data.append(t.firstName)
+			data.append(t.lastName)
 			data.append(t.mainDepartment)
 			data.append(t.numClasses)
 			data.append(t.avgClassSize)

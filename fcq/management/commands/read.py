@@ -1,3 +1,4 @@
+import os
 import csv
 
 
@@ -5,13 +6,14 @@ def readWriteCSV():
 	count = 0
 	lineCount = 0
 	data = []
-	with open('inst_summary_download_0.csv') as csv_file:
+	directory = os.path.dirname(os.path.abspath(__file__))
+	filename = os.path.join(directory, 'inst_summary_download_0.csv')
+	with open(filename) as csv_file:
 		csv_reader = csv.reader(csv_file, delimiter=',')
 		for row in csv_reader:
 			rowData = []
 			index = 0
 			add = True
-			rowData.append(count)
 			if lineCount > 6:
 				for col in row:
 					if ',' in col:
@@ -29,13 +31,14 @@ def readWriteCSV():
 						add = False
 						break
 					index += 1
+				rowData.append(count)
 				if add == True:
 					count += 1
 					data.append(rowData)
 			lineCount += 1
-	with open('clean_fcq.csv', mode='w', newline = '') as clean_fcq:
+	filename = os.path.join(directory, 'clean_fcq.csv')
+	with open(filename, mode='w', newline = '') as clean_fcq:
 		writer = csv.writer(clean_fcq, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
-
 		for i in data:
 			writer.writerow(i)
 

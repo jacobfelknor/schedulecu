@@ -6,59 +6,35 @@ from django.db import models
 # Print helpers
 print_format = "{:<15}" * 2
 
+
+
 class Teacher(models.Model):
-	name = models.CharField(max_length=50)
-	mainDepartment = models.CharField(max_length=6)
-	numClasses = models.IntegerField(default=0)
-	avgClassSize = models.IntegerField(default=0)
-	avgInstRating = models.FloatField(default=0.0)
-	avgCourseRating = models.FloatField(default=0.0)
-	avgChallenge = models.FloatField(default=0.0)
-	courseList = ArrayField(models.CharField(max_length=8),size=numClasses,)
-	timesCourseTaught = ArrayField(models.IntegerField(default=1),size=numClasses,)
-	courseRating = ArrayField(models.FloatField(default=0.0),size=numClasses,)
-	courseInstRating = ArrayField(models.FloatField(default=0.0),size=numClasses,)
-	courseChallenge = ArrayField(models.FloatField(default=0.0),size=numClasses,)
-	classIndex = ArrayField(models.IntegerField(),size=numClasses,)
+	firstName = models.CharField(max_length=50)
+	lastName = models.CharField(max_length=50)
+	mainDepartment = models.CharField(max_length=50)
+	numClasses = models.IntegerField()
+	avgClassSize = models.IntegerField()
+	avgInstRating = models.FloatField()
+	avgCourseRating = models.FloatField()
+	avgChallenge = models.FloatField()
+	courseList = ArrayField(models.CharField(max_length=50),)
+	timesCourseTaught = ArrayField(models.IntegerField(),)
+	courseRating = ArrayField(models.FloatField(),)
+	courseInstRating = ArrayField(models.FloatField(),)
+	courseChallenge = ArrayField(models.FloatField(),)
+	classIndex = ArrayField(models.IntegerField(),)
 
-	def __str__(self):
-		output = ""
-		for field in self.__dict__:
-			output += print_format.format(field, *self.__dict__[field])
-		return output
-
-	def empty_fields(self):
-		empty = []
-		for field in self.__dict__:
-			if self.__dict__[field] == None or self.__dict__[field] == "":
-				empty.append(field)
-		return empty
 
 
 class FCQ(models.Model):
-	name = models.CharField(max_length=50)
-	mainDepartment = models.CharField(max_length=6)
-	numClasses = models.IntegerField(default=0)
-	avgClassSize = models.IntegerField(default=0)
-	avgInstRating = models.FloatField(default=0.0)
-	avgCourseRating = models.FloatField(default=0.0)
-	avgChallenge = models.FloatField(default=0.0)
-	courseList = ArrayField(models.CharField(max_length=8),size=numClasses,)
-	timesCourseTaught = ArrayField(models.IntegerField(default=1),size=numClasses,)
-	courseRating = ArrayField(models.FloatField(default=0.0),size=numClasses,)
-	courseInstRating = ArrayField(models.FloatField(default=0.0),size=numClasses,)
-	courseChallenge = ArrayField(models.FloatField(default=0.0),size=numClasses,)
-	classIndex = ArrayField(models.IntegerField(),size=numClasses,)
-
-	def __str__(self):
-		output = ""
-		for field in self.__dict__:
-			output += print_format.format(field, *self.__dict__[field])
-		return output
-
-	def empty_fields(self):
-		empty = []
-		for field in self.__dict__:
-			if self.__dict__[field] == None or self.__dict__[field] == "":
-				empty.append(field)
-		return empty
+	index = models.IntegerField()
+	semester = models.CharField(max_length=50)
+	department = models.CharField(max_length=50)
+	subject = models.CharField(max_length=50)
+	course = models.CharField(max_length=50)
+	section = models.CharField(max_length=50)
+	course_title = models.CharField(max_length=200)
+	courseType = models.CharField(max_length=50)
+	level = models.CharField(max_length=50)
+	online = models.CharField(max_length=50)
+	size = models.IntegerField()
