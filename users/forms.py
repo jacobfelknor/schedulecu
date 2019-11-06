@@ -23,7 +23,8 @@ class UserSignUpForm(UserCreationForm):
 
     class Meta(UserCreationForm.Meta):
         model = User
-        fields = ("username", "email", "phone", "first_name", "last_name", "major")
+        fields = ("username", "email", "phone",
+                  "first_name", "last_name", "major")
 
     major = AutoCompleteField("major")
 
@@ -54,7 +55,8 @@ def change_password(request):
         if form.is_valid():
             user = form.save()
             update_session_auth_hash(request, user)  # Important!
-            messages.success(request, "Your password was successfully updated!")
+            messages.success(
+                request, "Your password was successfully updated!")
             return redirect("users:view_profile", username=request.user.username)
         else:
             messages.error(request, "Please correct the error below.")
