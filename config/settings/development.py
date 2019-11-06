@@ -14,7 +14,12 @@ import os
 
 try:
     from .keys import db_password, secret_key
-except ImportError:
+except ImportError as e:
+    print(
+        "\n***********************************\n\nError: {}. Using default configuration. This should ONLY be used by Travis for build testing.\n\n***********************************\n".format(
+            e
+        )
+    )
     db_password = ""
     secret_key = (
         "3u57j-w!+4m_k-f1(or!1d_n4bmrwi!+a@x9xvdt^r0qs(jj@!"
