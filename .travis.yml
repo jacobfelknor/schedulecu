@@ -1,19 +1,19 @@
 language: python
     
-    python: 
-        - "3.6"
+python: 
+    - "3.6"
 
-    services:
-        - postgresql
+services:
+    - postgresql
 
-    env:
-        -DJANGO=2.2.6 DB=postgresql
+env:
+    -DJANGO=2.2.6 DB=postgresql
 
-    install:
-        - pip install -r requirements/base.txt
-    
-    before_script:
-        - psql -c 'create database travis_ci_test;' -U postgres
+install:
+    - pip install -r requirements/base.txt
 
-    script:
-        - python manage.py test
+before_script:
+    - psql -c 'create database travis_ci_test;' -U postgres
+
+script:
+    - python manage.py test
