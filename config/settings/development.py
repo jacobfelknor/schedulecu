@@ -11,7 +11,14 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 """
 
 import os
-from .keys import db_password, secret_key
+
+try:
+    from .keys import db_password, secret_key
+except ImportError:
+    db_password = ""
+    secret_key = (
+        "3u57j-w!+4m_k-f1(or!1d_n4bmrwi!+a@x9xvdt^r0qs(jj@!"
+    )  # NOTE: This is an alternate secret key for build testing ONLY!
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -105,9 +112,7 @@ AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
 ]
 
-AJAX_LOOKUP_CHANNELS = {
-    'major' : ('users.lookups', 'MajorLookup')
-}
+AJAX_LOOKUP_CHANNELS = {"major": ("users.lookups", "MajorLookup")}
 
 
 # Internationalization
