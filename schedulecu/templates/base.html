@@ -54,7 +54,7 @@
             <a class="nav-link" href="{% url 'classes:search' %}">Class Search</a>
           </li>
           <li class="nav-item">
-            <a href="#" class="nav-link">Option 2</a>
+            <a href="{% url 'contact:contact' %}" class="nav-link">Contact Us</a>
           </li>
           <li class="nav-item">
             <a href="#" class="nav-link">Option 3</a>
@@ -105,11 +105,11 @@
   <div class="container">
     <div id="content">
       {% if messages %}
-      <div class="alert alert-info" role="alert">
-        {% for message in messages %}
+      {% for message in messages %}
+      <div class="alert alert-{{ message.tags }}" role="alert">
         <li{% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}</li>
-          {% endfor %}
       </div>
+      {% endfor %}
       {% endif %}
     </div> <!-- /content -->
   </div> <!-- /container -->
