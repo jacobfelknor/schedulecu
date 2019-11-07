@@ -18,6 +18,48 @@ def fcq_search(request):
     return render(request, "fcq/fcq_search.html")
 
 def fcq_display(request):
+    if request.method == "GET":
+        get = request.GET.get
+    else:
+        get = request.POST.get
+    name = get("name", "")
+    department = get("department", "")
+    subject = get("subject", "")
+    course = get("course", "")
+    name = re.split("\W", name)
+    name_query = reduce(
+        operator.and_,
+        (
+            (
+                Q(firstName__icontains=x)
+                | Q(lastName__icontains=x)
+            )
+            for x in name
+        ),
+    )
+
+    query = Q(courseList__contains=subject+course)
+    teachers = Teacher.objects.filter(query).order_by("firstName")
+    print(teachers)
+    #keyword = re.split("\W", keyword)
+    #keyword_query = reduce(
+    #     operator.and_,
+    #     (
+    #         (
+    #             Q(name__icontains=x)
+    #         )
+    #         for x in keyword
+    #     ),
+    # )
+    # department = get("mainDepartment", "")
+
+    # query = Q(mainDepartment__contains=department) & keyword_query
+
+    # teachers = Teacher.objects.filter(query).order_by("name")
+    #response = TeacherSerializer(teachers, many=True)
+
+
+
     return render(request, "fcq/fcq_display.html")
 
 def fcq_search_ajax(request):

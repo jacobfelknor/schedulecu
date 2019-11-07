@@ -258,6 +258,7 @@
 
 {% block javascript %}
 <script>
+    document.getElementById("result_table").addEventListener("load", fcq_search());
 
     $('#search_div').on('keydown', function (e) {
         var key = e.which;
@@ -269,55 +270,42 @@
     });
 
 
-
-
     function csrfSafeMethod(method) {
         // these HTTP methods do not require CSRF protection
         return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
     }
 
-    var fcq_search = function () {
+    function fcq_search() {
         // Get data from form
-        var keyword = $("#class_keyword").val()
-        var department = $("#select_department").val()
-        if (keyword != "" || department != "") { // Fields must actually contain something
-            var csrftoken = $('input[name="csrfToken"]').attr('value')
-            $.ajaxSetup({
-                beforeSend: function (xhr, settings) {
-                    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
-                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
-                    }
+        var csrftoken = $('input[name="csrfToken"]').attr('value')
+        $.ajaxSetup({
+            beforeSend: function (xhr, settings) {
+                if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                    xhr.setRequestHeader("X-CSRFToken", csrftoken);
                 }
-            });
-            var data = { keyword: keyword, department: department };
-            var args = {
-                type: "POST", url: "{% url 'fcq:fcq_search_ajax' %}", data: data
-            };
-            $.ajax(args).then(function (result) {
-                console.log(result);
-                // Code depending on result
-                document.getElementById("result_table").innerHTML = "";
-                var html = "";
-                for (var i = 0; i < result.length; i++) {
-                    html += `<tr><td><a href="{% url 'fcq:view' 703 %}">${result[i].department} ${result[i].course_subject}</a></td>\
-                    <td>${result[i].name}</td>\
-                    <td>${result[i].mainDepartment}</td>\
-                    <td>${result[i].numClasses}</td>\
-                    <td>${result[i].avgClassSize}</td>\
-                    <td>${result[i].avgInstRating}</td>\
+            }
+        });
+        var data = { department: department, subject: subject, course: course, name: name };
+        var args = {
+            type: "POST", url: "{% url 'fcq:fcq_search_ajax' %}", data: data
+        };
+        $.ajax(args).then(function (result) {
+            console.log(result);
+            // Code depending on result
+            document.getElementById("result_table").innerHTML = "";
+            var html = "";
+            for (var i = 0; i < result.length; i++) {
+                html += `<tr><td><a href="{% url 'fcq:view' 703 %}">${result[i].department} ${result[i].course_subject}</a></td>\
+                <td>${result[i].name}</td>\
+                <td>${result[i].mainDepartment}</td>\
+                <td>${result[i].numClasses}</td>\
+                <td>${result[i].avgClassSize}</td>\
+                <td>${result[i].avgInstRating}</td>\
 
-                    </tr>`.replace(/703/, result[i].name);
-                }
-                document.getElementById("result_table").innerHTML = html;
-            })
-                .catch(function () {
-                    // An error occurred
-                });
-        }
-        else {
-            // display an explanation of failure -- optional for starters
-        }
-        return false;
+                </tr>`.replace(/703/, result[i].name);
+            }
+            document.getElementById("result_table").innerHTML = html;
+        })
     };
 </script>
 

@@ -11,7 +11,7 @@
                     Search for Professors
                 </h5>
                 <div class="container" id="search_div">
-                    <form id="search_criteria" action="{% url 'fcq:fcq_display' %}">
+                    <form id="search_criteria" action="{% url 'fcq:fcq_display' %}" method="GET">
                         <br>
                         <select name="department" id="select_department" class="form-control">
                             <option value="">Any Department</option>
@@ -380,10 +380,11 @@
                             <option value="WGST">Women and Gender Studies (WGST)</option>
                             <option value="WRTG">Writing and Rhetoric (WRTG)</option>
                         </select>
+                        <input type="hidden" id="add" name="course" value="">
                         <div id="enter_course">
                         </div>
                         <br>
-                        <input id="prof_entry" type="text" class="form-control" name="name" placeholder="Professor's Name">
+                        <input id="prof_entry" type="text" class="form-control" name="name" placeholder="Professor's Name" maxlength="50">
                         <br>
                         <br>
                     </form>
@@ -412,6 +413,7 @@
 {% block javascript %}
 <script>
 
+
     $('#search_div').on('keydown', function (e) {
         var key = e.which;
         if (key == 13) {
@@ -427,18 +429,20 @@
         var subject = document.getElementById("select_subject").value;
         var html = '';
         if (subject != ""){
-            html += '<br><div class="row"><label class="col-4 col-form-label label" for="course">Class ID:</label><br><br><div class="col-7"><input type="text" class="form-control" name="course" id="course" placeholder="Course Number"></div></div>';
+            html += '<br><div class="row"><label class="col-4 col-form-label label" for="course">Class ID:</label><br><br><div class="col-7"><input type="text" class="form-control" id="course" placeholder="Course Number"></div></div>';
         }
         document.getElementById("enter_course").innerHTML = html;
     };
 
 
     var checkSearch = function () {
-
         name = document.getElementById("prof_entry").value;
         department = document.getElementById("select_department").value;
         subject = document.getElementById("select_subject").value;
         if (name != '' || department != '' || subject != ''){
+            if (document.getElementById("course")){
+                document.getElementById("add").value = document.getElementById("course").value
+            }
             document.getElementById("search_criteria").submit();
         }
         else{
@@ -451,6 +455,7 @@
         document.getElementById("prof_entry").value = '';
         document.getElementById("select_department").value = '';
         document.getElementById("select_subject").value = '';
+        document.getElementById("add").value = '';
         document.getElementById("search_criteria").submit();
     };
 
