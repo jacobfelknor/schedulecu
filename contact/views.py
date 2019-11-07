@@ -4,6 +4,7 @@ from django.views.generic import FormView
 from django.core.mail import send_mail
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse, reverse_lazy
+from django.contrib import messages
 
 from .forms import ContactForm
 
@@ -33,6 +34,12 @@ class ContactView(FormView):
             recipients = ["sawi8624@colorado.edu"]
             if cc_myself:
                 recipients.append(sender)
+
+            messages.success(
+                self.request,
+                "Email successfully sent",
+                # extra_tags="success"
+            )
 
             send_mail(subject, message, sender, recipients)
             # for now, redirect to same page

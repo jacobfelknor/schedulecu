@@ -24,6 +24,7 @@ except ImportError as e:
     secret_key = (
         "3u57j-w!+4m_k-f1(or!1d_n4bmrwi!+a@x9xvdt^r0qs(jj@!"
     )  # NOTE: This is an alternate secret key for build testing ONLY!
+    email_password = ""  # NOTE: no way to test sending emails
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(
