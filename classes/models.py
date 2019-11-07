@@ -1,4 +1,5 @@
 from django.db import models
+from schedules.models import Schedule
 
 # Create your models here.
 
@@ -21,9 +22,12 @@ class Class(models.Model):
     end_time = models.CharField(max_length=10, null=True, blank=True)
     days = models.CharField(max_length=10, null=True, blank=True)
     building_room = models.CharField(max_length=40, null=True, blank=True)
-    instructor_name = models.CharField(max_length=50, null=True, blank=True) # change to primary_key
+    instructor_name = models.CharField(max_length=50, null=True, blank=True)
     max_enrollment = models.IntegerField()
     campus = models.CharField(max_length=15)
+
+    # Relations
+    schedule = models.ManyToManyField(Schedule, related_name="classes")
 
     def empty_fields(self):
         empty = []

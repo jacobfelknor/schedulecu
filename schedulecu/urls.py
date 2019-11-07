@@ -26,5 +26,6 @@ urlpatterns = [
     path("users/", include("django.contrib.auth.urls")),
     path("ajax_select/", include(ajax_select_urls)),
     path("classes/", include("classes.urls")),
+    path("schedules/", include("schedules.urls")),
     path("contact/", include("contact.urls")),
 ]

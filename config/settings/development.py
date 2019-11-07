@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     "home.apps.HomeConfig",
     "users.apps.UsersConfig",
     "classes.apps.ClassesConfig",
+    "schedules.apps.SchedulesConfig",
     "crispy_forms",
     "ajax_select",
     "contact.apps.ContactConfig",

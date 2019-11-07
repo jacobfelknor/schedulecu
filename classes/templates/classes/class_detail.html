@@ -53,8 +53,15 @@
                 </tbody>
             </table>
             {% if user.is_authenticated %}
-            <button class="btn btn-outline-success"><i class="fa fa-plus-circle" aria-hidden="true"></i> Add to
-                Schedule</button>
+            {% if not in_schedule %}
+            <a href="{% url 'schedules:add_to_schedule' %}?class_id={{ class.id }}"><button
+                    class="btn btn-outline-success"><i class="fa fa-plus-circle" aria-hidden="true"></i> Add to
+                    Schedule</button></a>
+            {% else %}
+            <a href="{% url 'schedules:remove_from_schedule' %}?class_id={{ class.id }}"><button
+                    class="btn btn-outline-danger"><i class="fa fa-minus-circle" aria-hidden="true"></i> Remove from
+                    Schedule</button></a>
+            {% endif %}
             {% endif %}
         </div>
     </div> <!-- card -->

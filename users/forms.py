@@ -15,6 +15,7 @@ from ajax_select.fields import AutoCompleteField
 
 from .models import User
 from classes.models import Class
+from schedules.models import Schedule
 
 
 class UserSignUpForm(UserCreationForm):
@@ -23,8 +24,7 @@ class UserSignUpForm(UserCreationForm):
 
     class Meta(UserCreationForm.Meta):
         model = User
-        fields = ("username", "email", "phone",
-                  "first_name", "last_name", "major")
+        fields = ("username", "email", "phone", "first_name", "last_name", "major")
 
     major = AutoCompleteField("major")
 
@@ -43,9 +43,10 @@ class UserSignUpForm(UserCreationForm):
 
     @transaction.atomic
     def save(self):
-
         user = super().save(commit=False)
         user.save()
+        schedule = Schedule(user=user)
+        schedule.save()
         return user
 
 
@@ -55,8 +56,7 @@ def change_password(request):
         if form.is_valid():
             user = form.save()
             update_session_auth_hash(request, user)  # Important!
-            messages.success(
-                request, "Your password was successfully updated!")
+            messages.success(request, "Your password was successfully updated!")
             return redirect("users:view_profile", username=request.user.username)
         else:
             messages.error(request, "Please correct the error below.")
