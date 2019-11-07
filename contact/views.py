@@ -8,8 +8,6 @@ from django.contrib import messages
 
 from .forms import ContactForm
 
-# Create your views here.
-
 
 class ContactView(FormView):
     form_class = ContactForm
@@ -20,9 +18,6 @@ class ContactView(FormView):
     def get_context_data(self, **kwargs):
         kwargs["user_type"] = ""
         return super().get_context_data(**kwargs)
-
-    # def get(self, request):
-    #    return HttpResponse(reverse("contact"))
 
     def form_valid(self, form):
         if form.is_valid():
