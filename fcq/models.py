@@ -28,12 +28,13 @@ class Teacher(models.Model):
 
 class FCQ(models.Model):
 	index = models.IntegerField()
+	year = models.CharField(max_length=50)
 	semester = models.CharField(max_length=50)
 	department = models.CharField(max_length=50)
 	subject = models.CharField(max_length=50)
 	course = models.CharField(max_length=50)
 	section = models.CharField(max_length=50)
-	course_title = models.CharField(max_length=200)
+	courseTitle = models.CharField(max_length=200)
 	courseType = models.CharField(max_length=50)
 	level = models.CharField(max_length=50)
 	online = models.CharField(max_length=50)
