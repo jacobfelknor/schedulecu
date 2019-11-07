@@ -1,1 +1,23 @@
-<h1>Hello</h1>
+{% extends "base.html" %}
+
+{% block title %}Contact Us{% endblock %}
+
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="container">
+    <div class="card border-dark mb-3">
+        <h2 class="card-header">Contact Us</h2>
+        <div class="container">
+            <form method="post" novalidate>
+                {% csrf_token %}
+                <input type="hidden" name="next" value="{{ next }}">
+                {{ form.media }}
+                {{ form|crispy }}
+                <button type="submit" class="btn btn-outline-success">Send</button>
+            </form>
+            <br>
+        </div>
+    </div>
+</div>
+{% endblock %}

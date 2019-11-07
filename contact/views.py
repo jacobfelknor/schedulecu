@@ -3,7 +3,7 @@ from django.views import generic
 from django.views.generic import FormView
 from django.core.mail import send_mail
 from django.http import HttpResponse, HttpResponseRedirect
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 
 from .forms import ContactForm
 
@@ -13,6 +13,8 @@ from .forms import ContactForm
 class ContactView(FormView):
     form_class = ContactForm
     template_name = "contact/contact.html"
+
+    success_url = reverse_lazy("home:home")
 
     def get_context_data(self, **kwargs):
         kwargs["user_type"] = ""
@@ -25,10 +27,10 @@ class ContactView(FormView):
         if form.is_valid():
             subject = form.cleaned_data["subject"]
             message = form.cleaned_data["message"]
-            sender = form.cleaned_data["sender"]
+            sender = form.cleaned_data["email"]
             cc_myself = form.cleaned_data["cc_myself"]
 
-            recipients = ["needtoputsomeemailhere@mail.com"]
+            recipients = ["sawi8624@colorado.edu"]
             if cc_myself:
                 recipients.append(sender)
 

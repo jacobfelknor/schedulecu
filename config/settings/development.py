@@ -13,7 +13,7 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 import os
 
 try:
-    from .keys import db_password, secret_key
+    from .keys import db_password, secret_key, email_password
 except ImportError as e:
     print(
         "\n***********************************\n\nError: {}. Using default configuration. This should ONLY be used by Travis for build testing.\n\n***********************************\n".format(
@@ -121,6 +121,12 @@ AUTH_PASSWORD_VALIDATORS = [
 
 AJAX_LOOKUP_CHANNELS = {"major": ("users.lookups", "MajorLookup")}
 
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_USE_TLS = True
+EMAIL_PORT = 587
+EMAIL_HOST_USER = "scheduleCU@gmail.com"
+EMAIL_HOST_PASSWORD = email_password
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/
