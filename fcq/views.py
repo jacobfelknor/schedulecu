@@ -17,6 +17,9 @@ from .serializers import TeacherSerializer
 def fcq_search(request):
     return render(request, "fcq/fcq_search.html")
 
+def fcq_display(request):
+    return render(request, "fcq/fcq_display.html")
+
 def fcq_search_ajax(request):
     if request.method == "GET":
         get = request.GET.get
