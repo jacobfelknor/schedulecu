@@ -26,7 +26,8 @@ except ImportError as e:
     )  # NOTE: This is an alternate secret key for build testing ONLY!
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+BASE_DIR = os.path.dirname(os.path.dirname(
+    os.path.dirname(os.path.abspath(__file__))))
 
 
 # Quick-start development settings - unsuitable for production
@@ -55,6 +56,7 @@ INSTALLED_APPS = [
     "classes.apps.ClassesConfig",
     "crispy_forms",
     "ajax_select",
+    "contact.apps.ContactConfig",
 ]
 
 CRISPY_TEMPLATE_PACK = "bootstrap4"
