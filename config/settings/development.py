@@ -13,7 +13,7 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 import os
 
 try:
-    from .keys import db_password, secret_key
+    from .keys import db_password, secret_key, email_password
 except ImportError as e:
     print(
         "\n***********************************\n\nError: {}. Using default configuration. This should ONLY be used by Travis for build testing.\n\n***********************************\n".format(
@@ -24,9 +24,11 @@ except ImportError as e:
     secret_key = (
         "3u57j-w!+4m_k-f1(or!1d_n4bmrwi!+a@x9xvdt^r0qs(jj@!"
     )  # NOTE: This is an alternate secret key for build testing ONLY!
+    email_password = ""  # NOTE: no way to test sending emails
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+BASE_DIR = os.path.dirname(os.path.dirname(
+    os.path.dirname(os.path.abspath(__file__))))
 
 
 # Quick-start development settings - unsuitable for production
@@ -56,6 +58,7 @@ INSTALLED_APPS = [
     "schedules.apps.SchedulesConfig",
     "crispy_forms",
     "ajax_select",
+    "contact.apps.ContactConfig",
 ]
 
 CRISPY_TEMPLATE_PACK = "bootstrap4"
@@ -120,6 +123,12 @@ AUTH_PASSWORD_VALIDATORS = [
 
 AJAX_LOOKUP_CHANNELS = {"major": ("users.lookups", "MajorLookup")}
 
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_USE_TLS = True
+EMAIL_PORT = 587
+EMAIL_HOST_USER = "scheduleCU@gmail.com"
+EMAIL_HOST_PASSWORD = email_password
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/
