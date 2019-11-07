@@ -31,17 +31,15 @@ class ContactView(FormView):
             sender = form.cleaned_data["email"]
             cc_myself = form.cleaned_data["cc_myself"]
 
-            recipients = ["sawi8624@colorado.edu"]
+            recipients = ["schedulecu@gmail.com"]
             if cc_myself:
                 recipients.append(sender)
 
             messages.success(
                 self.request,
                 "Email successfully sent",
-                # extra_tags="success"
             )
 
             send_mail(subject, message, sender, recipients)
-            # for now, redirect to same page
-            # return HttpResponseRedirect(reverse("contact"))
+            # for now, redirect to home
             return super().form_valid(form)
