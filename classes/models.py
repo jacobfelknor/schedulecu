@@ -1,5 +1,5 @@
 from django.db import models
-
+from schedules.models import Schedule
 # Create your models here.
 
 # Print helpers
@@ -24,6 +24,9 @@ class Class(models.Model):
     instructor_name = models.CharField(max_length=50, null=True, blank=True) # change to primary_key
     max_enrollment = models.IntegerField()
     campus = models.CharField(max_length=15)
+
+    # Foreign Keys
+    schedule = models.ManyToManyField(Schedule, related_name="classes")
 
     def empty_fields(self):
         empty = []
