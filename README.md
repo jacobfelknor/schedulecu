@@ -5,7 +5,7 @@ ScheduleCU is a course scheduler for CU students. Students can search for classe
 
 ## Local Installation/Development Server
 
-Clone the schedulecu repository into a suitable directory. Create a virtual environment in this directory by using the following command:
+Clone the schedulecu repository into a suitable directory. Create a virtual environment in this directory by using the following command:\
 Windows:
 ```bash
 python -m venv <venv_name>
@@ -15,7 +15,7 @@ Linux/Mac:
 python3 -m venv <venv_name>
 ```
 
-Activate your virtual environment:
+Activate your virtual environment:\
 Windows:
 ```bash
 ./<venv_name>/Scripts/activate
@@ -25,7 +25,7 @@ Linux/Mac:
 source <venv_name>/bin/activate
 ```
 
-Install requirements:
+Install requirements:\
 Windows:
 ```bash
 pip install requirements/base.txt
@@ -39,7 +39,7 @@ pip3 install requirements/base.txt
 
 ## Usage
 
-Make Database Migrations:
+Make Database Migrations:\
 Windows:
 ```bash
 python manage.py makemigrations
@@ -49,7 +49,7 @@ Linux/Mac:
 python3 manage.py makemigrations
 ```
 
-Migrate changes to Database:
+Migrate changes to Database:\
 Windows:
 ```bash
 python manage.py migrate
@@ -59,7 +59,7 @@ Linux/Mac:
 python3 manage.py migrate
 ```
     
-Start Django Server:
+Start Django Server:\
 Windows:
 ```bash
 python manage.py runserver
