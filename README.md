@@ -51,7 +51,9 @@ Set your database password:
 postgres=# ALTER USER postgres PASSWORD 'myPassword';
 ```
 
-Create a "keys.py" file in the config folder. Secret keys can be generated [here](https://miniwebtool.com/django-secret-key-generator/) Populate it as follows:
+Create a "keys.py" file in the config folder. Secret keys can be generated [here](https://miniwebtool.com/django-secret-key-generator/) 
+
+Populate it as follows:
 
 ```python
 secret_key = 'your_secret_key'
