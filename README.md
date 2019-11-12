@@ -51,6 +51,31 @@ Set your database password:
 postgres=# ALTER USER postgres PASSWORD 'myPassword';
 ```
 
+Create a "keys.py" file in the config folder. Secret keys can be generated [here](https://miniwebtool.com/django-secret-key-generator/) Populate it as follows:
+
+```python
+secret_key = 'your_secret_key'
+db_password = "your_password"
+email_password = "email_password"
+```
+
+Udate your database settings in config/settings/development.py if necessary:
+```python
+# Database
+# https://docs.djangoproject.com/en/2.2/ref/settings/#databases
+
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": "schedulecu",
+        "USER": "postgres",
+        "PASSWORD": db_password,
+        "HOST": "localhost",
+        "PORT": "5432",
+    }
+}
+```
+
 ## Usage
 
 Make Database Migrations:\
