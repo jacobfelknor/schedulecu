@@ -37,9 +37,11 @@ pip3 install -r requirements/base.txt
 
 ## Database Setup
 Ensure you have a database management software installed. We recommend [PostgreSQL](https://www.postgresql.org/download/).
-We also recommend a PostgreSQL GUI, such as [pgAdmin 4](https://www.pgadmin.org/download/)\
+We also recommend a PostgreSQL GUI, such as [pgAdmin 4](https://www.pgadmin.org/download/)
 
 After your database manager of choice is installed, create a database named "schedulecu".
+
+
 If not using pgAdmin 4,
 ```psql
 postgres=# CREATE DATABASE schedulecu;
