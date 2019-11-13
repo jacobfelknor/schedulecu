@@ -21,7 +21,8 @@
                     <td></td>
                 </tr>
             </table>
-            <table class="form-table dt-responsive col-6" align="center">
+            <form id="search_criteria" action="{% url 'fcq:fcq_display' %}" method="GET">
+                <table class="form-table dt-responsive col-6" align="center">
                 <tr>
                     <td valign="middle">
                         <input type="hidden" name="csrfToken" value="{{ csrf_token }}">
@@ -241,6 +242,7 @@
                     </td>
                 </tr>
             </table>
+            </table>
         </div>
     </div>
     <div class="col-12">
@@ -275,37 +277,54 @@
         return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
     }
 
+
+    var checkSearch = function () {
+        name = document.getElementById("prof_entry").value;
+        subject = document.getElementById("select_subject").value;
+        if (name != '' || subject != ''){
+            if (document.getElementById("course")){
+                document.getElementById("add").value = document.getElementById("course").value
+            }
+            document.getElementById("search_criteria").submit();
+        }
+        else{
+            console.log("ERROR: You must fill out at least one field!");
+        }
+    };
+    
     function fcq_search() {
         // Get data from form
-        // var csrftoken = $('input[name="csrfToken"]').attr('value')
-        // $.ajaxSetup({
-        //     beforeSend: function (xhr, settings) {
-        //         if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
-        //             xhr.setRequestHeader("X-CSRFToken", csrftoken);
-        //         }
-        //     }
-        // });
-        // var data = { subject: subject, course: course, name: name };
-        // var args = {
-        //     type: "POST", url: "{% url 'fcq:fcq_search_ajax' %}", data: data
-        // };
-        // $.ajax(args).then(function (result) {
-        //     console.log(result);
-        //     // Code depending on result
-        //     document.getElementById("result_table").innerHTML = "";
-        //     var html = "";
-        //     for (var i = 0; i < result.length; i++) {
-        //         html += `<tr><td><a href="{% url 'fcq:view' 703 %}">${result[i].department} ${result[i].course_subject}</a></td>\
-        //         <td>${result[i].name}</td>\
-        //         <td>${result[i].mainDepartment}</td>\
-        //         <td>${result[i].numClasses}</td>\
-        //         <td>${result[i].avgClassSize}</td>\
-        //         <td>${result[i].avgInstRating}</td>\
-
-        //         </tr>`.replace(/703/, result[i].name);
-        //     }
-        //     document.getElementById("result_table").innerHTML = html;
-        // })
+        var csrftoken = $('input[name="csrfToken"]').attr('value')
+        $.ajaxSetup({
+            beforeSend: function (xhr, settings) {
+                if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                    xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                }
+            }
+        });
+        var urlParams = new URLSearchParams(window.location.search);
+        var subject = urlParams.get('subject');
+        var course = urlParams.get('course');
+        var name = urlParams.get('name');
+        var data = { subject: subject, course: course, name: name };
+        var args = {
+            type: "POST", url: "{% url 'fcq:fcq_search_ajax' %}", data: data
+        };
+        $.ajax(args).then(function (result) {
+            console.log(result);
+            // Code depending on result
+            document.getElementById("result_table").innerHTML = "";
+            var html = "";
+            for (var i = 0; i < result.length; i++) {
+                html += `<tr>
+                <td>${result[i].firstName}</td>\
+                <td>${result[i].mainDepartment}</td>\
+                <td>${result[i].numClasses}</td>\
+                <td>${result[i].avgClassSize}</td>\
+                <td>${result[i].avgInstRating}</td>`;
+            }
+            document.getElementById("result_table").innerHTML = html;
+        })
     };
 </script>
 

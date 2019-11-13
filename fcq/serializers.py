@@ -2,7 +2,8 @@ from rest_framework import serializers
 
 
 class TeacherSerializer(serializers.Serializer):
-    name = serializers.CharField()
+    firstName = serializers.CharField()
+    lastName = serializers.CharField()
     mainDepartment = serializers.CharField()
     numClasses = serializers.IntegerField() 
     avgClassSize = serializers.IntegerField()
