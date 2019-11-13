@@ -5963,6 +5963,7 @@ EDU,5301,001,B,33750,3,Queer Topics in Education,SEM,05:00 PM,07:30 PM,M,MUEND14
 EDU,5355,010,B,27099,3,Social Studies Methods II,LEC,05:00 PM,07:30 PM,W,EDUC338,Willmann;Kent,10,Main Campus
 EDU,5365,010,B,27100,3,Secondary English Methods II,LEC,04:00 PM,06:30 PM,T,EDUC338,Glenn;Wendy,15,Main Campus
 EDU,5375,010,B,27101,3-4,Problem-Based Math Instruction,LEC,05:00 PM,07:30 PM,W,EDUC341,Bush;Jeffrey,10,Main Campus
+EDU,5375,011,B,27102,3-4,Problem-Based Math Instruction,PRA,,,TBA,Meetsat,Bush;Jeffrey,10,Main Campus
 EDU,5385,010,B,27106,3-4,Problem-Based Science Instrct,LEC,05:00 PM,07:30 PM,W,EDUC346,Writer;Jeffrey,35,Main Campus
 EDU,5385,011,B,27107,3-4,Problem-Based Science Instrct,PRA,,,TBA,Meetsat,Writer;Jeffrey,35,Main Campus
 EDU,5425,001,B,33238,3,Intro Biling/Multi Ed,LEC,05:00 PM,07:30 PM,TH,EDUC143,Morales;Astrid,8,Main Campus
@@ -5978,6 +5979,7 @@ EDU,5625,001,B,27238,3,Methods Teaching ESL,LEC,05:00 PM,07:30 PM,T,EDUC143,Palm
 EDU,5635,001,B,33279,3,ED & Sociolinguistics,LEC,05:00 PM,07:30 PM,TH,HLMS237,Gort;Mileidis,25,Main Campus
 EDU,5706,001,B,27112,3,Assessmt Math & Sci Edu,LEC,05:00 PM,07:30 PM,T,EDUC346,Bush;Jeffrey,999,Main Campus
 EDU,5706,001B,B,27262,3,Assessmt Math & Sci Edu,LEC,,,TBA,DistanceEducation,Bush;Jeffrey,999,Main Campus
+EDU,5821,001,B,33748,3,Tchg Math Algebraic Thk,SEM,,,,,,30,Main Campus
 EDU,5822,001,B,27291,3,Teaching & Learning Chem,LEC,05:00 PM,07:30 PM,TH,EDUC346,Andrew;Julie,10,Main Campus
 EDU,6325,001,B,37546,3,Anthropology of Education,LEC,05:00 PM,07:30 PM,TH,EDUC134,Dyrness;Andrea,20,Main Campus
 EDU,6368,001,B,27198,3,Adol Psy & Dev for Tchrs,LEC,01:00 PM,03:30 PM,M,EDUC251,,25,Main Campus

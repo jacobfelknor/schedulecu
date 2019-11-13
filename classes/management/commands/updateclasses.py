@@ -38,7 +38,7 @@ def PopulateClasses():
 
 class Command(BaseCommand):
     print("Updating classes with class_schedule.csv found in classes/management/commands")
-    print("The Russian class that fails is expected, not planning on fixing the data more until spring 2020 pdf is available")
+    print("This will take ~30 seconds")
 
     def handle(self, *args, **options):
         PopulateClasses()
