@@ -6,6 +6,7 @@ from django.db.models import Q
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.views.generic import CreateView, DetailView, ListView, UpdateView
+from django.db.models.functions import Substr, Lower
 
 from fcq.models import Teacher
 from rest_framework import serializers
@@ -37,9 +38,10 @@ def fcq_display(request):
             for x in name
         ),
     )
-
-    query = Q(courseList__contains=subject+course)
-    teachers = Teacher.objects.filter(query).order_by("firstName")
+    course_query = reduce(operator.and_,(Q(courseList__contains=[x]) for x in course))
+    subject_query = reduce(operator.and_, (Q(courseList__contains=[x]) for x in subject))
+    query = course_query & subject_query
+    teachers = Teacher.objects.filter(query)
     print(teachers)
     #keyword = re.split("\W", keyword)
     #keyword_query = reduce(

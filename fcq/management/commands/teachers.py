@@ -85,14 +85,14 @@ def fillInfo(teachers): #fills avg rating, main subject, and num semesters
 				depCount.append(1)
 			else:
 				depCount[dep.index(line[4])] += 1
-			if (line[5]+line[6]) not in courses:
-				courses.append(line[5]+line[6])
+			if (line[5]+' '+line[6]) not in courses:
+				courses.append(line[5]+' '+line[6])
 				timesTaught.append(1) 
 				instAvg.append(round(float(line[25]),2))
 				classRating.append(round(float(line[21]),2))
 				classChallenge.append(round(float(line[19]),2))
 			else:
-				i = courses.index(line[5]+line[6])
+				i = courses.index(line[5]+' '+line[6])
 				timesTaught[i] += 1
 				instAvg[i] += float(line[25])
 				classRating[i] += float(line[21])
