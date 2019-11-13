@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang='en'>
+
+<head>
+
+    <title>ScheduleCU</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <!-- jQuery library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <!-- Popper JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <!-- Latest compiled JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <!-- CSS Style sheet -->
+    <link rel="stylesheet" type="text/css" href="index.css">
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <title>ScheduleCU</title>
+    <link rel='icon' href='../resources/img/favicon.ico' type='image/x-icon'/>
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+    <link href="../resources/css/my_style.css" rel="stylesheet">
+
+    <meta charset='utf-8' />
+
+    <link href='packages/core/main.css' rel='stylesheet' />
+    <link href='packages/daygrid/main.css' rel='stylesheet' />
+    <link href='packages/timegrid/main.css' rel='stylesheet' />
+
+    <script src='packages/core/main.js'></script>
+    <script src='packages/daygrid/main.js'></script>
+    <script src='packages/timegrid/main.js'></script>
+
+    <style>
+        #calendar {
+            max-width: 900px;
+            margin: 40px auto;
+            
+        }
+    </style>
+
+
+    <script>
+
+        document.addEventListener('DOMContentLoaded', function () {
+            var calendarEl = document.getElementById('calendar');
+
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                plugins: ['dayGrid', 'timeGrid'],
+                defaultView: 'timeGridWeek',
+                minTime: '06:00:00',
+                maxTime: '20:00:00',
+                header: {
+                    center: 'addEventButton',
+                    left: null,
+                    right: null
+                },
+                allDaySlot: false,
+
+                customButtons: {
+                    addEventButton: {
+                        text: 'add event...',
+                        click: function () {
+                            var dateStr = prompt('Enter a date in YYYY-MM-DD format');
+                            var date = new Date(dateStr + 'T12:00:00'); // will be in local time
+
+                            if (!isNaN(date.valueOf())) { // valid?
+                                calendar.addEvent({
+                                    title: 'dynamic event',
+                                    start: date,
+                                    end: new Date(dateStr + 'T13:00:00'),
+                                    allDay: false
+                                });
+                                alert('Great. Now, update your database...');
+                            } else {
+                                alert('Invalid date.');
+                            }
+                        }
+                    }
+                }
+            });
+
+            calendar.render();
+        });
+
+    </script>
+</head>
+
+<body>
+
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+   <a class="navbar-brand" href="home.html">
+   <img class="rounded-circle" src="cu_boulder_libraries_5x7_76.jpg" alt="" width="30" height="30">
+   </a>
+   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+   <span class="navbar-toggler-icon"></span>
+   </button>
+   <div class="collapse navbar-collapse" id="navbarText">
+   <ul class="navbar-nav mr-auto">
+     <li class="nav-item active">
+     <a class="nav-link" href="">ScheduleCU</a>
+     </li>
+     <li class="nav-item">
+     <a class="nav-link" href="">Class search <span class="sr-only">(current)</span></a>
+     </li>
+     <li class="nav-item">
+     <a class="nav-link" href="">Schedule 2</a>
+     </li>
+      <li class="nav-item">
+     <a class="nav-link" href="">Schedule 3</a>
+     </li>
+      <li class="nav-item">
+     <a class="nav-link" href="">Search</a>
+     </li>
+
+   </ul>
+   <div class="form-inline my-2 my-lg-0">
+     <button class="btn btn-outline-light my-2 my-sm-0" type="submit">Logout</button>
+   </div>
+   </div>
+ </nav>
+ <div class="container">
+   <h3>Personalize your schedule</h3>
+
+    <div id='calendar'></div>
+
+</body>
+
+</html>
