@@ -44,35 +44,10 @@ def fcq_display(request):
         if subject != '':
             if course != '':
                 subject += ' ' + course
-                print(subject)
-                teachers = teachers.filter(courseList__contains=[[subject]])
-            # else:
-
-                # teachers = teachers.find(courseList__regex=r'^\d+')
-
-
-
-
-            # teachers = teachers.get(courseList__startswith=subject)
-            
-            # teachers = teachers.filter(subject_query)
-        # if course != '':
-        #     subject_query = reduce(operator.and_, (Q(courseList__contains=[x]) for x in subject))
-        #     teachers = teachers.filter(course_subject)
-    #keyword = re.split("\W", keyword)
-    #keyword_query = reduce(
-    #     operator.and_,
-    #     (
-    #         (
-    #             Q(name__icontains=x)
-    #         )
-    #         for x in keyword
-    #     ),
-    # )
-    # department = get("mainDepartment", "")
-
-    # query = Q(mainDepartment__contains=department) & keyword_query
-
+                # print(subject)
+                teachers = teachers.filter(courseList__contains=[subject])
+            else:
+                teachers = teachers.filter(courseList__icontains=subject)
     # teachers = Teacher.objects.filter(query).order_by("name")
     #response = TeacherSerializer(teachers, many=True)
     print(len(teachers))

@@ -5,13 +5,10 @@ from fcq.models import Teacher, FCQ
 
 def PopulateFCQ():
     FCQ.objects.all().delete()
-
     directory = os.path.dirname(os.path.abspath(__file__))
     filename = os.path.join(directory, 'clean_fcq.csv')
     f = open(filename, 'r')
-
     failures = 0
-
     for line in f:
         fcq = FCQ()
         # remove newline char at end and replace temporary semicolons back to commas
@@ -66,6 +63,8 @@ def PopulateTeachers():
             data[index] = data[index].replace('[','')
             while index != 0:
                 data[index] = data[index].replace('"','')
+                data[index] = data[index].replace("'","")
+
                 if ']' in data[index]:
                     break
                 else:
@@ -177,5 +176,5 @@ def PopulateTeachers():
 class Command(BaseCommand):
     print("Updating fcq'a with clean_fcq.csv found in fcq/management/commands")
     def handle(self, *args, **options):
-        # PopulateFCQ()
+        PopulateFCQ()
         PopulateTeachers()
