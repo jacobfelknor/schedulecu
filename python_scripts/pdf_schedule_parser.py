@@ -1,9 +1,6 @@
 # Consistency with building/room (space vs no space)
-# names occasionally appearing in building/room 
-# 
-
-
-
+# names occasionally appearing in building/room
+#
 
 
 import PyPDF2
@@ -63,7 +60,7 @@ class Course:
         return output[: len(output) - 1]
 
 
-pdf_doc = open("fall2019class_schedule.pdf", "rb")
+pdf_doc = open("spring2020class_schedule.pdf", "rb")
 pdf_reader = PyPDF2.PdfFileReader(pdf_doc)
 pdf_pages = pdf_reader.pages
 
@@ -121,7 +118,7 @@ pdf_pages = pdf_reader.pages
 # Removes whitespace elements
 # Removes trailing space on each line
 def extract_text(raw_page):
-    return [x[0 : len(x) - 1] for x in raw_page.extractText().split("\n") if x.strip()]
+    return [x[0: len(x) - 1] for x in raw_page.extractText().split("\n") if x.strip()]
 
 
 # Removes the generic header and footer from pages.
@@ -130,9 +127,9 @@ def extract_text(raw_page):
 def remove_header_footer(extracted_text):
     # Extracting class code from 0th element of extracted text
     strip = extracted_text[0].strip()
-    extracted_text[0] = strip[len(strip) - 4 :]
+    extracted_text[0] = strip[len(strip) - 4:]
     # Removing generic footer
-    del extracted_text[len(extracted_text) - 3 :]
+    del extracted_text[len(extracted_text) - 3:]
 
 
 # Outlines can be used for headers to organize
@@ -177,6 +174,8 @@ class_components = [
     "PRA",
     "FLD",
     "CLN",
+    "THE",
+    "DSC"
 ]
 
 # GRE and MUS duplicate keys
@@ -297,6 +296,8 @@ department_codes = {
 # Raw row pulled from below loop
 # Parses the information in a raw row and creates a class object.
 # Complains about any error in the process
+
+
 def create_course(raw_row):
 
     # start = timer()
@@ -340,7 +341,6 @@ def create_course(raw_row):
     if full_time == None:
         # This is expected to happen in quite a few cases
         print("No class time found")
-        print(raw_row_data)
         class_data += [""]
         class_data += [""]
     else:
@@ -381,7 +381,8 @@ def create_course(raw_row):
                 # Day is probably lumped in with the class
                 # Need to know if the next element is entire building and room or only the building
                 if re.search("[0-9]", flattened_subdata[i + 1]) == None:
-                    class_data += [(flattened_subdata[i + 1] + flattened_subdata[i + 2]).replace(" ", "")]
+                    class_data += [(flattened_subdata[i + 1] +
+                                    flattened_subdata[i + 2]).replace(" ", "")]
                 else:
                     class_data += [flattened_subdata[i + 1].replace(" ", "")]
                 break
@@ -434,25 +435,28 @@ def create_course(raw_row):
     # end = timer()
     # print(end - start)
 
+
 def get_in_department(element):
     element = [x for x in element.split()]
     return department_codes.get(element[0])
 
 # Pull out 13 elements, split last two into max enrollment and campus
+
+
 def parse_rows(ext_page):
     rows = []
     index = 0
     loop = 1
     while loop:
-        cur_row = ext_page[index : index + 13]
+        cur_row = ext_page[index: index + 13]
         # Make sure we're starting on a class code, make a dictionary if this trick doesn't work
         if cur_row:
-            
+
             while cur_row and get_in_department(cur_row[0]) == None:
                 # (len(cur_row[0]) > 4 or len(cur_row[0]) < 3) and not has_numbers(cur_row[0]):
                 #cur_row = cur_row[1:]
                 index += 1
-                cur_row = ext_page[index : index + 13]
+                cur_row = ext_page[index: index + 13]
 
         for i in range(len(cur_row)):
             if "Main Campus" in cur_row[i]:
@@ -506,13 +510,18 @@ for page in pdf_pages:
     extr = extract_text(page)
     remove_header_footer(extr)
     for row in parse_rows(extr):
-        
+
         # Specifically only page 26 has a weird bug where it cuts off the section number
         if page_num == 26:
             row.insert(2, str(bio_lab_number))
             bio_lab_number += 1
 
-        failure, data = create_course(row)
+        try:
+            failure, data = create_course(row)
+        except:
+            print("FAILURE")
+            print(row)
+            exit()
         failed_class_counter += failure
         if data != None:
             course = Course(data)
