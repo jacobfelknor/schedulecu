@@ -69,9 +69,9 @@ def PopulateTeachers():
                 if ']' in data[index]:
                     break
                 else:
-                    holder.append('{'+data[index]+'}')
+                    holder.append(data[index])
                 index += 1
-        data[index] = '{' + data[index].replace(']','}')
+        data[index] = data[index].replace(']','')
         holder.append(data[index])
         index += 1
         teacher.courseList = holder
@@ -177,5 +177,5 @@ def PopulateTeachers():
 class Command(BaseCommand):
     print("Updating fcq'a with clean_fcq.csv found in fcq/management/commands")
     def handle(self, *args, **options):
-        PopulateFCQ()
+        # PopulateFCQ()
         PopulateTeachers()

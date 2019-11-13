@@ -20,6 +20,7 @@ class TeacherSerializer(serializers.Serializer):
 
 class FcqSerializer(serializers.Serializer):
     index = serializers.IntegerField()
+    year = serializers.CharField()
     semester = serializers.CharField()
     department = serializers.CharField()
     subject = serializers.CharField()

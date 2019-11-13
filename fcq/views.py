@@ -24,25 +24,41 @@ def fcq_display(request):
     else:
         get = request.POST.get
     name = get("name", "")
-    department = get("department", "")
     subject = get("subject", "")
     course = get("course", "")
-    name = re.split("\W", name)
-    name_query = reduce(
-        operator.and_,
-        (
-            (
-                Q(firstName__icontains=x)
-                | Q(lastName__icontains=x)
+    teachers = Teacher.objects.all()
+    if name != '' or subject != '':
+        if name != '':
+            name = re.split("\W", name)
+            name_query = reduce(
+                operator.and_,
+                (
+                    (
+                        Q(firstName__icontains=x)
+                        | Q(lastName__icontains=x)
+                    )
+                    for x in name
+                ),
             )
-            for x in name
-        ),
-    )
-    course_query = reduce(operator.and_,(Q(courseList__contains=[x]) for x in course))
-    subject_query = reduce(operator.and_, (Q(courseList__contains=[x]) for x in subject))
-    query = course_query & subject_query
-    teachers = Teacher.objects.filter(query)
-    print(teachers)
+            teachers = teachers.filter(name_query)
+        if subject != '':
+            if course != '':
+                subject += ' ' + course
+                print(subject)
+                teachers = teachers.filter(courseList__contains=[[subject]])
+            # else:
+
+                # teachers = teachers.find(courseList__regex=r'^\d+')
+
+
+
+
+            # teachers = teachers.get(courseList__startswith=subject)
+            
+            # teachers = teachers.filter(subject_query)
+        # if course != '':
+        #     subject_query = reduce(operator.and_, (Q(courseList__contains=[x]) for x in subject))
+        #     teachers = teachers.filter(course_subject)
     #keyword = re.split("\W", keyword)
     #keyword_query = reduce(
     #     operator.and_,
@@ -59,8 +75,7 @@ def fcq_display(request):
 
     # teachers = Teacher.objects.filter(query).order_by("name")
     #response = TeacherSerializer(teachers, many=True)
-
-
+    print(len(teachers))
 
     return render(request, "fcq/fcq_display.html")
 
