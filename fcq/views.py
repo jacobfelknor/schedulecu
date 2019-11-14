@@ -47,9 +47,8 @@ def fcq_search_ajax(request):
         if subject != '':
             if course != '':
                 subject += ' ' + course
-                teachers = teachers.filter(courseList__contains=[subject])
-            else:
-                teachers = teachers.filter(courseList__icontains=subject)
+            teachers = teachers.filter(courseList__icontains=subject)
+    teachers = teachers.order_by("lastName")
     response = TeacherSerializer(teachers, many=True)
     return JsonResponse(response.data, safe=False)
 
