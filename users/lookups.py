@@ -1,16 +1,17 @@
 from ajax_select import register, LookupChannel
-from classes.models import Class
+from classes.models import Department
 
-# TODO Populate majors with class code and degree from PDF 
+# TODO Populate majors with class code and degree from PDF
+
 
 @register("major")
 class MajorLookup(LookupChannel):
 
-    model = Class
+    model = Department
 
     def get_query(self, q, request):
-        objects = self.model.objects.filter(department__icontains=q)
-        majors = set([x.department for x in objects])
+        objects = self.model.objects.filter(code__icontains=q)
+        majors = set([x.code for x in objects])
         return majors
 
     def format_match(self, item):

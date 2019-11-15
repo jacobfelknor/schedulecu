@@ -14,7 +14,7 @@ from django.urls import reverse_lazy
 from ajax_select.fields import AutoCompleteField
 
 from .models import User
-from classes.models import Class
+from classes.models import Class, Department
 from schedules.models import Schedule
 
 
@@ -38,7 +38,7 @@ class UserSignUpForm(UserCreationForm):
         major_error_msg = "Please enter a valid major from the autocomplete."
 
         # Any other fields to validate placed below
-        if len(model.objects.filter(department=major)) == 0:
+        if len(Department.objects.filter(code=major)) == 0:
             self.add_error("major", major_error_msg)
 
     @transaction.atomic
