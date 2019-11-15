@@ -3,14 +3,16 @@ from schedules.models import Schedule
 
 # Create your models here.
 
-# Print helpers
-print_format = "{:<15}" * 2
+
+class Department(models.Model):
+    name = models.CharField(max_length=200)
+    code = models.CharField(max_length=4)
 
 
 class Class(models.Model):
 
     # Database
-    department = models.CharField(max_length=4)
+    # department = models.CharField(max_length=4)
     course_subject = models.IntegerField()
     section_number = models.CharField(max_length=5)
     session = models.CharField(max_length=5)
@@ -28,6 +30,9 @@ class Class(models.Model):
 
     # Relations
     schedule = models.ManyToManyField(Schedule, related_name="classes")
+    department = models.ForeignKey(
+        Department, on_delete=models.CASCADE, related_name="classes"
+    )
 
     def empty_fields(self):
         empty = []
