@@ -200,12 +200,13 @@
                         <div id="enter_course">
                         </div>
                         <br>
-                        <input id="prof_entry" type="text" class="form-control" name="name" placeholder="Professor's Name" maxlength="50">
+                        <input id="prof_entry" type="text" class="form-control" name="name"
+                            placeholder="Professor's Name" maxlength="50">
                         <br>
                         <br>
                     </form>
                     <button class="btn btn-dark btn-block" id="search_button" onclick="checkSearch();">Search</button>
-                        <br>
+                    <br>
                 </div>
             </div>
             <br>
@@ -215,8 +216,8 @@
             <h2>
                 Welcome to the FCQ page
             </h2>
-            <p> 
-                ba;sldkfhasdhflasdfhlakjsdhfffffffffddddddd dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd ddddddd ddddddddddddddddddddddddddddddddddddddddddddddddd dddddddddddddsldkfhasdhflasdfhlakjs dhfffffffffddddddddddddddddddddddddddddddddddddddddddddddddd dddddddddddddddddddddddddddddddddddddd dddddddd ddddddddddddddddddddddddddddddddddddddddddddddddddddddddd ddddddddddddddddsldkfhasdhflasdfhlakjsdhfffffffffdddddddddddddddddddddd dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+            <p>
+
             </p>
         </div>
     </div>
@@ -242,7 +243,7 @@
     var courseBox = function () {
         var subject = document.getElementById("select_subject").value;
         var html = '';
-        if (subject != ""){
+        if (subject != "") {
             html += '<br><div class="row"><label class="col-4 col-form-label label" for="course">Class ID:</label><br><br><div class="col-7"><input type="text" class="form-control" id="course" placeholder="Course Number"></div></div>';
         }
         document.getElementById("enter_course").innerHTML = html;
@@ -252,13 +253,13 @@
     var checkSearch = function () {
         name = document.getElementById("prof_entry").value;
         subject = document.getElementById("select_subject").value;
-        if (name != '' || subject != ''){
-            if (document.getElementById("course")){
+        if (name != '' || subject != '') {
+            if (document.getElementById("course")) {
                 document.getElementById("add").value = document.getElementById("course").value
             }
             document.getElementById("search_criteria").submit();
         }
-        else{
+        else {
             console.log("ERROR: You must fill out at least one field!");
         }
     };

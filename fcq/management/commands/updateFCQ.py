@@ -3,6 +3,7 @@ from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 from fcq.models import Teacher, FCQ
 
+
 def PopulateFCQ():
     FCQ.objects.all().delete()
     directory = os.path.dirname(os.path.abspath(__file__))
@@ -15,8 +16,7 @@ def PopulateFCQ():
         data = [x.replace(";", ",") for x in line[:len(line) - 1].split(",")]
         fcq.semester = data[0]
         fcq.year = data[1]
-        fcq.department = data[4]
-        fcq.subject = data[5]
+        fcq.department = data[5]
         fcq.course = data[6]
         fcq.section = data[7]
         fcq.courseTitle = data[8]
@@ -31,8 +31,7 @@ def PopulateFCQ():
         except:
             print(data)
             failures += 1
-    print("Failed to add" , failures, "fcq")
-
+    print("Failed to add", failures, "fcq")
 
 
 def PopulateTeachers():
@@ -60,107 +59,107 @@ def PopulateTeachers():
 
         holder = []
         if '[' in data[index]:
-            data[index] = data[index].replace('[','')
+            data[index] = data[index].replace('[', '')
             while index != 0:
-                data[index] = data[index].replace('"','')
-                data[index] = data[index].replace("'","")
+                data[index] = data[index].replace('"', '')
+                data[index] = data[index].replace("'", "")
 
                 if ']' in data[index]:
                     break
                 else:
                     holder.append(data[index])
                 index += 1
-        data[index] = data[index].replace(']','')
+        data[index] = data[index].replace(']', '')
         holder.append(data[index])
         index += 1
         teacher.courseList = holder
 
         holder = []
         if '[' in data[index]:
-            data[index] = data[index].replace('"','')
-            data[index] = data[index].replace('[','')
+            data[index] = data[index].replace('"', '')
+            data[index] = data[index].replace('[', '')
             while index != 0:
-                data[index] = data[index].replace('"','')
-                data[index] = data[index].replace(' ','')
+                data[index] = data[index].replace('"', '')
+                data[index] = data[index].replace(' ', '')
 
                 if ']' in data[index]:
                     break
                 else:
                     holder.append(int(data[index]))
                 index += 1
-        data[index] = data[index].replace(']','')
+        data[index] = data[index].replace(']', '')
         holder.append(int(data[index]))
         index += 1
         teacher.timesCourseTaught = holder
 
         holder = []
         if '[' in data[index]:
-            data[index] = data[index].replace('"','')
-            data[index] = data[index].replace('[','')
+            data[index] = data[index].replace('"', '')
+            data[index] = data[index].replace('[', '')
             while index != 0:
-                data[index] = data[index].replace('"','')
-                data[index] = data[index].replace(' ','')
+                data[index] = data[index].replace('"', '')
+                data[index] = data[index].replace(' ', '')
 
                 if ']' in data[index]:
                     break
                 else:
                     holder.append(float(data[index]))
                 index += 1
-        data[index] = data[index].replace(']','')
+        data[index] = data[index].replace(']', '')
         holder.append(float(data[index]))
         index += 1
         teacher.courseRating = holder
 
         holder = []
         if '[' in data[index]:
-            data[index] = data[index].replace('"','')
-            data[index] = data[index].replace('[','')
+            data[index] = data[index].replace('"', '')
+            data[index] = data[index].replace('[', '')
             while index != 0:
-                data[index] = data[index].replace('"','')
-                data[index] = data[index].replace(' ','')
+                data[index] = data[index].replace('"', '')
+                data[index] = data[index].replace(' ', '')
 
                 if ']' in data[index]:
                     break
                 else:
                     holder.append(float(data[index]))
                 index += 1
-        data[index] = data[index].replace(']','')
+        data[index] = data[index].replace(']', '')
         holder.append(float(data[index]))
         index += 1
         teacher.courseInstRating = holder
 
         holder = []
         if '[' in data[index]:
-            data[index] = data[index].replace('"','')
-            data[index] = data[index].replace('[','')
+            data[index] = data[index].replace('"', '')
+            data[index] = data[index].replace('[', '')
             while index != 0:
-                data[index] = data[index].replace('"','')
-                data[index] = data[index].replace(' ','')
+                data[index] = data[index].replace('"', '')
+                data[index] = data[index].replace(' ', '')
 
                 if ']' in data[index]:
                     break
                 else:
                     holder.append(float(data[index]))
                 index += 1
-        data[index] = data[index].replace(']','')
+        data[index] = data[index].replace(']', '')
         holder.append(float(data[index]))
         index += 1
         teacher.courseChallenge = holder
 
         holder = []
         if '[' in data[index]:
-            data[index] = data[index].replace('"','')
-            data[index] = data[index].replace('[','')
+            data[index] = data[index].replace('"', '')
+            data[index] = data[index].replace('[', '')
             while index != 0:
-                data[index] = data[index].replace('"','')
-                data[index] = data[index].replace(' ','')
+                data[index] = data[index].replace('"', '')
+                data[index] = data[index].replace(' ', '')
 
                 if ']' in data[index]:
                     break
                 else:
                     holder.append(int(data[index]))
                 index += 1
-        data[index] = data[index].replace(']','')
+        data[index] = data[index].replace(']', '')
         holder.append(int(data[index]))
         index += 1
         teacher.classIndex = holder
@@ -170,11 +169,12 @@ def PopulateTeachers():
         except:
             print(data)
             failures += 1
-    print("Failed to add" , failures, "classes")
+    print("Failed to add", failures, "professors")
 
 
 class Command(BaseCommand):
-    print("Updating fcq'a with clean_fcq.csv found in fcq/management/commands")
+    print("Updating fcqs with clean_fcq.csv found in fcq/management/commands")
+
     def handle(self, *args, **options):
         PopulateFCQ()
         PopulateTeachers()
