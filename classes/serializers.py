@@ -3,7 +3,9 @@ from rest_framework import serializers
 
 class ClassSerializer(serializers.Serializer):
     id = serializers.IntegerField()
-    department = serializers.CharField()
+    department = (
+        serializers.SerializerMethodField()
+    )  # since this is now a foreign key relationship
     course_subject = serializers.IntegerField()
     section_number = serializers.CharField()
     session = serializers.CharField()
@@ -18,3 +20,7 @@ class ClassSerializer(serializers.Serializer):
     instructor_name = serializers.CharField()
     max_enrollment = serializers.IntegerField()
     campus = serializers.CharField()
+
+    def get_department(self, obj):
+        """ return the class' department code to be serialized """
+        return obj.department.code

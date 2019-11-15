@@ -1,7 +1,7 @@
 from django.contrib.auth import login
 from django.test import Client, TestCase
 
-from classes.models import Class
+from classes.models import Class, Department
 from users.forms import UserSignUpForm
 from users.models import User
 
@@ -15,9 +15,12 @@ class ScheduleTestCase(TestCase):
         """ Set up new user using UserSignUp Form to test schedule. Uses similar method as in the user test
             Tests whether or not the user's schedule is assigned correctly on creation
         """
+        test_department = Department.objects.create(
+            name="Computer Science (CSCI)", code="CSCI"
+        )
         # Class being made to add to schedule
         test_class = Class.objects.create(
-            department="CSCI",
+            department=test_department,
             course_subject=1350,
             section_number="100",
             session="B",

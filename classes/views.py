@@ -7,7 +7,7 @@ from django.http import JsonResponse
 from django.shortcuts import render
 from django.views.generic import CreateView, DetailView, ListView, UpdateView
 
-from classes.models import Class
+from classes.models import Class, Department
 
 from .serializers import ClassSerializer
 
@@ -37,10 +37,12 @@ def search_ajax(request):
             for x in keyword
         ),
     )
-    department = get("department", "")
-
-    query = Q(department__contains=department) & keyword_query
-
+    department = get("department")
+    if department:
+        department_obj = Department.objects.get(code=department)
+        query = Q(department=department_obj) & keyword_query
+    else:
+        query = keyword_query
     classes = Class.objects.filter(query).order_by("course_subject")
     response = ClassSerializer(classes, many=True)
     return JsonResponse(response.data, safe=False)

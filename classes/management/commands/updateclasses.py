@@ -1,5 +1,8 @@
+import html
+
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
+
 from classes.models import Class, Department
 
 class_dict = {
@@ -201,12 +204,29 @@ known_differences = {
     "SWE": "SWED",
     "WRT": "WRTG",
     "EHO": "EHON",
+    "EME": "EMEN",
+    "HUE": "HUEN",
+    "MCE": "MCEN",
+    "COM": "COMM",
+    "CMD": "CMDP",
+    "EMU": "EMUS",
+    "PMU": "PMUS",
+    "BAD": "BADM",
+    "BCO": "BCOR",
+    "BSL": "BSLW",
+    "MGM": "MGMT",
+    "MKT": "MKTG",
+    "MBA": "MBAC",
+    "ORM": "ORMG",
+    "ARC": "ARCH",
+    "EDU": "EDUC",
+    "LAW": "LAWS",
 }
 
 
 def PopulateClasses():
     Class.objects.all().delete()
-
+    Department.objects.all().delete()
     f = open("classes/management/commands/class_schedule.csv", "r")
 
     failures = 0
@@ -222,13 +242,17 @@ def PopulateClasses():
         ############################
         # create new department object here, and link it to the class
         try:
-            department = Department(name=class_dict[data[0]], code=data[0])
-            department.save()
+            name = html.unescape(
+                class_dict[data[0]]
+            )  # some characters like '&' are encoded as 'amp;'
+            if not Department.objects.filter(name=name):
+                department = Department(name=name, code=data[0])
+                department.save()
         except KeyError:
-            print("Failed: {}".format(data))
-            exit()
-        course.department = department
+            failures += 1
+            continue
         ############################
+        course.department = department
         course.course_subject = data[1]
         course.section_number = data[2]
         course.session = data[3]
@@ -250,6 +274,7 @@ def PopulateClasses():
             print(data)
             failures += 1
     print("Failed to add", failures, "classes")
+    f.close()  # close file
 
 
 class Command(BaseCommand):
