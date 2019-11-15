@@ -58,6 +58,8 @@ class ClassView(DetailView):
             course_subject=self.object.course_subject, department=self.object.department
         ).exclude(id=self.object.id)
         ctx["related"] = related
-        if self.object in self.request.user.schedule.classes.all():
-            ctx["in_schedule"] = True
+        # only add to schedule functionality if user is logged in
+        if self.request.user.is_authenticated:
+            if self.object in self.request.user.schedule.classes.all():
+                ctx["in_schedule"] = True
         return ctx

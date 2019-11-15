@@ -84,7 +84,7 @@
             <tbody id="result_table">
                 {% for class in related %}
                 <tr>
-                    <td><a href="{% url 'classes:view' class.id %}">{{ class.department }}
+                    <td><a href="{% url 'classes:view' class.id %}">{{ class.department.code }}
                             {{ class.course_subject }} ({{ class.class_component }})</a></td>
                     <td>{{ class.course_title }}</td>
                     <td>{{ class.section_number }}</td>
