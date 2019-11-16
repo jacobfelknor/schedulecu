@@ -9,21 +9,9 @@
         </h3>
         <div class="card-body">
             <table class="table dt-responsive" cellspacing="0" width="100%">
-                <!-- <thead class="thead" id="material">
-                            <tr>
-                                <th></th>
-                                <th></th>
-                            </tr>
-                        </thead> -->
-                <!-- 
-                    session = models.CharField(max_length=5)
-                    class_number = models.IntegerField()
-                    credit = models.CharField(max_length=5)
-                    class_component = models.CharField(max_length=10)
-                     -->
                 <tbody>
                     <tr>
-                        <td><b>Department/Number:</b> <br>{{ class.department }} {{ class.course_subject }}
+                        <td><b>Department/Number:</b> <br>{{ class.department.code }} {{ class.course_subject }}
                             ({{ class.class_component }})</td>
                         <td><b>Section:</b> <br>{{ class.section_number }}</td>
                         {% if class.instructor_name %}
