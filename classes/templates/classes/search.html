@@ -1,12 +1,12 @@
 {% extends 'base.html' %}
 {% load crispy_forms_tags %}
-
+{% load static %}
 {% block content %}
 
 <div class="container-fluid">
     <div class="row">
         <div class="col-4">
-            <div class="card">
+            <div class="card border-0">
                 <h5 class="card-header bg-warning">
                     Class Search
                 </h5>
@@ -16,23 +16,26 @@
                     {{ form|crispy }}
                     <input type="hidden" name="csrfToken" value="{{ csrf_token }}">
                     <button class="btn btn-dark btn-block" id="search_button" onclick="search();">Search</button>
+                    <button class="btn btn-outline-danger btn-block" onclick="reset();">Reset</button>
                     <br>
                 </div>
             </div>
         </div>
         <div class="col-8 text-center" id="result_div">
-            <table class="table dt-responsive table-striped" cellspacing="0" width="100%">
-                <thead class="thead-dark">
-                    <tr>
-                        <th class="sticky-top">Course Number</th>
-                        <th class="sticky-top">Course Title</th>
-                        <th class="sticky-top">Credits</th>
-                    </tr>
-                </thead>
-                <tbody id="result_table">
+            <div class="card border-0">
+                <table class="table dt-responsive table-striped" cellspacing="0" width="100%">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th class="sticky-top">Course Number</th>
+                            <th class="sticky-top">Course Title</th>
+                            <th class="sticky-top">Credits</th>
+                        </tr>
+                    </thead>
+                    <tbody id="result_table">
 
-                </tbody>
-            </table>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>
@@ -43,6 +46,8 @@
 <script>
 
     $(document).ready(function () {
+        // change background image
+        $("body").attr("style", "background: url({% static 'images/background.jpg' %}) no-repeat; background-size: cover;");
         // setup table scrolling
         $("#result_div").attr("style", `height: ${screen.height * 0.77}px; overflow: auto;`);
         // set placeholder for department field (not working through django side)
@@ -70,6 +75,8 @@
         return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
     }
     var search = function () {
+        // scroll to top of table
+        $("#result_div").animate({ scrollTop: 0 }, "fast");
         // Get data from form
         var keyword = $("#id_keyword").val()
         var department = $("#id_department").val()
@@ -96,7 +103,7 @@
                 console.log(result);
                 var duplicate_check = {}
                 // Code depending on result
-                document.getElementById("result_table").innerHTML = "";
+                $("#result_table").html("");
                 var html = "";
                 for (var i = 0; i < result.length; i++) {
                     if (duplicate_check[result[i].department] !== result[i].course_subject && result[i].credit != 0) {
@@ -105,7 +112,7 @@
                         duplicate_check[result[i].department] = result[i].course_subject;
                     }
                 }
-                document.getElementById("result_table").innerHTML = html;
+                $("#result_table").html(html);
             })
                 .catch(function () {
                     // An error occurred
@@ -116,6 +123,14 @@
         }
         return false;
     };
+
+    function reset() {
+        $("#id_department").val("");
+        $("#id_keyword").val("");
+        $("#result_table").html("");
+        sessionStorage.removeItem("dept_search");
+        sessionStorage.removeItem("keyword_search");
+    }
 </script>
 
 
