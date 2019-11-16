@@ -6,15 +6,12 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-4">
-            <div class="card sticky-top">
+            <div class="card">
                 <h5 class="card-header bg-warning">
                     Class Search
                 </h5>
                 <div class="container" id="search_div">
                     <br>
-                    <!-- <form action="#" method="POST"> -->
-                    <!-- {% csrf_token %} -->
-                    <!-- <label for="search">Search Class Name</label> -->
                     {{ form.media }}
                     {{ form|crispy }}
                     <input type="hidden" name="csrfToken" value="{{ csrf_token }}">
@@ -23,17 +20,13 @@
                 </div>
             </div>
         </div>
-        <div class="col-8 text-center">
+        <div class="col-8 text-center" id="result_div">
             <table class="table dt-responsive table-striped" cellspacing="0" width="100%">
                 <thead class="thead-dark">
                     <tr>
                         <th class="sticky-top">Course Number</th>
                         <th class="sticky-top">Course Title</th>
                         <th class="sticky-top">Credits</th>
-                        <!-- <th>Section #</th>
-                        <th>Instructor</th>
-                        <th>Time</th>
-                        <th>Room</th> -->
                     </tr>
                 </thead>
                 <tbody id="result_table">
@@ -41,9 +34,6 @@
                 </tbody>
             </table>
         </div>
-        <!-- <div class="col-5 text-center">
-            Column Three
-        </div> -->
     </div>
 </div>
 
@@ -53,6 +43,8 @@
 <script>
 
     $(document).ready(function () {
+        // setup table scrolling
+        $("#result_div").attr("style", `height: ${screen.height * 0.77}px; overflow: auto;`);
         // set placeholder for department field (not working through django side)
         $("#id_department").attr("placeholder", "Any Subject");
         // retrieve values from sessionStorage
