@@ -50,6 +50,13 @@ def fcq_search_ajax(request):
         query = Q(mainDepartment=department_obj.code) & keyword_query
     else:
         query = keyword_query
+    number = get("number")
+    if number:
+        number = "{} {}".format(
+            department_obj.code, number
+        )  # this feels sort of hackish...
+        number_query = Q(courseList__contains=[number])
+        query &= number_query
     teachers = Teacher.objects.filter(query)
     response = TeacherSerializer(teachers, many=True)
     return JsonResponse(response.data, safe=False)

@@ -59,8 +59,11 @@
             // Code for localStorage/sessionStorage.
             $("#id_department").val(sessionStorage.getItem("fcq_dept_search"));
             $("#id_keyword").val(sessionStorage.getItem("fcq_keyword_search"));
+            $("#id_number").val(sessionStorage.getItem("fcq_number_search"));
             $('#search_button').click();
         }
+        // show courseBox if necessary
+        courseBox();
     });
 
     $('#search_div').on('keydown', function (e) {
@@ -72,14 +75,20 @@
         }
     });
 
+    $("#search_div").on('keyup', function (e) {
+        // show courseBox if necessary
+        courseBox();
+    });
 
-    var courseBox = function () {
-        var subject = document.getElementById("select_subject").value;
-        var html = '';
-        if (subject != "") {
-            html += '<br><div class="row"><label class="col-4 col-form-label label" for="course">Class ID:</label><br><br><div class="col-7"><input type="text" class="form-control" id="course" placeholder="Course Number"></div></div>';
+
+    function courseBox() {
+        var department = $("#id_department").val();
+        if (department.length == 0) {
+            $("#id_number").val(null);
+            $("#id_number").attr("hidden", "true");
+        } else {
+            $("#id_number").removeAttr("hidden");
         }
-        document.getElementById("enter_course").innerHTML = html;
     };
 
     function csrfSafeMethod(method) {
@@ -90,13 +99,15 @@
         // scroll to top of table
         $("#result_div").animate({ scrollTop: 0 }, "fast");
         // Get data from form
-        var keyword = $("#id_keyword").val()
-        var department = $("#id_department").val()
+        var keyword = $("#id_keyword").val();
+        var department = $("#id_department").val();
+        var number = $("#id_number").val();
         // save data to sessionStorage storage to retain values
         if (typeof (Storage) !== "undefined") {
             // Code for sessionStorage.
             sessionStorage.setItem("fcq_dept_search", department);
             sessionStorage.setItem("fcq_keyword_search", keyword);
+            sessionStorage.setItem("fcq_number_search", number);
         }
         if (keyword != "" || department != "") { // Fields must actually contain something
             var csrftoken = $('input[name="csrfToken"]').attr('value')
@@ -107,7 +118,7 @@
                     }
                 }
             });
-            var data = { keyword: keyword, department: department };
+            var data = { keyword: keyword, department: department, number: number };
             var args = {
                 type: "POST", url: "{% url 'fcq:fcq_search_ajax' %}", data: data
             };
@@ -138,8 +149,10 @@
         $("#id_department").val("");
         $("#id_keyword").val("");
         $("#result_table").html("");
+        courseBox();
         sessionStorage.removeItem("fcq_dept_search");
         sessionStorage.removeItem("fcq_keyword_search");
+        sessionStorage.removeItem("fcq_number_search");
     }
 </script>
 
