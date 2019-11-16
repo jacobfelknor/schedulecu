@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-
+{% load crispy_forms_tags %}
 
 {% block content %}
 
@@ -15,8 +15,10 @@
                     <!-- <form action="#" method="POST"> -->
                     <!-- {% csrf_token %} -->
                     <!-- <label for="search">Search Class Name</label> -->
+                    {{ form.media }}
+                    {{ form|crispy }}
                     <input type="hidden" name="csrfToken" value="{{ csrf_token }}">
-                    <input id="class_keyword" type="text" class="form-control"
+                    <!-- <input id="class_keyword" type="text" class="form-control"
                         placeholder="Class Name, Class Code, Instructor">
                     <br>
                     <select name="department" id="select_department" class="form-control">
@@ -201,8 +203,8 @@
                         <option value="TMUS">Thesis Music (TMUS)</option>
                         <option value="WGST">Women and Gender Studies (WGST)</option>
                         <option value="WRTG">Writing and Rhetoric (WRTG)</option>
-                    </select>
-                    <br>
+                    </select> -->
+                    <!-- <br> -->
                     <button class="btn btn-dark btn-block" id="search_button" onclick="search();">Search</button>
                     <!-- <input type="submit" class="btn btn-dark btn-block" value="Search"> -->
                     <!-- </form> -->
@@ -240,7 +242,15 @@
 <script>
 
     $(document).ready(function () {
-        $('#search_button').click();
+        // set placeholder for department field (not working through django side)
+        $("#id_department").attr("placeholder", "Any Subject");
+        // retrieve values from sessionStorage
+        if (typeof (Storage) !== "undefined") {
+            // Code for localStorage/sessionStorage.
+            $("#id_department").val(sessionStorage.getItem("dept_search"));
+            $("#id_keyword").val(sessionStorage.getItem("keyword_search"));
+            $('#search_button').click();
+        }
     });
 
     $('#search_div').on('keydown', function (e) {
@@ -258,8 +268,14 @@
     }
     var search = function () {
         // Get data from form
-        var keyword = $("#class_keyword").val()
-        var department = $("#select_department").val()
+        var keyword = $("#id_keyword").val()
+        var department = $("#id_department").val()
+        // save data to sessionStorage storage to retain values
+        if (typeof (Storage) !== "undefined") {
+            // Code for sessionStorage.
+            sessionStorage.setItem("dept_search", department);
+            sessionStorage.setItem("keyword_search", keyword);
+        }
         if (keyword != "" || department != "") { // Fields must actually contain something
             var csrftoken = $('input[name="csrfToken"]').attr('value')
             $.ajaxSetup({

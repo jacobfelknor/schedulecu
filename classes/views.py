@@ -10,12 +10,15 @@ from django.views.generic import CreateView, DetailView, ListView, UpdateView
 from classes.models import Class, Department
 
 from .serializers import ClassSerializer
+from .forms import SearchForm
 
 # Create your views here.
 
 
 def search(request):
-    return render(request, "classes/search.html")
+    ctx = {}
+    ctx["form"] = SearchForm()
+    return render(request, "classes/search.html", ctx)
 
 
 def search_ajax(request):
@@ -39,7 +42,10 @@ def search_ajax(request):
     )
     department = get("department")
     if department:
-        department_obj = Department.objects.get(code=department)
+        department_obj = Department.objects.filter(code__iexact=department).first()
+        if not department_obj:
+            # return no results if department is not found
+            return JsonResponse({})
         query = Q(department=department_obj) & keyword_query
     else:
         query = keyword_query
