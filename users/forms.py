@@ -88,7 +88,7 @@ class UserAccountForm(forms.ModelForm):
         major_error_msg = "Please enter a valid major from the autocomplete."
 
         # Any other fields to validate placed below
-        if len(model.objects.filter(department=major)) == 0:
+        if len(Department.objects.filter(code=major)) == 0:
             self.add_error("major", major_error_msg)
 
     @transaction.atomic

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 {% load staticfiles i18n %}
+{% load static %}
 <html lang="en-us" xml:lang="en-us">
 
 <head>
@@ -34,7 +35,7 @@
 
 </head>
 
-<body>
+<body style="background: url({% static 'images/background.jpg' %}) no-repeat; background-size: cover;">
 
   <div class="mb-3">
     <nav class="navbar navbar-expand-md navbar-dark" id="navbar">
