@@ -60,6 +60,7 @@ INSTALLED_APPS = [
     "crispy_forms",
     "ajax_select",
     "contact.apps.ContactConfig",
+    "fcq.apps.FcqConfig",
 ]
 
 CRISPY_TEMPLATE_PACK = "bootstrap4"
