@@ -29,7 +29,8 @@ except ImportError as e:
     )  # NOTE: no way to test sending emails, since our password is necessary.
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+BASE_DIR = os.path.dirname(os.path.dirname(
+    os.path.dirname(os.path.abspath(__file__))))
 
 
 # Quick-start development settings - unsuitable for production
@@ -60,6 +61,7 @@ INSTALLED_APPS = [
     "crispy_forms",
     "ajax_select",
     "contact.apps.ContactConfig",
+    "fcq.apps.FcqConfig",
 ]
 
 CRISPY_TEMPLATE_PACK = "bootstrap4"
