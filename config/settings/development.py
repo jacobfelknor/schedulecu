@@ -62,6 +62,7 @@ INSTALLED_APPS = [
     "ajax_select",
     "contact.apps.ContactConfig",
     "fcq.apps.FcqConfig",
+    "audit.apps.AuditConfig",
 ]
 
 CRISPY_TEMPLATE_PACK = "bootstrap4"

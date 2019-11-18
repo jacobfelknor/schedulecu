@@ -1,11 +1,6 @@
 from django.db import models
 from schedules.models import Schedule
 
-# Create your models here.
-
-# Print helpers
-print_format = "{:<15}" * 2
-
 
 class Class(models.Model):
 
@@ -35,4 +30,3 @@ class Class(models.Model):
             if self.__dict__[field] == None or self.__dict__[field] == "":
                 empty.append(field)
         return empty
-
