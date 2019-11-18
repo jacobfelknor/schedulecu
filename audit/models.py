@@ -10,7 +10,9 @@ class Audit(models.Model):
 
     # Database
     creditRequirement = models.IntegerField()
+    majorRequirement = models.IntegerField()
     currentCredit = models.IntegerField()
+    currentMajorCredit = models.IntegerField()
     # Relation
     userId = models.ForeignKey(User, on_delete=models.CASCADE)
 
