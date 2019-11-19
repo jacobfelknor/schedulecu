@@ -1,20 +1,69 @@
 from django.core.management.base import BaseCommand, CommandError
-from audit.models import Audit, Prerequisite
+from audit.models import Audit, Prerequisite, DegreeSection
+from classes.models import Class
 from django.db import transaction
 from users.models import User
 
 
+def loadSection(filename, Section):
+    file = open(filename, "r")
+    line = file.readline()
+    Section.creditRequirement = line.split(",")[0]
+    for className in line.split(",")[1:]:
+        classDepartment = className[0:-4]
+        courseSubject = className[-4:]
+        objects = Class.objects.filter(department=classDepartment).filter(
+            course_subject=courseSubject)
+        for obj in objects:
+            Section.appliedClasses.add(obj)
+    file.close()
+    return Section
+
+
 def createCSAudit(userId):
     CSAudit = Audit()
-    CSAudit.creditRequirement = 128
-    CSAudit.majorRequirement = 58
-    CSAudit.currentCredit = 0
-    CSAudit.currentMajorCredit = 0
-    CSAudit.currentCredit = 0
+    OverallSection = DegreeSection()
+    MajorSection = DegreeSection()
+    NatSciSection = DegreeSection()
+    AllHumn = DegreeSection()
+    UpperHumn = DegreeSection()
+    OverallSection.sectionName = "Overall"
+    MajorSection.sectionName = "Major"
+    NatSciSection.sectionName = "Natural Science"
+    AllHumn.sectionName = "Humanities"
+    UpperHumn.sectionName = "Upper Humanities"
+    OverallSection.creditRequirement = 128
+    OverallSection.currentCredit = 0
+    MajorSection.creditRequirement = 58
+    MajorSection.currentCredit = 0
+    NatSciSection.creditRequirement = 17
+    NatSciSection.currentCredit = 0
+    AllHumn.creditRequirement = 15
+    AllHumn.currentCredit = 0
+    UpperHumn.creditRequirement = 6
+    UpperHumn.currentCredit = 0
+
     CSAudit.userId = userId
     # I don't think I need to wrap this in a try block
     with transaction.atomic():
         CSAudit.save()
+
+    # load and save all sections
+    OverallSection.auditId = CSAudit
+    MajorSection.auditId = CSAudit
+    NatSciSection.auditId = CSAudit
+    AllHumn.auditId = CSAudit
+    UpperHumn.auditId = CSAudit
+
+    with transaction.atomic():
+        OverallSection.save()
+        MajorSection.save()
+        NatSciSection.save()
+        AllHumn.save()
+        UpperHumn.save()
+
+    NatSciSection = loadSection(
+        "audit/management/commands/natsci.csv", NatSciSection)
 
     file = open('audit/management/commands/csAudit.csv', 'r')
     failures = 0
@@ -30,6 +79,7 @@ def createCSAudit(userId):
                 prereq.save()
         except:
             failures += 1
+    file.close()
     print("Failed", failures, "prereqs")
 
 
