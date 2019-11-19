@@ -10,6 +10,7 @@ from users.models import User
 # Create class for each test case, inherit Django's TestCase class
 class ScheduleTestCase(TestCase):
     class_id = None
+    class_obj = None
     # function that gets called first
     def setUp(self):
         """ Set up new user using UserSignUp Form to test schedule. Uses similar method as in the user test
@@ -36,8 +37,9 @@ class ScheduleTestCase(TestCase):
             max_enrollment=200,
             campus="Main Campus",
         )
-        # Save this class' id for later use
+        # Save this class' id/obj for later use
         self.class_id = test_class.id
+        self.class_obj = test_class
 
         # Ensure blank form is not valid
         form = UserSignUpForm({})
@@ -83,3 +85,7 @@ class ScheduleTestCase(TestCase):
             "/schedules/add_to_schedule/", {"class_id": self.class_id}
         )  # make request to view to add class to schedule
         self.assertEqual(len(user.schedule.classes.all()), 1)  # confirm class was added
+
+        self.assertEqual(
+            user.schedule.classes.first(), self.class_obj
+        )  # confirm class was added correctly

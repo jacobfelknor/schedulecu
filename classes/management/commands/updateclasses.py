@@ -275,6 +275,10 @@ def PopulateClasses():
             failures += 1
     print("Failed to add", failures, "classes")
     f.close()  # close file
+    if failures == 0:
+        return True  # for testing
+    else:
+        return False
 
 
 class Command(BaseCommand):
@@ -284,4 +288,8 @@ class Command(BaseCommand):
     print("This will take ~30 seconds")
 
     def handle(self, *args, **options):
-        PopulateClasses()
+        # Return values are for tests
+        if PopulateClasses():
+            return True
+        else:
+            return False
