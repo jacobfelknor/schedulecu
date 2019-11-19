@@ -57,7 +57,7 @@ def fcq_search_ajax(request):
         )  # this feels sort of hackish...
         number_query = Q(courseList__contains=[number])
         query &= number_query
-    teachers = Teacher.objects.filter(query)
+    teachers = Teacher.objects.filter(query).order_by("lastName")
     response = TeacherSerializer(teachers, many=True)
     return JsonResponse(response.data, safe=False)
 

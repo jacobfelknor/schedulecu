@@ -226,7 +226,6 @@ known_differences = {
 
 def PopulateClasses():
     Class.objects.all().delete()
-    Department.objects.all().delete()
     f = open("classes/management/commands/class_schedule.csv", "r")
 
     failures = 0
@@ -245,7 +244,8 @@ def PopulateClasses():
             name = html.unescape(
                 class_dict[data[0]]
             )  # some characters like '&' are encoded as 'amp;'
-            if not Department.objects.filter(name=name):
+            department = Department.objects.filter(name=name).first()
+            if not department:
                 department = Department(name=name, code=data[0])
                 department.save()
         except KeyError:
