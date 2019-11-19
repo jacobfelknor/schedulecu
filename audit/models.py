@@ -4,23 +4,28 @@ from users.models import User
 from classes.models import Class
 
 
-# Ideally this would split requirements into humanities reqs as well, but theres no way to separate humanites
-# credit from free electives without more pdf parsing I believe
-# webscrape the classes off classes.colorado.edu for humanities?
+# webscrape humanities classes off classes.colorado.edu?
 # I have natsci classes already
 class Audit(models.Model):
 
     # Database
-    creditRequirement = models.IntegerField()
-    majorRequirement = models.IntegerField()
-    lowerHumnRequirement = models.IntegerField()
-    upperHumnRequierement = models.IntegerField()
-    currentCredit = models.IntegerField()
-    currentMajorCredit = models.IntegerField()
-    currentLowerHumnRequirement = models.IntegerField()
-    currentUpperHumnRequirement = models.IntegerField()
+    # Each audit is made of many DegreeSection objects, does not individually hold data
+
     # Relation
     userId = models.ForeignKey(User, on_delete=models.CASCADE)
+
+
+# DegreeSection holds requirements for a section of the degree (i.e. nat sci, humanities, etc)
+class DegreeSection(models.Model):
+
+    # Database
+    sectionName = models.CharField(max_length=40)
+    creditRequirement = models.IntegerField()
+    currentCredit = models.IntegerField()
+    # Relation
+    appliedClasses = models.ManyToManyField(
+        Class, related_name="appliedClasses")
+    auditId = models.ForeignKey(Audit, on_delete=models.CASCADE)
 
 
 # Model to define the classes a user has completed. A new object created for each class a user has completed
@@ -43,6 +48,6 @@ class Prerequisite(models.Model):
     # classId = models.ForeignKey(
     #    Class, on_delete=models.CASCADE, blank=True, null=True)
     # I believe this is many-to-many, as there are many CSCI1300 and many CSCI2270, any 1300 is a prereq for any 2270
-    classes = models.ManyToManyField(Class, related_name="appliedClasses")
+    classes = models.ManyToManyField(Class, related_name="classes")
     auditId = models.ForeignKey(
         Audit, on_delete=models.CASCADE, blank=True, null=True)
