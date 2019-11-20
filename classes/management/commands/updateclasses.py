@@ -3,9 +3,9 @@ import html
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 
-from classes.models import Class, Department
+from classes.models import Class, Department, Section
 
-class_dict = {
+dept_dict = {
     "ACCT": "Accounting (ACCT)",
     "APRD": "Advertising, PR, Media Design (APRD)",
     "ASEN": "Aerospace Engineering (ASEN)",
@@ -225,13 +225,13 @@ known_differences = {
 
 
 def PopulateClasses():
-    Class.objects.all().delete()
+    # Class.objects.all().delete() # we won't need this after changes
     f = open("classes/management/commands/class_schedule.csv", "r")
 
     failures = 0
 
     for line in f:
-        course = Class()
+        course = Section()
         # remove newline char at end and replace temporary semicolons back to commas
         data = [x.replace(";", ",") for x in line[: len(line) - 1].split(",")]
         # deal with known differences below:
@@ -239,26 +239,31 @@ def PopulateClasses():
         if adjust_code:
             data[0] = adjust_code
         ############################
-        # create new department object here, and link it to the class
+        # create new department/class object here, and link it to the section
         try:
             name = html.unescape(
-                class_dict[data[0]]
+                dept_dict[data[0]]
             )  # some characters like '&' are encoded as 'amp;'
             department = Department.objects.filter(name=name).first()
             if not department:
                 department = Department(name=name, code=data[0])
                 department.save()
+
+            # match class if these params match. Omit course title in case of 
+            # slight inconsitancies (such as trailing spaces)
+            class_obj = Class.objects.filter(department=department, course_subject=data[1]).first()
+            if not class_obj:
+                class_obj = Class(department=department, course_subject=data[1], course_title=data[6])
+                class_obj.save()
         except KeyError:
             failures += 1
             continue
         ############################
-        course.department = department
-        course.course_subject = data[1]
+        course.parent_class = class_obj
         course.section_number = data[2]
         course.session = data[3]
         course.class_number = data[4]
         course.credit = data[5]
-        course.course_title = data[6]
         course.class_component = data[7]
         course.start_time = data[8]
         course.end_time = data[9]
