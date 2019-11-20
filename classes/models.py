@@ -45,7 +45,6 @@ class Department(models.Model):
 class Class(models.Model):
 
     # Database
-    # department = models.CharField(max_length=4)
     course_subject = models.IntegerField()
     section_number = models.CharField(max_length=5)
     session = models.CharField(max_length=5)
