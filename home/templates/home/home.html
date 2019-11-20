@@ -34,6 +34,8 @@
 
 <div id='calendar'></div>
 <script>
+    // Access classes needed to be added to the calendar via user -> schedule -> classes
+    // Note: Both users and classes contain references to schedule.
 
     document.addEventListener('DOMContentLoaded', function () {
         var calendarEl = document.getElementById('calendar');
@@ -50,6 +52,7 @@
             },
             allDaySlot: false,
 
+            /*
             customButtons: {
                 addEventButton: {
                     text: 'add event...',
@@ -70,7 +73,9 @@
                         }
                     }
                 }
-            }
+            } */
+
+            
         });
 
         calendar.render();
