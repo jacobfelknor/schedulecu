@@ -71,7 +71,6 @@ class ScheduleTestCase(TestCase):
 
     def testScheduleAssignment(self):
         user = User.objects.get(username="testing123")
-        print(user.schedule)
         self.assertIsNotNone(user.schedule)
 
     def testAddClassToSchedule(self):

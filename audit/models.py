@@ -4,35 +4,17 @@ from users.models import User
 from classes.models import Class, Department
 from django.db import transaction
 
-# webscrape humanities classes off classes.colorado.edu?
-# I have natsci classes already
 
+class AuditFactory:
 
-class Audit(models.Model):
-
-    # Database
-    # Each audit is made of many DegreeSection objects, does not individually hold data
-
-    # Relation
-    userId = models.ForeignKey(User, on_delete=models.CASCADE)
-
-    def save(self, *args, **kwargs):
-        if self.pk is None:
-            super(Audit, self).save(*args, **kwargs)
-            # new object
-            self.createCSAudit()
-
-        super(Audit, self).save(*args, **kwargs)
-
-    # Helper methods
-    def loadSection(self, filename):
+    def loadSection(self, audit, filename):
         Section = DegreeSection()
         file = open(filename, "r")
         line = file.readline().split(",")
         Section.sectionName = line[0]
         Section.creditRequirement = line[1]
         Section.currentCredit = 0
-        Section.auditId = self
+        Section.auditId = audit
 
         with transaction.atomic():
             Section.save()
@@ -47,16 +29,19 @@ class Audit(models.Model):
         file.close()
         return Section
 
-    def createCSAudit(self):
-        OverallSection = self.loadSection(
-            "audit/requirements/bscs/overall.csv")
-        MajorSection = self.loadSection("audit/requirements/bscs/major.csv")
-        NatSciSection = self.loadSection("audit/requirements/bscs/natsci.csv")
-        AllHumn = self.loadSection("audit/requirements/bscs/humanities.csv")
-        UpperHumn = self.loadSection(
-            "audit/requirements/bscs/upperhumanities.csv")
+    def createAudit(self, audit, name):
+        OverallSection = self.loadSection(audit,
+                                          "audit/requirements/{}/overall.csv".format(name))
+        MajorSection = self.loadSection(audit,
+                                        "audit/requirements/{}/major.csv".format(name))
+        NatSciSection = self.loadSection(audit,
+                                         "audit/requirements/{}/natsci.csv".format(name))
+        AllHumn = self.loadSection(audit,
+                                   "audit/requirements/{}/humanities.csv".format(name))
+        UpperHumn = self.loadSection(audit,
+                                     "audit/requirements/{}/upperhumanities.csv".format(name))
 
-        file = open('audit/management/commands/csAudit.csv', 'r')
+        file = open('audit/requirements/{}/required.csv'.format(name), 'r')
         failures = 0
         for line in file:
             prereq = Prerequisite()
@@ -64,7 +49,7 @@ class Audit(models.Model):
                     for x in line[:len(line) - 1].split(",")]
             prereq.requiredNumber = data[0]
             prereq.possibleClasses = data[1:]
-            prereq.auditId = self
+            prereq.auditId = audit
 
             try:
                 with transaction.atomic():
@@ -73,6 +58,30 @@ class Audit(models.Model):
                 failures += 1
         file.close()
         # print("Failed", failures, "prereqs")
+        return audit
+
+
+# webscrape humanities classes off classes.colorado.edu?
+# I have natsci classes already
+class Audit(models.Model):
+
+    # Database
+    # Each audit is made of many DegreeSection objects, does not individually hold data
+
+    # Relation
+    userId = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    factory = AuditFactory()
+
+    def save(self, *args, **kwargs):
+        if self.pk is None:
+            super(Audit, self).save(*args, **kwargs)
+            # would need a smarter way if we're doing more than one major
+            if self.userId.major == "CSCI":
+                print("executing\n\n\n")
+                self = self.factory.createAudit(self, "bscs")
+
+        super(Audit, self).save(*args, **kwargs)
 
 
 # DegreeSection holds requirements for a section of the degree (i.e. nat sci, humanities, etc)
