@@ -28,5 +28,5 @@ urlpatterns = [
     path("classes/", include("classes.urls")),
     path("schedules/", include("schedules.urls")),
     path("contact/", include("contact.urls")),
-    path("fcq/", include("fcq.urls"))
+    path("fcq/", include("fcq.urls")),
 ]

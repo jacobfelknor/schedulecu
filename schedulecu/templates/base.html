@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 {% load staticfiles i18n %}
+{% load static %}
 <html lang="en-us" xml:lang="en-us">
 
 <head>
@@ -34,7 +35,7 @@
 
 </head>
 
-<body>
+<body style="background: url({% static 'images/background.jpg' %}) no-repeat; background-size: cover;">
 
   <div class="mb-3">
     <nav class="navbar navbar-expand-md navbar-dark" id="navbar">
@@ -54,15 +55,10 @@
             <a class="nav-link" href="{% url 'classes:search' %}">Class Search</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'fcq:fcq_search' %}">FCQ's</a>
+            <a class="nav-link" href="{% url 'fcq:fcq_search' %}">Professor Search</a>
           </li>
           <li class="nav-item">
             <a href="{% url 'contact:contact' %}" class="nav-link">Contact Us</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">
-              <span class="fa fa-search"></span> Search
-            </a>
           </li>
         </ul>
       </div>
