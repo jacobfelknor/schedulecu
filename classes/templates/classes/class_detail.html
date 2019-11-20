@@ -3,27 +3,15 @@
 {% block content %}
 
 <div class="container">
-    <div class="card">
-        <h3 class="card-header">
+    <div class="card border-dark">
+        <h3 class="card-header bg-dark text-light">
             {{ class.course_title }}
         </h3>
         <div class="card-body">
             <table class="table dt-responsive" cellspacing="0" width="100%">
-                <!-- <thead class="thead" id="material">
-                            <tr>
-                                <th></th>
-                                <th></th>
-                            </tr>
-                        </thead> -->
-                <!-- 
-                    session = models.CharField(max_length=5)
-                    class_number = models.IntegerField()
-                    credit = models.CharField(max_length=5)
-                    class_component = models.CharField(max_length=10)
-                     -->
                 <tbody>
                     <tr>
-                        <td><b>Department/Number:</b> <br>{{ class.department }} {{ class.course_subject }}
+                        <td><b>Department/Number:</b> <br>{{ class.department.code }} {{ class.course_subject }}
                             ({{ class.class_component }})</td>
                         <td><b>Section:</b> <br>{{ class.section_number }}</td>
                         {% if class.instructor_name %}
@@ -65,7 +53,7 @@
             {% endif %}
         </div>
     </div> <!-- card -->
-    <div class="card">
+    <div class="card border-dark">
         <h5 class="card-header bg-warning">
             Related Classes
         </h5>
@@ -84,7 +72,7 @@
             <tbody id="result_table">
                 {% for class in related %}
                 <tr>
-                    <td><a href="{% url 'classes:view' class.id %}">{{ class.department }}
+                    <td><a href="{% url 'classes:view' class.id %}">{{ class.department.code }}
                             {{ class.course_subject }} ({{ class.class_component }})</a></td>
                     <td>{{ class.course_title }}</td>
                     <td>{{ class.section_number }}</td>

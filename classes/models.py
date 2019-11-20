@@ -3,14 +3,49 @@ from schedules.models import Schedule
 
 # Create your models here.
 
-# Print helpers
-print_format = "{:<15}" * 2
+# Proposed changes:
+"""
+Split a class into two models - Class and Section
+    - Can differentiate between REC/LEC/etc more
+      concretely. Have a model for each kind
+    
+    - Keep historical data. Each time a new class
+      list is released, simply append a section
+      to an existing class instead of deleting
+      old classes. This plays well with the FCQ
+      stuff as well
+
+    - Class Model (Generic for all types)
+        department (Foreign key to department object)
+        course_subject
+        
+    
+    - Section Model (One for each type)
+        class (Foreign key to the actual class object)
+        credits
+        section number
+        start_time
+        end_time
+        instructor (foreign key to instructor)
+        days
+        session
+        semester (Spring/Fall/Summer <year>)
+        max_enrollment
+        building_room
+        campus
+        schedule (Many to Many Field)
+"""
+
+
+class Department(models.Model):
+    name = models.CharField(max_length=200)
+    code = models.CharField(max_length=4)
 
 
 class Class(models.Model):
 
     # Database
-    department = models.CharField(max_length=4)
+    # department = models.CharField(max_length=4)
     course_subject = models.IntegerField()
     section_number = models.CharField(max_length=5)
     session = models.CharField(max_length=5)
@@ -28,6 +63,9 @@ class Class(models.Model):
 
     # Relations
     schedule = models.ManyToManyField(Schedule, related_name="classes")
+    department = models.ForeignKey(
+        Department, on_delete=models.CASCADE, related_name="classes"
+    )
 
     def empty_fields(self):
         empty = []

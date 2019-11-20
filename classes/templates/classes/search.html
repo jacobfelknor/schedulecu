@@ -1,236 +1,42 @@
 {% extends 'base.html' %}
-
-
+{% load crispy_forms_tags %}
+{% load static %}
 {% block content %}
 
 <div class="container-fluid">
     <div class="row">
         <div class="col-4">
-            <div class="card">
+            <div class="card border-dark">
                 <h5 class="card-header bg-warning">
                     Class Search
                 </h5>
                 <div class="container" id="search_div">
                     <br>
-                    <!-- <form action="#" method="POST"> -->
-                    <!-- {% csrf_token %} -->
-                    <!-- <label for="search">Search Class Name</label> -->
+                    {{ form.media }}
+                    {{ form|crispy }}
                     <input type="hidden" name="csrfToken" value="{{ csrf_token }}">
-                    <input id="class_keyword" type="text" class="form-control"
-                        placeholder="Class Name, Class Code, Instructor">
-                    <br>
-                    <select name="department" id="select_department" class="form-control">
-                        <option value="">Any Subject</option>
-                        <option value="ACCT">Accounting (ACCT)</option>
-                        <option value="APRD">Advertising, PR, Media Design (APRD)</option>
-                        <option value="ASEN">Aerospace Engineering (ASEN)</option>
-                        <option value="AIRR">Air Force Aerospace Studies (AIRR)</option>
-                        <option value="ANTH">Anthropology (ANTH)</option>
-                        <option value="APPM">Applied Math (APPM)</option>
-                        <option value="ARAB">Arabic (ARAB)</option>
-                        <option value="AREN">Architectural Engineering (AREN)</option>
-                        <option value="ARCH">Architecture (ARCH)</option>
-                        <option value="ARTF">Art Film Studies (ARTF)</option>
-                        <option value="ARTH">Art History (ARTH)</option>
-                        <option value="ARTS">Art Studio and Non-Studio (ARTS)</option>
-                        <option value="ARSC">Arts &amp; Sciences Courses (ARSC)</option>
-                        <option value="ASIA">Asian Studies (ASIA)</option>
-                        <option value="ASTR">Astrophysical &amp; Planetary Sci (ASTR)</option>
-                        <option value="ATLS">ATLAS (ATLS)</option>
-                        <option value="ATOC">Atmospheric &amp; Oceanic Sciences (ATOC)</option>
-                        <option value="BAKR">Baker Residential Acad Prgm (BAKR)</option>
-                        <option value="BASE">BCOR Applied Semester Exper (BASE)</option>
-                        <option value="BCHM">Biochemistry (BCHM)</option>
-                        <option value="BMEN">Biomedical Engineering (BMEN)</option>
-                        <option value="BADM">Business Administration (BADM)</option>
-                        <option value="BCOR">Business Core (BCOR)</option>
-                        <option value="BPOL">Business Environment &amp; Policy (BPOL)</option>
-                        <option value="BSLW">Business Law (BSLW)</option>
-                        <option value="BUSM">Business Minor (BUSM)</option>
-                        <option value="CSVC">Career Services (CSVC)</option>
-                        <option value="CWCV">Center for Western Civilizatio (CWCV)</option>
-                        <option value="CAMW">Center of the American West (CAMW)</option>
-                        <option value="CEES">Central &amp; East European Stdy (CEES)</option>
-                        <option value="CHEN">Chemical Engineering (CHEN)</option>
-                        <option value="CHEM">Chemistry (CHEM)</option>
-                        <option value="CHIN">Chinese (CHIN)</option>
-                        <option value="CINE">Cinema Stds/Moving Image Arts (CINE)</option>
-                        <option value="CVEN">Civil Engineering (CVEN)</option>
-                        <option value="GREK">Classical Greek Language (GREK)</option>
-                        <option value="CLAS">Classics (CLAS)</option>
-                        <option value="COEN">Coll of Engineerng&amp;App Sci Adm (COEN)</option>
-                        <option value="CMCI">Coll of Media,Commncation,Info (CMCI)</option>
-                        <option value="COMM">Communication (COMM)</option>
-                        <option value="COMR">Communication Res Acad Prgm (COMR)</option>
-                        <option value="COML">Comparative Literature (COML)</option>
-                        <option value="CSCI">Computer Science (CSCI)</option>
-                        <option value="CSPB">Computer Science Post Bacc (CSPB)</option>
-                        <option value="CNCR">Concurrent Placeholder (CNCR)</option>
-                        <option value="CMDP">Critical Media Practices (CMDP)</option>
-                        <option value="CESR">Curr Emphasis in Soc Respnsbly (CESR)</option>
-                        <option value="DNCE">Dance (DNCE)</option>
-                        <option value="DANE">Danish (DANE)</option>
-                        <option value="DHUM">Digital Humanities (DHUM)</option>
-                        <option value="EALC">East Asian Langs &amp; Civilzatns (EALC)</option>
-                        <option value="EBIO">Ecology &amp; Evolutionary Biology (EBIO)</option>
-                        <option value="ECON">Economics (ECON)</option>
-                        <option value="EDUC">Education (EDUC)</option>
-                        <option value="ECEN">Electrical &amp; Computer Engr (ECEN)</option>
-                        <option value="ENEN">Energy Engineering (ENEN)</option>
-                        <option value="EHON">Engineering Honors (EHON)</option>
-                        <option value="ENLP">Engineering Leadership Program (ENLP)</option>
-                        <option value="EMEN">Engineering Management (EMEN)</option>
-                        <option value="ENGL">English (ENGL)</option>
-                        <option value="ESLG">English as a Second Language (ESLG)</option>
-                        <option value="EDEN">Engr for Developng Communities (EDEN)</option>
-                        <option value="ESBM">Entrepren &amp; Small Bus Mgmt (ESBM)</option>
-                        <option value="ENST">Environment and Sustainability (ENST)</option>
-                        <option value="ENVD">Environmental Design (ENVD)</option>
-                        <option value="EVEN">Environmental Engineering (EVEN)</option>
-                        <option value="EPOD">Environmental Prod of Design (EPOD)</option>
-                        <option value="ENVS">Environmental Studies (ENVS)</option>
-                        <option value="ETHN">Ethnic Studies (ETHN)</option>
-                        <option value="TDXD">Experience Design (TDXD)</option>
-                        <option value="FARR">Farrand Residential Acad Prgm (FARR)</option>
-                        <option value="FRSI">Farsi (FRSI)</option>
-                        <option value="FILM">Film Studies (FILM)</option>
-                        <option value="FNCE">Finance (FNCE)</option>
-                        <option value="FINN">Finnish (FINN)</option>
-                        <option value="FYXP">First Year Exploration (FYXP)</option>
-                        <option value="FYSM">First Year Seminar (FYSM)</option>
-                        <option value="FREN">French (FREN)</option>
-                        <option value="GEEN">General Engineering (GEEN)</option>
-                        <option value="GEOG">Geography (GEOG)</option>
-                        <option value="GEOL">Geological Sciences (GEOL)</option>
-                        <option value="GRMN">German (GRMN)</option>
-                        <option value="GSLL">Germanic &amp; Slavic Lang &amp; Lit (GSLL)</option>
-                        <option value="GRAD">Graduate School (GRAD)</option>
-                        <option value="GRTE">Graduate Teacher Education (GRTE)</option>
-                        <option value="HEBR">Hebrew (HEBR)</option>
-                        <option value="HIND">Hindi/Urdu (HIND)</option>
-                        <option value="HIST">History (HIST)</option>
-                        <option value="HONR">Honors (HONR)</option>
-                        <option value="HUMN">Humanities (HUMN)</option>
-                        <option value="HUEN">Humanities for Engineers (HUEN)</option>
-                        <option value="INDO">Indonesian (INDO)</option>
-                        <option value="BAIM">Infm Mgmt/Business Analytics (BAIM)</option>
-                        <option value="INFO">Information Science (INFO)</option>
-                        <option value="IPHY">Integrative Physiology (IPHY)</option>
-                        <option value="IMUS">Intensive Music (IMUS)</option>
-                        <option value="INST">Interdisciplinary Studies (INST)</option>
-                        <option value="IAFS">International Affairs (IAFS)</option>
-                        <option value="INBU">International Business Cert (INBU)</option>
-                        <option value="IAWP">Intrmedia Art,Wrtg,Performance (IAWP)</option>
-                        <option value="INVS">INVST Community Studies (INVS)</option>
-                        <option value="ITAL">Italian (ITAL)</option>
-                        <option value="JPNS">Japanese (JPNS)</option>
-                        <option value="JWST">Jewish Studies (JWST)</option>
-                        <option value="JRNL">Journalism (JRNL)</option>
-                        <option value="KREN">Korean (KREN)</option>
-                        <option value="LAND">Landscape Architecture (LAND)</option>
-                        <option value="LGTC">Language Technology (LGTC)</option>
-                        <option value="LAMS">Latin American Studies (LAMS)</option>
-                        <option value="LATN">Latin Language (LATN)</option>
-                        <option value="LAWS">Law School (LAWS)</option>
-                        <option value="LEAD">Leadership Minor (LEAD)</option>
-                        <option value="LDSP">Leadership Res Acad Prgrm (LDSP)</option>
-                        <option value="LGBT">Lesbn/Gay/Bisexual Stdys (LGBT)</option>
-                        <option value="LIBB">Libby Residential Acad Prgm (LIBB)</option>
-                        <option value="LIBR">Libraries (LIBR)</option>
-                        <option value="LING">Linguistics (LING)</option>
-                        <option value="MGMT">Management (MGMT)</option>
-                        <option value="MKTG">Marketing (MKTG)</option>
-                        <option value="ENVM">Master of the Environment (ENVM)</option>
-                        <option value="MSEN">Materials Science&amp;Engineering (MSEN)</option>
-                        <option value="MATH">Mathematics (MATH)</option>
-                        <option value="MBAX">MBA Advanced Electives (MBAX)</option>
-                        <option value="MBAC">MBA Core (MBAC)</option>
-                        <option value="MCEN">Mechanical Engineering (MCEN)</option>
-                        <option value="MDRP">Media Research and Practice (MDRP)</option>
-                        <option value="MDST">Media Studies (MDST)</option>
-                        <option value="MEMS">Medieval &amp; Early Modern Stdys (MEMS)</option>
-                        <option value="MILR">Military Science (MILR)</option>
-                        <option value="MCDB">Molecular Cell &amp; Dev Biology (MCDB)</option>
-                        <option value="MSBC">MS Business Core (MSBC)</option>
-                        <option value="MSBX">MS Business Electives (MSBX)</option>
-                        <option value="MUSM">Museum (MUSM)</option>
-                        <option value="MUSC">Music (MUSC)</option>
-                        <option value="MUEL">Music Electives (MUEL)</option>
-                        <option value="EMUS">Music Ensemble (EMUS)</option>
-                        <option value="NAVR">Naval Science (NAVR)</option>
-                        <option value="NRSC">Neuroscience (NRSC)</option>
-                        <option value="NCBE">Non-credit Business Education (NCBE)</option>
-                        <option value="NCEN">Non-credit Engineering (NCEN)</option>
-                        <option value="NCGR">Non-credit German (NCGR)</option>
-                        <option value="NCIE">Non-credit Internat'l English (NCIE)</option>
-                        <option value="NCTM">Non-credit Technology &amp; Media (NCTM)</option>
-                        <option value="NCTP">Non-credit Test Preparation (NCTP)</option>
-                        <option value="NRLN">Norlin Scholars (NRLN)</option>
-                        <option value="OPIM">Operations &amp; Information MGMT (OPIM)</option>
-                        <option value="ORMG">Organization Management (ORMG)</option>
-                        <option value="ORGN">Organizational Behavior (ORGN)</option>
-                        <option value="ORGL">Organizational Leadership (ORGL)</option>
-                        <option value="PACS">Peace &amp; Conflict Studies (PACS)</option>
-                        <option value="PMUS">Performance Music (PMUS)</option>
-                        <option value="PHIL">Philosophy (PHIL)</option>
-                        <option value="PHYS">Physics (PHYS)</option>
-                        <option value="PLAN">Planning and Urban Design (PLAN)</option>
-                        <option value="PSCI">Political Science (PSCI)</option>
-                        <option value="PORT">Portuguese (PORT)</option>
-                        <option value="PRLC">Presidents Leadership Class (PRLC)</option>
-                        <option value="PSYC">Psychology (PSYC)</option>
-                        <option value="REAL">Real Estate (REAL)</option>
-                        <option value="RCPR">Reciprocal Exchange (RCPR)</option>
-                        <option value="RLST">Religious Studies (RLST)</option>
-                        <option value="RUSS">Russian (RUSS)</option>
-                        <option value="SNSK">Sanskrit (SNSK)</option>
-                        <option value="SCAN">Scandinavian (SCAN)</option>
-                        <option value="SEWL">Sewall Residential Acad Prgm (SEWL)</option>
-                        <option value="SOCY">Sociology (SOCY)</option>
-                        <option value="SPAN">Spanish (SPAN)</option>
-                        <option value="SLHS">Speech, Language &amp; Hearing Sci (SLHS)</option>
-                        <option value="STAT">Statistics (STAT)</option>
-                        <option value="STDY">Study Abroad (STDY)</option>
-                        <option value="SUST">Sustainability by Design RAP (SUST)</option>
-                        <option value="SSIR">Sustainablty&amp;Soc Innovtn RAP (SSIR)</option>
-                        <option value="SWED">Swedish (SWED)</option>
-                        <option value="CYBR">Technology, Cybersec &amp; Policy (CYBR)</option>
-                        <option value="TLEN">Telecommunications (TLEN)</option>
-                        <option value="THDN">Theater &amp; Dance (THDN)</option>
-                        <option value="THTR">Theatre (THTR)</option>
-                        <option value="TMUS">Thesis Music (TMUS)</option>
-                        <option value="WGST">Women and Gender Studies (WGST)</option>
-                        <option value="WRTG">Writing and Rhetoric (WRTG)</option>
-                    </select>
-                    <br>
                     <button class="btn btn-dark btn-block" id="search_button" onclick="search();">Search</button>
-                    <!-- <input type="submit" class="btn btn-dark btn-block" value="Search"> -->
-                    <!-- </form> -->
+                    <button class="btn btn-outline-danger btn-block" onclick="reset();">Reset</button>
                     <br>
                 </div>
             </div>
         </div>
-        <div class="col-8 text-center">
-            <table class="table dt-responsive table-striped" cellspacing="0" width="100%">
-                <thead class="thead-dark">
-                    <tr>
-                        <th>Course Number</th>
-                        <th>Course Title</th>
-                        <th>Credits</th>
-                        <!-- <th>Section #</th>
-                        <th>Instructor</th>
-                        <th>Time</th>
-                        <th>Room</th> -->
-                    </tr>
-                </thead>
-                <tbody id="result_table">
+        <div class="col-8 text-center" id="result_div">
+            <div class="card border-0">
+                <table class="table dt-responsive table-striped" cellspacing="0" width="100%">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th class="sticky-top">Course Number</th>
+                            <th class="sticky-top">Course Title</th>
+                            <th class="sticky-top">Credits</th>
+                        </tr>
+                    </thead>
+                    <tbody id="result_table">
 
-                </tbody>
-            </table>
+                    </tbody>
+                </table>
+            </div>
         </div>
-        <!-- <div class="col-5 text-center">
-            Column Three
-        </div> -->
     </div>
 </div>
 
@@ -240,7 +46,17 @@
 <script>
 
     $(document).ready(function () {
-        $('#search_button').click();
+        // setup table scrolling
+        $("#result_div").attr("style", `height: ${screen.height * 0.77}px; overflow: auto;`);
+        // set placeholder for department field (not working through django side)
+        $("#id_department").attr("placeholder", "Any Subject");
+        // retrieve values from sessionStorage
+        if (typeof (Storage) !== "undefined") {
+            // Code for localStorage/sessionStorage.
+            $("#id_department").val(sessionStorage.getItem("dept_search"));
+            $("#id_keyword").val(sessionStorage.getItem("keyword_search"));
+            $('#search_button').click();
+        }
     });
 
     $('#search_div').on('keydown', function (e) {
@@ -257,9 +73,17 @@
         return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
     }
     var search = function () {
+        // scroll to top of table
+        $("#result_div").animate({ scrollTop: 0 }, "fast");
         // Get data from form
-        var keyword = $("#class_keyword").val()
-        var department = $("#select_department").val()
+        var keyword = $("#id_keyword").val();
+        var department = $("#id_department").val();
+        // save data to sessionStorage storage to retain values
+        if (typeof (Storage) !== "undefined") {
+            // Code for sessionStorage.
+            sessionStorage.setItem("dept_search", department);
+            sessionStorage.setItem("keyword_search", keyword);
+        }
         if (keyword != "" || department != "") { // Fields must actually contain something
             var csrftoken = $('input[name="csrfToken"]').attr('value')
             $.ajaxSetup({
@@ -277,23 +101,16 @@
                 console.log(result);
                 var duplicate_check = {}
                 // Code depending on result
-                document.getElementById("result_table").innerHTML = "";
+                $("#result_table").html("");
                 var html = "";
                 for (var i = 0; i < result.length; i++) {
                     if (duplicate_check[result[i].department] !== result[i].course_subject && result[i].credit != 0) {
-                        // html += `<tr><td><a href="{% url 'classes:view' 0 %}">${result[i].department} ${result[i].course_subject}</a></td>\
-                        // <td>${result[i].course_title}</td>\
-                        // <td>${result[i].section_number}</td>\
-                        // <td>${result[i].instructor_name}</td>\
-                        // <td>${result[i].start_time}-${result[i].end_time}</td>\
-                        // <td>${result[i].building_room}</td>\
-                        // </tr>`.replace(/0/, result[i].id);
                         html += `<tr><td><a href="{% url 'classes:view' 0 %}">${result[i].department} ${result[i].course_subject}</a></td>\
                         <td>${result[i].course_title}</td><td>${result[i].credit}</td></tr>`.replace(/0/, result[i].id);
                         duplicate_check[result[i].department] = result[i].course_subject;
                     }
                 }
-                document.getElementById("result_table").innerHTML = html;
+                $("#result_table").html(html);
             })
                 .catch(function () {
                     // An error occurred
@@ -304,6 +121,14 @@
         }
         return false;
     };
+
+    function reset() {
+        $("#id_department").val("");
+        $("#id_keyword").val("");
+        $("#result_table").html("");
+        sessionStorage.removeItem("dept_search");
+        sessionStorage.removeItem("keyword_search");
+    }
 </script>
 
 

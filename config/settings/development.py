@@ -16,7 +16,7 @@ try:
     from .keys import db_password, secret_key, email_password
 except ImportError as e:
     print(
-        "\n***********************************\n\nError: {}. Using default configuration. This should ONLY be used by Travis for build testing.\n\n***********************************\n".format(
+        "\n***********************************\n\nWARNING: {}. Using default configuration. This should ONLY be used by Travis for build testing.\n\n***********************************\n".format(
             e
         )
     )
@@ -24,11 +24,12 @@ except ImportError as e:
     secret_key = (
         "3u57j-w!+4m_k-f1(or!1d_n4bmrwi!+a@x9xvdt^r0qs(jj@!"
     )  # NOTE: This is an alternate secret key for build testing ONLY!
-    email_password = ""  # NOTE: no way to test sending emails
+    email_password = (
+        ""
+    )  # NOTE: no way to test sending emails, since our password is necessary.
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-BASE_DIR = os.path.dirname(os.path.dirname(
-    os.path.dirname(os.path.abspath(__file__))))
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 
 # Quick-start development settings - unsuitable for production
@@ -59,6 +60,7 @@ INSTALLED_APPS = [
     "crispy_forms",
     "ajax_select",
     "contact.apps.ContactConfig",
+    "fcq.apps.FcqConfig",
 ]
 
 CRISPY_TEMPLATE_PACK = "bootstrap4"

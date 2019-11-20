@@ -7,15 +7,18 @@ from django.http import JsonResponse
 from django.shortcuts import render
 from django.views.generic import CreateView, DetailView, ListView, UpdateView
 
-from classes.models import Class
+from classes.models import Class, Department
 
 from .serializers import ClassSerializer
+from .forms import SearchForm
 
 # Create your views here.
 
 
 def search(request):
-    return render(request, "classes/search.html")
+    ctx = {}
+    ctx["form"] = SearchForm()
+    return render(request, "classes/search.html", ctx)
 
 
 def search_ajax(request):
@@ -37,10 +40,15 @@ def search_ajax(request):
             for x in keyword
         ),
     )
-    department = get("department", "")
-
-    query = Q(department__contains=department) & keyword_query
-
+    department = get("department")
+    if department:
+        department_obj = Department.objects.filter(code__iexact=department).first()
+        if not department_obj:
+            # return no results if department is not found
+            return JsonResponse({})
+        query = Q(department=department_obj) & keyword_query
+    else:
+        query = keyword_query
     classes = Class.objects.filter(query).order_by("course_subject")
     response = ClassSerializer(classes, many=True)
     return JsonResponse(response.data, safe=False)
@@ -56,6 +64,8 @@ class ClassView(DetailView):
             course_subject=self.object.course_subject, department=self.object.department
         ).exclude(id=self.object.id)
         ctx["related"] = related
-        if self.object in self.request.user.schedule.classes.all():
-            ctx["in_schedule"] = True
+        # only add to schedule functionality if user is logged in
+        if self.request.user.is_authenticated:
+            if self.object in self.request.user.schedule.classes.all():
+                ctx["in_schedule"] = True
         return ctx

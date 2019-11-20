@@ -19,7 +19,7 @@ def add_to_schedule(request):
     messages.success(
         request,
         "{} {} has been successfully added to your schedule!".format(
-            add_class.department, add_class.course_subject
+            add_class.department.code, add_class.course_subject
         ),
     )
     return redirect("classes:view", pk=add_class_id)
@@ -38,7 +38,7 @@ def remove_from_schedule(request):
     messages.success(
         request,
         "{} {} has been successfully removed to your schedule!".format(
-            remove_class.department, remove_class.course_subject
+            remove_class.department.code, remove_class.course_subject
         ),
         extra_tags="danger",
     )
