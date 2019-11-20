@@ -1,7 +1,7 @@
 from django.test import TestCase
 from users.models import User
 from users.forms import UserSignUpForm
-from classes.models import Class
+from classes.models import Class, Department
 
 # Model unit test
 
@@ -12,11 +12,20 @@ class UserTestCase(TestCase):
     # function that gets called first
     def setUp(self):
         new_user = User.objects.create(
-            email="test@test.com", phone="1234567890", first_name="test", last_name="user", major="APPM")
+            email="test@test.com",
+            phone="1234567890",
+            first_name="test",
+            last_name="user",
+            major="APPM",
+        )
+
+        test_department = Department.objects.create(
+            name="Applied Math (APPM)", code="APPM"
+        )
 
         # Class being made just for the department so I can make sure users enter valid majors
         test_class = Class.objects.create(
-            department="APPM",
+            department=test_department,
             course_subject=1350,
             section_number="100",
             session="B",
@@ -30,7 +39,7 @@ class UserTestCase(TestCase):
             building_room="MATH100",
             instructor_name="McMathson,Mathy",
             max_enrollment=200,
-            campus="Main Campus"
+            campus="Main Campus",
         )
 
     # running a test case
@@ -53,28 +62,34 @@ class UserTestCase(TestCase):
         self.assertEqual(len(form.errors), 7)
         self.assertEqual(form.errors.get("phone"), None)
 
-        form = UserSignUpForm({
-            "username": "abc123",
-            "email": "me@me.com",
-            "phone": "1234567890",
-            "first_name": "test",
-            "last_name": "user",
-            "major": "happy",
-            "password1": "SuperSecretPassword123",
-            "password2": "SuperSecretPassword123"})
+        form = UserSignUpForm(
+            {
+                "username": "abc123",
+                "email": "me@me.com",
+                "phone": "1234567890",
+                "first_name": "test",
+                "last_name": "user",
+                "major": "happy",
+                "password1": "SuperSecretPassword123",
+                "password2": "SuperSecretPassword123",
+            }
+        )
 
         # Invalid major
         self.assertEqual(len(form.errors), 1)
 
-        form = UserSignUpForm({
-            "username": "abc123",
-            "email": "me@me.com",
-            "phone": "1234567890",
-            "first_name": "test",
-            "last_name": "user",
-            "major": "APPM",
-            "password1": "SuperSecretPassword123",
-            "password2": "SuperSecretPassword123"})
+        form = UserSignUpForm(
+            {
+                "username": "abc123",
+                "email": "me@me.com",
+                "phone": "1234567890",
+                "first_name": "test",
+                "last_name": "user",
+                "major": "APPM",
+                "password1": "SuperSecretPassword123",
+                "password2": "SuperSecretPassword123",
+            }
+        )
 
         print(form.errors)
         # Valid input

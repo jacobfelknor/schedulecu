@@ -1,0 +1,161 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block content %}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-4">
+            <div class="card border-dark">
+                <h5 class="card-header bg-warning">
+                    Search for Professors
+                </h5>
+                <div class="container" id="search_div">
+                    <br>
+                    {{ form.media }}
+                    {{ form|crispy }}
+                    <input type="hidden" name="csrfToken" value="{{ csrf_token }}">
+                    <button class="btn btn-dark btn-block" id="search_button" onclick="search();">Search</button>
+                    <button class="btn btn-outline-danger btn-block" onclick="reset();">Reset</button>
+                    <br>
+                </div>
+            </div>
+        </div>
+        <div class="col-8 text-center" id="result_div">
+            <div class="card border-0">
+                <table class="table dt-responsive table-striped" cellspacing="0" width="100%">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th class="sticky-top">Instructor Name</th>
+                            <th class="sticky-top">Main Department</th>
+                            <th class="sticky-top">Average Rating</th>
+                            <th class="sticky-top">Average Challenge</th>
+                            <th class="sticky-top"># of Classes Taught</th>
+                        </tr>
+                    </thead>
+                    <tbody id="result_table" style="overflow-y: scroll; height: 200px;">
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}
+
+{% block javascript %}
+<script>
+
+    $(document).ready(function () {
+        // setup table scrolling
+        $("#result_div").attr("style", `height: ${screen.height * 0.77}px; overflow: auto;`);
+        // set placeholder for department field (not working through django side)
+        $("#id_department").attr("placeholder", "Any Subject");
+        // retrieve values from sessionStorage
+        if (typeof (Storage) !== "undefined") {
+            // Code for localStorage/sessionStorage.
+            $("#id_department").val(sessionStorage.getItem("fcq_dept_search"));
+            $("#id_keyword").val(sessionStorage.getItem("fcq_keyword_search"));
+            $("#id_number").val(sessionStorage.getItem("fcq_number_search"));
+            $('#search_button').click();
+        }
+        // show courseBox if necessary
+        courseBox();
+    });
+
+    $('#search_div').on('keydown', function (e) {
+        var key = e.which;
+        if (key == 13) {
+            // alert("enter");
+            $('#search_button').click();
+            return false;
+        }
+    });
+
+    $("#search_div").on('keyup', function (e) {
+        // show courseBox if necessary
+        courseBox();
+    });
+
+
+    function courseBox() {
+        var department = $("#id_department").val();
+        if (department.length == 0) {
+            $("#id_number").val(null);
+            $("#id_number").attr("hidden", "true");
+        } else {
+            $("#id_number").removeAttr("hidden");
+        }
+    };
+
+    function csrfSafeMethod(method) {
+        // these HTTP methods do not require CSRF protection
+        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    }
+    var search = function () {
+        // scroll to top of table
+        $("#result_div").animate({ scrollTop: 0 }, "fast");
+        // Get data from form
+        var keyword = $("#id_keyword").val();
+        var department = $("#id_department").val();
+        var number = $("#id_number").val();
+        // save data to sessionStorage storage to retain values
+        if (typeof (Storage) !== "undefined") {
+            // Code for sessionStorage.
+            sessionStorage.setItem("fcq_dept_search", department);
+            sessionStorage.setItem("fcq_keyword_search", keyword);
+            sessionStorage.setItem("fcq_number_search", number);
+        }
+        if (keyword != "" || department != "") { // Fields must actually contain something
+            var csrftoken = $('input[name="csrfToken"]').attr('value')
+            $.ajaxSetup({
+                beforeSend: function (xhr, settings) {
+                    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                    }
+                }
+            });
+            var data = { keyword: keyword, department: department, number: number };
+            var args = {
+                type: "POST", url: "{% url 'fcq:fcq_search_ajax' %}", data: data
+            };
+            $.ajax(args).then(function (result) {
+                console.log(result);
+                // Code depending on result
+                $("#result_table").html("");
+                var html = "";
+                for (var i = 0; i < result.length; i++) {
+                    html += `<tr><td>${result[i].lastName}, ${result[i].firstName}</td>\
+                        <td>${result[i].mainDepartment}</td>
+                        <td>${result[i].avgCourseRating}</td><td>${result[i].avgChallenge}</td>
+                        <td>${result[i].numClasses}</td></tr>`;
+                }
+                $("#result_table").html(html);
+            })
+                .catch(function () {
+                    // An error occurred
+                });
+        }
+        else {
+            // display an explanation of failure -- optional for starters
+        }
+        return false;
+    };
+
+    function reset() {
+        $("#id_department").val("");
+        $("#id_keyword").val("");
+        $("#result_table").html("");
+        courseBox();
+        sessionStorage.removeItem("fcq_dept_search");
+        sessionStorage.removeItem("fcq_keyword_search");
+        sessionStorage.removeItem("fcq_number_search");
+    }
+</script>
+
+
+
+{% endblock %}

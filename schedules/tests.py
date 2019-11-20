@@ -1,7 +1,7 @@
 from django.contrib.auth import login
 from django.test import Client, TestCase
 
-from classes.models import Class
+from classes.models import Class, Department
 from users.forms import UserSignUpForm
 from users.models import User
 
@@ -10,14 +10,18 @@ from users.models import User
 # Create class for each test case, inherit Django's TestCase class
 class ScheduleTestCase(TestCase):
     class_id = None
+    class_obj = None
     # function that gets called first
     def setUp(self):
         """ Set up new user using UserSignUp Form to test schedule. Uses similar method as in the user test
             Tests whether or not the user's schedule is assigned correctly on creation
         """
+        test_department = Department.objects.create(
+            name="Computer Science (CSCI)", code="CSCI"
+        )
         # Class being made to add to schedule
         test_class = Class.objects.create(
-            department="CSCI",
+            department=test_department,
             course_subject=1350,
             section_number="100",
             session="B",
@@ -33,8 +37,9 @@ class ScheduleTestCase(TestCase):
             max_enrollment=200,
             campus="Main Campus",
         )
-        # Save this class' id for later use
+        # Save this class' id/obj for later use
         self.class_id = test_class.id
+        self.class_obj = test_class
 
         # Ensure blank form is not valid
         form = UserSignUpForm({})
@@ -80,3 +85,7 @@ class ScheduleTestCase(TestCase):
             "/schedules/add_to_schedule/", {"class_id": self.class_id}
         )  # make request to view to add class to schedule
         self.assertEqual(len(user.schedule.classes.all()), 1)  # confirm class was added
+
+        self.assertEqual(
+            user.schedule.classes.first(), self.class_obj
+        )  # confirm class was added correctly
