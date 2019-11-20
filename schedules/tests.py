@@ -8,10 +8,13 @@ from users.models import User
 # Model unit test
 
 # Create class for each test case, inherit Django's TestCase class
+
+
 class ScheduleTestCase(TestCase):
     class_id = None
     class_obj = None
     # function that gets called first
+
     def setUp(self):
         """ Set up new user using UserSignUp Form to test schedule. Uses similar method as in the user test
             Tests whether or not the user's schedule is assigned correctly on creation
@@ -62,13 +65,13 @@ class ScheduleTestCase(TestCase):
                 "password2": "SuperSecretPassword123",
             }
         )
-        print(form.errors)
         # Valid input
         self.assertTrue(form.is_valid())
         form.save()
 
     def testScheduleAssignment(self):
         user = User.objects.get(username="testing123")
+        print(user.schedule)
         self.assertIsNotNone(user.schedule)
 
     def testAddClassToSchedule(self):
@@ -84,7 +87,8 @@ class ScheduleTestCase(TestCase):
         c.get(
             "/schedules/add_to_schedule/", {"class_id": self.class_id}
         )  # make request to view to add class to schedule
-        self.assertEqual(len(user.schedule.classes.all()), 1)  # confirm class was added
+        self.assertEqual(len(user.schedule.classes.all()),
+                         1)  # confirm class was added
 
         self.assertEqual(
             user.schedule.classes.first(), self.class_obj

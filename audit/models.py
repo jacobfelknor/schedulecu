@@ -1,89 +1,8 @@
 from django.db import models
 from django.contrib.postgres.fields import ArrayField
 from users.models import User
-from classes.models import Class
+from classes.models import Class, Department
 from django.db import transaction
-
-
-class AuditCreator:
-
-    def loadSection(filename, Section):
-        file = open(filename, "r")
-        line = file.readline()
-        Section.creditRequirement = line.split(",")[0]
-        for className in line.split(",")[1:]:
-            classDepartment = className[0:-4]
-            courseSubject = className[-4:]
-            objects = Class.objects.filter(department=classDepartment).filter(
-                course_subject=courseSubject)
-            for obj in objects:
-                Section.appliedClasses.add(obj)
-        file.close()
-        return Section
-
-    def createCSAudit(CSAudit):
-        OverallSection = DegreeSection()
-        MajorSection = DegreeSection()
-        NatSciSection = DegreeSection()
-        AllHumn = DegreeSection()
-        UpperHumn = DegreeSection()
-        OverallSection.sectionName = "Overall"
-        MajorSection.sectionName = "Major"
-        NatSciSection.sectionName = "Natural Science"
-        AllHumn.sectionName = "Humanities"
-        UpperHumn.sectionName = "Upper Humanities"
-        OverallSection.creditRequirement = 128
-        OverallSection.currentCredit = 0
-        MajorSection.creditRequirement = 58
-        MajorSection.currentCredit = 0
-        NatSciSection.creditRequirement = 17
-        NatSciSection.currentCredit = 0
-        AllHumn.creditRequirement = 15
-        AllHumn.currentCredit = 0
-        UpperHumn.creditRequirement = 6
-        UpperHumn.currentCredit = 0
-
-        # CSAudit.userId = userId
-        # I don't think I need to wrap this in a try block
-        # with transaction.atomic():
-        #    CSAudit.save()
-
-        # load and save all sections
-        OverallSection.auditId = CSAudit
-        MajorSection.auditId = CSAudit
-        NatSciSection.auditId = CSAudit
-        AllHumn.auditId = CSAudit
-        UpperHumn.auditId = CSAudit
-
-        with transaction.atomic():
-            OverallSection.save()
-            MajorSection.save()
-            NatSciSection.save()
-            AllHumn.save()
-            UpperHumn.save()
-
-        NatSciSection = loadSection(
-            "audit/management/commands/natsci.csv", NatSciSection)
-
-        file = open('audit/management/commands/csAudit.csv', 'r')
-        failures = 0
-        for line in file:
-            prereq = Prerequisite()
-            data = [x.replace(";", ",")
-                    for x in line[:len(line) - 1].split(",")]
-            prereq.requiredNumber = data[0]
-            prereq.possibleClasses = data[1:]
-            prereq.auditId = CSAudit
-
-            try:
-                with transaction.atomic():
-                    prereq.save()
-            except:
-                failures += 1
-        file.close()
-        print("Failed", failures, "prereqs")
-
-        return audit
 
 # webscrape humanities classes off classes.colorado.edu?
 # I have natsci classes already
@@ -106,14 +25,22 @@ class Audit(models.Model):
         super(Audit, self).save(*args, **kwargs)
 
     # Helper methods
-    def loadSection(self, filename, Section):
+    def loadSection(self, filename):
+        Section = DegreeSection()
         file = open(filename, "r")
-        line = file.readline()
-        Section.creditRequirement = line.split(",")[0]
-        for className in line.split(",")[1:]:
+        line = file.readline().split(",")
+        Section.sectionName = line[0]
+        Section.creditRequirement = line[1]
+        Section.currentCredit = 0
+        Section.auditId = self
+
+        with transaction.atomic():
+            Section.save()
+
+        for className in line[2:]:
             classDepartment = className[0:-4]
             courseSubject = className[-4:]
-            objects = Class.objects.filter(department=classDepartment).filter(
+            objects = Class.objects.filter(department__code=classDepartment).filter(
                 course_subject=courseSubject)
             for obj in objects:
                 Section.appliedClasses.add(obj)
@@ -121,43 +48,13 @@ class Audit(models.Model):
         return Section
 
     def createCSAudit(self):
-        OverallSection = DegreeSection()
-        MajorSection = DegreeSection()
-        NatSciSection = DegreeSection()
-        AllHumn = DegreeSection()
-        UpperHumn = DegreeSection()
-        OverallSection.sectionName = "Overall"
-        MajorSection.sectionName = "Major"
-        NatSciSection.sectionName = "Natural Science"
-        AllHumn.sectionName = "Humanities"
-        UpperHumn.sectionName = "Upper Humanities"
-        OverallSection.creditRequirement = 128
-        OverallSection.currentCredit = 0
-        MajorSection.creditRequirement = 58
-        MajorSection.currentCredit = 0
-        NatSciSection.creditRequirement = 17
-        NatSciSection.currentCredit = 0
-        AllHumn.creditRequirement = 15
-        AllHumn.currentCredit = 0
-        UpperHumn.creditRequirement = 6
-        UpperHumn.currentCredit = 0
-
-        # load and save all sections
-        OverallSection.auditId = self
-        MajorSection.auditId = self
-        NatSciSection.auditId = self
-        AllHumn.auditId = self
-        UpperHumn.auditId = self
-
-        with transaction.atomic():
-            OverallSection.save()
-            MajorSection.save()
-            NatSciSection.save()
-            AllHumn.save()
-            UpperHumn.save()
-
-        NatSciSection = self.loadSection(
-            "audit/management/commands/natsci.csv", NatSciSection)
+        OverallSection = self.loadSection(
+            "audit/requirements/bscs/overall.csv")
+        MajorSection = self.loadSection("audit/requirements/bscs/major.csv")
+        NatSciSection = self.loadSection("audit/requirements/bscs/natsci.csv")
+        AllHumn = self.loadSection("audit/requirements/bscs/humanities.csv")
+        UpperHumn = self.loadSection(
+            "audit/requirements/bscs/upperhumanities.csv")
 
         file = open('audit/management/commands/csAudit.csv', 'r')
         failures = 0
@@ -175,7 +72,7 @@ class Audit(models.Model):
             except:
                 failures += 1
         file.close()
-        print("Failed", failures, "prereqs")
+        # print("Failed", failures, "prereqs")
 
 
 # DegreeSection holds requirements for a section of the degree (i.e. nat sci, humanities, etc)
