@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 
-class ClassSerializer(serializers.Serializer):
+class SectionSerializer(serializers.Serializer):
     id = serializers.IntegerField()
     department = (
         serializers.SerializerMethodField()
@@ -30,3 +30,14 @@ class ClassSerializer(serializers.Serializer):
 
     def get_course_title(self, obj):
         return obj.parent_class.course_title
+
+
+class ClassSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
+    department = serializers.SerializerMethodField()
+    course_title = serializers.CharField()
+    course_subject = serializers.IntegerField()
+
+    def get_department(self, obj):
+        """ return the class' department code to be serialized """
+        return obj.department.code

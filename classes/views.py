@@ -4,13 +4,13 @@ from functools import reduce
 
 from django.db.models import Q
 from django.http import JsonResponse
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, render
 from django.views.generic import CreateView, DetailView, ListView, UpdateView
 
 from classes.models import Class, Department, Section
 
-from .serializers import ClassSerializer
 from .forms import SearchForm
+from .serializers import ClassSerializer
 
 # Create your views here.
 
@@ -33,9 +33,9 @@ def search_ajax(request):
         operator.and_,
         (
             (
-                Q(parent_class__course_title__icontains=x)
-                | Q(instructor_name__icontains=x)
-                | Q(parent_class__course_subject__icontains=x)
+                Q(course_title__icontains=x)
+                # | Q(instructor_name__icontains=x)
+                | Q(course_subject__icontains=x)
             )
             for x in keyword
         ),
@@ -46,27 +46,44 @@ def search_ajax(request):
         if not department_obj:
             # return no results if department is not found
             return JsonResponse({})
-        query = Q(parent_class__department=department_obj) & keyword_query
+        query = Q(department=department_obj) & keyword_query
     else:
         query = keyword_query
-    classes = Section.objects.filter(query).order_by("parent_class__course_subject")
+    classes = Class.objects.filter(query).order_by("course_subject")
     response = ClassSerializer(classes, many=True)
     return JsonResponse(response.data, safe=False)
 
 
-class ClassView(DetailView):
-    model = Section
-    context_object_name = "class"
-
-    def get_context_data(self, **kwargs):
-        ctx = super().get_context_data(**kwargs)
-        related = Section.objects.filter(
-            parent_class__course_subject=self.object.parent_class.course_subject,
-            parent_class__department=self.object.parent_class.department,
-        ).exclude(id=self.object.id)
-        ctx["related"] = related
-        # only add to schedule functionality if user is logged in
-        if self.request.user.is_authenticated:
-            if self.object in self.request.user.schedule.classes.all():
-                ctx["in_schedule"] = True
-        return ctx
+def view_section(request, class_id, section_id):
+    ctx = {}
+    # take advantage of relation for these queries!! :)
+    parent_class = get_object_or_404(Class, id=class_id)
+    ctx["parent_class"] = parent_class
+    if section_id != "all":
+        current_section = get_object_or_404(Section, id=section_id)
+        ctx["current_section"] = current_section
+        ctx["generic_view"] = False
+    else:
+        ctx["generic_view"] = True
+    lectures = parent_class.sections.filter(class_component="LEC")
+    recitations = parent_class.sections.filter(class_component="REC")
+    labs = parent_class.sections.filter(class_component="LAB")
+    seminars = parent_class.sections.filter(class_component="SEM")
+    other_query = (
+        Q(class_component="SEM")
+        | Q(class_component="LAB")
+        | Q(class_component="REC")
+        | Q(class_component="LEC")
+    )
+    other = parent_class.sections.exclude(other_query)
+    ctx["lectures"] = lectures
+    ctx["recitations"] = recitations
+    ctx["labs"] = labs
+    ctx["seminars"] = seminars
+    ctx["other"] = other
+    # only add to schedule functionality if user is logged in
+    if request.user.is_authenticated and not ctx["generic_view"]:
+        # if self.object in self.request.user.schedule.classes.all():
+        #     ctx["in_schedule"] = True
+        ctx["in_schedule"] = current_section.in_schedule(request.user)
+    return render(request, "classes/class_detail.html", ctx)

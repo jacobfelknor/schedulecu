@@ -105,7 +105,7 @@
                 var html = "";
                 for (var i = 0; i < result.length; i++) {
                     if (duplicate_check[result[i].department] !== result[i].course_subject && result[i].credit != 0) {
-                        html += `<tr><td><a href="{% url 'classes:view' 0 %}">${result[i].department} ${result[i].course_subject}</a></td>\
+                        html += `<tr><td><a href="{% url 'classes:view' 0 'all' %}">${result[i].department} ${result[i].course_subject}</a></td>\
                         <td>${result[i].course_title}</td><td>${result[i].credit}</td></tr>`.replace(/0/, result[i].id);
                         duplicate_check[result[i].department] = result[i].course_subject;
                     }

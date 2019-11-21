@@ -46,6 +46,7 @@ class Class(models.Model):
     """ 
     General class model. Only one instance for each class
     """
+
     # Fields
     course_title = models.CharField(max_length=50)
     course_subject = models.IntegerField()
@@ -66,6 +67,7 @@ class Section(models.Model):
     """
     Specific Class instance. includes details about a general class
     """
+
     # Fields
     section_number = models.CharField(max_length=5)
     session = models.CharField(max_length=5)
@@ -81,5 +83,13 @@ class Section(models.Model):
     campus = models.CharField(max_length=15)
 
     # Relations
-    parent_class = models.ForeignKey(Class, on_delete=models.CASCADE, related_name="sections")
+    parent_class = models.ForeignKey(
+        Class, on_delete=models.CASCADE, related_name="sections"
+    )
     schedule = models.ManyToManyField(Schedule, related_name="classes")
+
+    def in_schedule(self, user):  # broken for now
+        if self in user.schedule.classes.all():
+            return True
+        else:
+            return False
