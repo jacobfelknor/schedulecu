@@ -63,6 +63,7 @@ INSTALLED_APPS = [
     "contact.apps.ContactConfig",
     "fcq.apps.FcqConfig",
     "audit.apps.AuditConfig",
+    "completedclasses.apps.CompletedclassesConfig",
 ]
 
 CRISPY_TEMPLATE_PACK = "bootstrap4"

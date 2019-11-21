@@ -97,15 +97,6 @@ class DegreeSection(models.Model):
     auditId = models.ForeignKey(Audit, on_delete=models.CASCADE)
 
 
-# Model to define the classes a user has completed. A new object created for each class a user has completed
-class CompletedClass(models.Model):
-
-    # Database
-    completedClass = models.CharField(max_length=10)
-    # Relation
-    userId = models.ForeignKey(User, on_delete=models.CASCADE)
-
-
 # Model to define the prerequisites for taking a class. ArrayField allows for multiple possible prereqs
 # RequiredNumber allows defining how many need to be taken (i.e. take 6 of the following)
 class Prerequisite(models.Model):

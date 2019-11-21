@@ -17,6 +17,7 @@ from .models import User
 from classes.models import Class, Department
 from schedules.models import Schedule
 from audit.models import Audit
+from completedclasses.models import CompletedClasses
 
 
 class UserSignUpForm(UserCreationForm):
@@ -52,6 +53,9 @@ class UserSignUpForm(UserCreationForm):
         audit = Audit()
         audit.userId = user
         audit.save()
+        completed = CompletedClasses()
+        completed.user = user
+        completed.save()
         return user
 
 

@@ -1,5 +1,6 @@
 from django.db import models
 from schedules.models import Schedule
+from completedclasses.models import CompletedClasses
 
 # Create your models here.
 
@@ -65,6 +66,8 @@ class Class(models.Model):
     department = models.ForeignKey(
         Department, on_delete=models.CASCADE, related_name="classes"
     )
+    completed = models.ManyToManyField(
+        CompletedClasses, related_name="classes")
 
     def empty_fields(self):
         empty = []

@@ -42,7 +42,8 @@ def search_ajax(request):
     )
     department = get("department")
     if department:
-        department_obj = Department.objects.filter(code__iexact=department).first()
+        department_obj = Department.objects.filter(
+            code__iexact=department).first()
         if not department_obj:
             # return no results if department is not found
             return JsonResponse({})
@@ -68,4 +69,6 @@ class ClassView(DetailView):
         if self.request.user.is_authenticated:
             if self.object in self.request.user.schedule.classes.all():
                 ctx["in_schedule"] = True
+            if self.object in self.request.user.completed.classes.all():
+                ctx["in_completed]"] = True
         return ctx

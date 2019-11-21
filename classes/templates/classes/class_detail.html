@@ -50,6 +50,15 @@
                     class="btn btn-outline-danger"><i class="fa fa-minus-circle" aria-hidden="true"></i> Remove from
                     Schedule</button></a>
             {% endif %}
+            {% if not in_completed %}
+            <a href="{% url 'completedclasses:add_to_completed_classes' %}?class_id={{ class.id }}"><button
+                    class="btn btn-outline-success"><i class="fa fa-plus-circle" aria-hidden="true"></i> Add to
+                    Completed Classes</button></a>
+            {% else %}
+            <a href="{% url 'completedclasses:remove_from_completed_classes' %}?class_id={{ class.id }}"><button
+                    class="btn btn-outline-danger"><i class="fa fa-minus-circle" aria-hidden="true"></i> Remove from
+                    Completed Classes</button></a>
+            {% endif %}
             {% endif %}
         </div>
     </div> <!-- card -->
