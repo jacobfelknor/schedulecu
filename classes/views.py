@@ -7,7 +7,7 @@ from django.http import JsonResponse
 from django.shortcuts import render
 from django.views.generic import CreateView, DetailView, ListView, UpdateView
 
-from classes.models import Class, Department
+from classes.models import Class, Department, Section
 
 from .serializers import ClassSerializer
 from .forms import SearchForm
@@ -33,9 +33,9 @@ def search_ajax(request):
         operator.and_,
         (
             (
-                Q(course_title__icontains=x)
+                Q(parent_class__course_title__icontains=x)
                 | Q(instructor_name__icontains=x)
-                | Q(course_subject__icontains=x)
+                | Q(parent_class__course_subject__icontains=x)
             )
             for x in keyword
         ),
@@ -46,22 +46,23 @@ def search_ajax(request):
         if not department_obj:
             # return no results if department is not found
             return JsonResponse({})
-        query = Q(department=department_obj) & keyword_query
+        query = Q(parent_class__department=department_obj) & keyword_query
     else:
         query = keyword_query
-    classes = Class.objects.filter(query).order_by("course_subject")
+    classes = Section.objects.filter(query).order_by("parent_class__course_subject")
     response = ClassSerializer(classes, many=True)
     return JsonResponse(response.data, safe=False)
 
 
 class ClassView(DetailView):
-    model = Class
+    model = Section
     context_object_name = "class"
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
-        related = Class.objects.filter(
-            course_subject=self.object.course_subject, department=self.object.department
+        related = Section.objects.filter(
+            parent_class__course_subject=self.object.parent_class.course_subject,
+            parent_class__department=self.object.parent_class.department,
         ).exclude(id=self.object.id)
         ctx["related"] = related
         # only add to schedule functionality if user is logged in

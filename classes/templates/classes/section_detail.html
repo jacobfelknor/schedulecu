@@ -5,13 +5,14 @@
 <div class="container">
     <div class="card border-dark">
         <h3 class="card-header bg-dark text-light">
-            {{ class.course_title }}
+            {{ class.parent_class.course_title }}
         </h3>
         <div class="card-body">
             <table class="table dt-responsive" cellspacing="0" width="100%">
                 <tbody>
                     <tr>
-                        <td><b>Department/Number:</b> <br>{{ class.department.code }} {{ class.course_subject }}
+                        <td><b>Department/Number:</b> <br>{{ class.parent_class.department.code }}
+                            {{ class.parent_class.course_subject }}
                             ({{ class.class_component }})</td>
                         <td><b>Section:</b> <br>{{ class.section_number }}</td>
                         {% if class.instructor_name %}
@@ -72,9 +73,9 @@
             <tbody id="result_table">
                 {% for class in related %}
                 <tr>
-                    <td><a href="{% url 'classes:view' class.id %}">{{ class.department.code }}
-                            {{ class.course_subject }} ({{ class.class_component }})</a></td>
-                    <td>{{ class.course_title }}</td>
+                    <td><a href="{% url 'classes:view' class.id %}">{{ class.parent_class.department.code }}
+                            {{ class.parent_class.course_subject }} ({{ class.class_component }})</a></td>
+                    <td>{{ class.parent_class.course_title }}</td>
                     <td>{{ class.section_number }}</td>
                     {% if class.instructor_name %}
                     <td>{{ class.instructor_name }}</td>
