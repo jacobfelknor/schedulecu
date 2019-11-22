@@ -70,5 +70,5 @@ class ClassView(DetailView):
             if self.object in self.request.user.schedule.classes.all():
                 ctx["in_schedule"] = True
             if self.object in self.request.user.completed.classes.all():
-                ctx["in_completed]"] = True
+                ctx["in_completed"] = True
         return ctx
