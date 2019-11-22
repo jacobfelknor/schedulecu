@@ -28,7 +28,7 @@
                         <tr>
                             <th class="sticky-top">Course Number</th>
                             <th class="sticky-top">Course Title</th>
-                            <th class="sticky-top">Credits</th>
+                            <th class="sticky-top"># Total Sections</th>
                         </tr>
                     </thead>
                     <tbody id="result_table">
@@ -99,16 +99,13 @@
             };
             $.ajax(args).then(function (result) {
                 console.log(result);
-                var duplicate_check = {}
+
                 // Code depending on result
                 $("#result_table").html("");
                 var html = "";
                 for (var i = 0; i < result.length; i++) {
-                    if (duplicate_check[result[i].department] !== result[i].course_subject && result[i].credit != 0) {
-                        html += `<tr><td><a href="{% url 'classes:view' 0 %}">${result[i].department} ${result[i].course_subject}</a></td>\
-                        <td>${result[i].course_title}</td><td>${result[i].credit}</td></tr>`.replace(/0/, result[i].id);
-                        duplicate_check[result[i].department] = result[i].course_subject;
-                    }
+                    html += `<tr><td><a href="{% url 'classes:view' 0 'all' %}">${result[i].department} ${result[i].course_subject}</a></td>\
+                        <td>${result[i].course_title}</td><td>${result[i].num_sections}</td></tr>`.replace(/0/, result[i].id);
                 }
                 $("#result_table").html(html);
             })
