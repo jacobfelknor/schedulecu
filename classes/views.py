@@ -34,7 +34,6 @@ def search_ajax(request):
         (
             (
                 Q(course_title__icontains=x)
-                # | Q(instructor_name__icontains=x)
                 | Q(course_subject__icontains=x)
             )
             for x in keyword
@@ -86,4 +85,5 @@ def view_section(request, class_id, section_id):
         # if self.object in self.request.user.schedule.classes.all():
         #     ctx["in_schedule"] = True
         ctx["in_schedule"] = current_section.in_schedule(request.user)
+    ctx["schedule"] = request.user.schedule.classes.all().order_by("start_time")
     return render(request, "classes/class_detail.html", ctx)
