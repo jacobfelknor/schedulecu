@@ -37,7 +37,11 @@ class ClassSerializer(serializers.Serializer):
     department = serializers.SerializerMethodField()
     course_title = serializers.CharField()
     course_subject = serializers.IntegerField()
+    num_sections = serializers.SerializerMethodField()
 
     def get_department(self, obj):
         """ return the class' department code to be serialized """
         return obj.department.code
+
+    def get_num_sections(self, obj):
+        return obj.sections.count()

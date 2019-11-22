@@ -229,6 +229,7 @@ def PopulateClasses():
     f = open("classes/management/commands/class_schedule.csv", "r")
 
     failures = 0
+    adds = 0
 
     for line in f:
         course = Section()
@@ -249,36 +250,58 @@ def PopulateClasses():
                 department = Department(name=name, code=data[0])
                 department.save()
 
-            # match class if these params match. Omit course title in case of 
+            # match class if these params match. Omit course title in case of
             # slight inconsitancies (such as trailing spaces)
-            class_obj = Class.objects.filter(department=department, course_subject=data[1]).first()
+            class_obj = Class.objects.filter(
+                department=department, course_subject=data[1]
+            ).first()
             if not class_obj:
-                class_obj = Class(department=department, course_subject=data[1], course_title=data[6])
+                class_obj = Class(
+                    department=department, course_subject=data[1], course_title=data[6]
+                )
                 class_obj.save()
         except KeyError:
             failures += 1
             continue
         ############################
-        course.parent_class = class_obj
-        course.section_number = data[2]
-        course.session = data[3]
-        course.class_number = data[4]
-        course.credit = data[5]
-        course.class_component = data[7]
-        course.start_time = data[8]
-        course.end_time = data[9]
-        course.days = data[10]
-        course.building_room = data[11]
-        course.instructor_name = data[12]
-        course.max_enrollment = data[13]
-        course.campus = data[14]
-        try:
-            with transaction.atomic():
-                course.save()
-        except:
-            print(data)
-            failures += 1
-    print("Failed to add", failures, "classes")
+        section_obj = Section.objects.filter(
+            parent_class=class_obj,
+            section_number=data[2],
+            session=data[3],
+            class_number=data[4],
+            credit=data[5],
+            class_component=data[7],
+            start_time=data[8],
+            end_time=data[9],
+            days=data[10],
+            building_room=data[11],
+            instructor_name=data[12],
+            max_enrollment=data[13],
+            campus=data[14],
+        ).first()
+
+        if not section_obj:
+            course.parent_class = class_obj
+            course.section_number = data[2]
+            course.session = data[3]
+            course.class_number = data[4]
+            course.credit = data[5]
+            course.class_component = data[7]
+            course.start_time = data[8]
+            course.end_time = data[9]
+            course.days = data[10]
+            course.building_room = data[11]
+            course.instructor_name = data[12]
+            course.max_enrollment = data[13]
+            course.campus = data[14]
+            try:
+                with transaction.atomic():
+                    course.save()
+                    adds += 1
+            except:
+                print(data)
+                failures += 1
+    print("Added {} classes with {} failures".format(adds, failures))
     f.close()  # close file
     if failures == 0:
         return True  # for testing
@@ -292,9 +315,13 @@ class Command(BaseCommand):
     )
     print("This will take ~30 seconds")
 
-    def handle(self, *args, **options):
-        # Return values are for tests
-        if PopulateClasses():
-            return True
+    def handle(self, *args, **kwargs):
+        # Return values are for tests. test kwarg flag will be set if used with test
+        in_test = kwargs.pop("test", False)
+        if in_test:
+            if PopulateClasses():
+                return True
+            else:
+                return False
         else:
-            return False
+            PopulateClasses()
