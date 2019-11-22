@@ -82,13 +82,15 @@ def view_section(request, class_id, section_id):
     ctx["labs"] = labs
     ctx["seminars"] = seminars
     ctx["other"] = other
+    #ctx["completed"] = request.user.completed.classes.all()
     # only add to schedule functionality if user is logged in
     if request.user.is_authenticated and not ctx["generic_view"]:
         # if self.object in self.request.user.schedule.classes.all():
         #     ctx["in_schedule"] = True
         ctx["in_schedule"] = current_section.in_schedule(request.user)
 
-        if self.object in self.request.user.completed.classes.all():
+    if request.user.is_authenticated:
+        if parent_class in request.user.completed.classes.all():
             ctx["in_completed"] = True
 
     return render(request, "classes/class_detail.html", ctx)

@@ -15,13 +15,15 @@ def add_to_completed_classes(request):
     add_class_id = get("class_id")
     add_class = get_object_or_404(Class, pk=add_class_id)
     completed_classes.classes.add(add_class)
+    # Modify user's audit here too
+
     messages.success(
         request,
         "{} {} has been successfully added to your completed classes!".format(
             add_class.department.code, add_class.course_subject
         ),
     )
-    return redirect("classes:view", pk=add_class_id)
+    return redirect("classes:view", class_id=add_class_id, section_id="all")
 
 
 def remove_from_completed_classes(request):
@@ -34,6 +36,8 @@ def remove_from_completed_classes(request):
     remove_class_id = get("class_id")
     remove_class = get_object_or_404(Class, pk=remove_class_id)
     completed_classes.classes.remove(remove_class)
+    # Modify user's audit here too
+
     messages.success(
         request,
         "{} {} has been successfully removed from your completed classes!".format(
@@ -41,4 +45,4 @@ def remove_from_completed_classes(request):
         ),
         extra_tags="danger",
     )
-    return redirect("classes:view", pk=remove_class_id)
+    return redirect("classes:view", class_id=remove_class_id, section_id="all")

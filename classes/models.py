@@ -55,6 +55,8 @@ class Class(models.Model):
     department = models.ForeignKey(
         Department, on_delete=models.CASCADE, related_name="classes"
     )
+    completed = models.ManyToManyField(
+        CompletedClasses, related_name="classes")
 
     def empty_fields(self):
         empty = []
@@ -87,8 +89,6 @@ class Section(models.Model):
     parent_class = models.ForeignKey(
         Class, on_delete=models.CASCADE, related_name="sections"
     )
-    completed = models.ManyToManyField(
-        CompletedClasses, related_name="classes")
 
     schedule = models.ManyToManyField(Schedule, related_name="classes")
 
