@@ -14,7 +14,7 @@ class AuditFactory:
         Section.sectionName = line[0]
         Section.creditRequirement = line[1]
         Section.currentCredit = 0
-        Section.auditId = audit
+        Section.audit = audit
 
         with transaction.atomic():
             Section.save()
@@ -43,21 +43,35 @@ class AuditFactory:
 
         file = open('audit/requirements/{}/required.csv'.format(name), 'r')
         failures = 0
+        prereqFailures = []
+
         for line in file:
             prereq = Prerequisite()
             data = [x.replace(";", ",")
                     for x in line[:len(line) - 1].split(",")]
             prereq.requiredNumber = data[0]
-            prereq.possibleClasses = data[1:]
-            prereq.auditId = audit
+            prereq.corequisite = data[1]
+            #prereq.possibleClasses = data[2:]
+            prereq.audit = audit
 
             try:
                 with transaction.atomic():
                     prereq.save()
             except:
                 failures += 1
+
+            for name in data[2:]:
+                departCode = name[:4]
+                classNumber = name[4:]
+                try:
+                    prereq.possibleClasses.add(Class.objects.filter(
+                        course_subject=classNumber).filter(department__code=departCode).get())
+                except:
+                    prereqFailures += [name]
         file.close()
-        # print("Failed", failures, "prereqs")
+        if failures > 0:
+            print("Failed", failures, "prereqs")
+            print("Failed to add classes:\n", prereqFailures)
         return audit
 
 
@@ -69,7 +83,7 @@ class Audit(models.Model):
     # Each audit is made of many DegreeSection objects, does not individually hold data
 
     # Relation
-    userId = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     factory = AuditFactory()
 
@@ -77,7 +91,7 @@ class Audit(models.Model):
         if self.pk is None:
             super(Audit, self).save(*args, **kwargs)
             # would need a smarter way if we're doing more than one major
-            if self.userId.major == "CSCI":
+            if self.user.major == "CSCI":
                 print("executing\n\n\n")
                 self = self.factory.createAudit(self, "bscs")
 
@@ -94,7 +108,7 @@ class DegreeSection(models.Model):
     # Relation
     appliedClasses = models.ManyToManyField(
         Class, related_name="appliedClasses")
-    auditId = models.ForeignKey(Audit, on_delete=models.CASCADE)
+    audit = models.ForeignKey(Audit, on_delete=models.CASCADE)
 
 
 # Model to define the prerequisites for taking a class. ArrayField allows for multiple possible prereqs
@@ -103,11 +117,12 @@ class Prerequisite(models.Model):
 
     # Database
     requiredNumber = models.IntegerField()
-    possibleClasses = ArrayField(models.CharField(max_length=10),)
+    corequisite = models.BooleanField()
+    #possibleClasses = ArrayField(models.CharField(max_length=10),)
     # Relation. Each prereq has a class or audit exclusive
-    # classId = models.ForeignKey(
-    #    Class, on_delete=models.CASCADE, blank=True, null=True)
-    # I believe this is many-to-many, as there are many CSCI1300 and many CSCI2270, any 1300 is a prereq for any 2270
-    classes = models.ManyToManyField(Class, related_name="classes")
-    auditId = models.ForeignKey(
+    classes = models.ForeignKey(
+        Class, on_delete=models.CASCADE, blank=True, null=True)
+    audit = models.ForeignKey(
         Audit, on_delete=models.CASCADE, blank=True, null=True)
+    possibleClasses = models.ManyToManyField(
+        Class, related_name="possibleClasses")

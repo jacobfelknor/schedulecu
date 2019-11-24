@@ -51,7 +51,7 @@ class UserSignUpForm(UserCreationForm):
         schedule = Schedule(user=user)
         schedule.save()
         audit = Audit()
-        audit.userId = user
+        audit.user = user
         audit.save()
         completed = CompletedClasses()
         completed.user = user
