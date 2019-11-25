@@ -51,7 +51,6 @@ class AuditFactory:
                     for x in line[:len(line) - 1].split(",")]
             prereq.requiredNumber = data[0]
             prereq.corequisite = data[1]
-            #prereq.possibleClasses = data[2:]
             prereq.audit = audit
 
             try:
@@ -92,7 +91,6 @@ class Audit(models.Model):
             super(Audit, self).save(*args, **kwargs)
             # would need a smarter way if we're doing more than one major
             if self.user.major == "CSCI":
-                print("executing\n\n\n")
                 self = self.factory.createAudit(self, "bscs")
 
         super(Audit, self).save(*args, **kwargs)

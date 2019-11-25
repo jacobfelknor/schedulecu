@@ -46,4 +46,5 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
         print("Populating Prerequisites from audit/requirements/prerequisites/prereqs.csv")
+        print("note: there is currently no protection from adding multiple copies of the same prereq")
         PopulatePrereqs()
