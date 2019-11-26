@@ -45,6 +45,10 @@ class ScheduleTestCase(TestCase):
         self.section_id = test_section.id
         self.section_obj = test_section
 
+        # Save class id/obj for later use
+        self.class_id = test_class.id
+        self.class_obj = test_class
+
         # Ensure blank form is not valid
         form = UserSignUpForm({})
         self.assertFalse(form.is_valid())
@@ -85,7 +89,9 @@ class ScheduleTestCase(TestCase):
             username="testing123", password="SuperSecretPassword123"
         )  # login user
         c.get(
-            "/schedules/add_to_schedule/", {"section_id": self.section_id}
+            "/schedules/add_to_schedule/",
+            {"section_id": self.section_id,
+             "class_id": self.class_id}
         )  # make request to view to add class to schedule
         self.assertEqual(len(user.schedule.classes.all()),
                          1)  # confirm class was added
