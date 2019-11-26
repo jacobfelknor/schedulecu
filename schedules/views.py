@@ -28,8 +28,6 @@ def add_to_schedule(request):
     coreq_failures = []
     for prereq in prereqs:
         # Needs to check possibleClasses not classes
-        # in_completed = CompletedClasses.objects.filter(
-        #    classes=pre_class.classes, user=request.user).exists()
         possibleClasses = [x for x in prereq.possibleClasses.all()]
         in_completed = CompletedClasses.objects.filter(
             classes__in=possibleClasses, user=request.user).exists()
@@ -53,7 +51,24 @@ def add_to_schedule(request):
             ),
         )
     else:
+        def generate_printout(failures, title):
+            output = "Missing {}: ".format(title)
+            if (len(failures) == 0):
+                return ""
+            for failed in failures:
+                possibleClasses = [x for x in failed.possibleClasses.all()]
+                output += "("
+                # return str(failed)
+                for possibleClass in possibleClasses:
+                    print(possibleClass)
+                    output += possibleClass.department.code + \
+                        str(possibleClass.course_subject) + " or "
+                output = output[:-4] + ") and "
+                #output += ") and ("
+            return output[:-5]
+
         # INCOMPLETE MESSAGING. make this nicer
+        '''
         messages.success(
             request,
             "To add this class, add the prerequisites " +
@@ -63,6 +78,20 @@ def add_to_schedule(request):
                           str(y.course_subject) for x in coreq_failures for y in x.possibleClasses.all()]))),
             extra_tags="danger",
         )
+        '''
+        if len(prereq_failures) > 0:
+            messages.success(
+                request,
+                generate_printout(prereq_failures, "prerequisites") + ". " +
+                generate_printout(coreq_failures, "corequisites"),
+                extra_tags="danger",
+            )
+        else:
+            messages.success(
+                request,
+                generate_printout(coreq_failures, "corequisites"),
+                extra_tags="danger",
+            )
 
     return redirect("classes:view", class_id=class_id, section_id=add_section_id)
 
