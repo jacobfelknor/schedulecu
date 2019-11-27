@@ -91,6 +91,7 @@ dept_dict = {
     "GEOG": "Geography (GEOG)",
     "GEOL": "Geological Sciences (GEOL)",
     "GRMN": "German (GRMN)",
+    "GSAP": "Global Studies Residential Academic Program (GSAP)",
     "GSLL": "Germanic &amp; Slavic Lang &amp; Lit (GSLL)",
     "GRAD": "Graduate School (GRAD)",
     "GRTE": "Graduate Teacher Education (GRTE)",
@@ -170,6 +171,7 @@ dept_dict = {
     "REAL": "Real Estate (REAL)",
     "RCPR": "Reciprocal Exchange (RCPR)",
     "RLST": "Religious Studies (RLST)",
+    "RSEI": "Renewable & Sustainable Energy Institute (RSEI)",
     "RUSS": "Russian (RUSS)",
     "SNSK": "Sanskrit (SNSK)",
     "SCAN": "Scandinavian (SCAN)",
@@ -249,36 +251,41 @@ def PopulateFCQ():
             prof = data[9].split(',')
             first = prof[1][1:]
             last = prof[0]
-            professor1 = Professor.objects.filter(
+            prof_obj = Professor.objects.filter(
                 lastName=last,
                 firstName=first,
             ).first()
             #if professor does not exist, add them
-            if not professor1:
-                professor1 = Professor(lastName=last,firstName=first)
-                professor1.save()
+            if not prof_obj:
+                prof_obj = Professor(lastName=last,firstName=first)
+                prof_obj.save()
                 profAdds += 1
 
-            department = Department.objects.filter(name=data[5]).first()
+            if dept_dict[data[5]]:
+                name = html.unescape(
+                    dept_dict[data[5]]
+                )  # some characters like '&' are encoded as 'amp;'
+            else:
+                name = data[5]
+            department = Department.objects.filter(name=name).first()
             if not department:
-                department = Department(name=data[5], code=data[5])
+                department = Department(name=name, code=data[5])
                 department.save()
                 depAdds += 1
 
             # match class if these params match. Omit course title in case of
             # slight inconsitancies (such as trailing spaces)
-            course1 = Class.objects.filter(
+            course_obj = Class.objects.filter(
                 department=department, course_subject=data[6]
             ).first()
-            if not course1:
-                course1 = Class(
+            if not course_obj:
+                course_obj = Class(
                     department=department, course_subject=data[6], course_title=data[8]
                 )
-                course1.save()
+                course_obj.save()
                 courseAdds += 1
         except KeyError:
             failures += 1
-            print(data[5],data[6])
             continue
         fcq = FCQ.objects.filter(
             year=data[1],
@@ -295,8 +302,8 @@ def PopulateFCQ():
             profRating=data[25],
             courseSD=data[26],
             profSD=data[27],
-            professor=professor1,
-            course=course1
+            professor=prof_obj,
+            course=course_obj,
         ).first()
         if not fcq:
             fcq = FCQ()
@@ -314,8 +321,8 @@ def PopulateFCQ():
             fcq.profRating = data[25]
             fcq.courseSD = data[26]
             fcq.profSD = data[27]
-            fcq.professor = professor1
-            fcq.course = course1
+            fcq.professor = prof_obj
+            fcq.course = course_obj
             try:
                 with transaction.atomic():
                     fcq.save()
@@ -332,6 +339,7 @@ def PopulateFCQ():
 
 class Command(BaseCommand):
     print("Filling FCQ and Professor database tables...")
+    print("This will take ~5 minutes")
     def handle(self, *args, **kwargs):
         # Return values are for tests. test kwarg flag will be set if used with test
         in_test = kwargs.pop("test", False)

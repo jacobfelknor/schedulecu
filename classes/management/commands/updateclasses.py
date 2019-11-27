@@ -89,6 +89,7 @@ dept_dict = {
     "GEOG": "Geography (GEOG)",
     "GEOL": "Geological Sciences (GEOL)",
     "GRMN": "German (GRMN)",
+    "GSAP": "Global Studies Residential Academic Program (GSAP)",
     "GSLL": "Germanic &amp; Slavic Lang &amp; Lit (GSLL)",
     "GRAD": "Graduate School (GRAD)",
     "GRTE": "Graduate Teacher Education (GRTE)",
@@ -168,6 +169,7 @@ dept_dict = {
     "REAL": "Real Estate (REAL)",
     "RCPR": "Reciprocal Exchange (RCPR)",
     "RLST": "Religious Studies (RLST)",
+    "RSEI": "Renewable & Sustainable Energy Institute (RSEI)",
     "RUSS": "Russian (RUSS)",
     "SNSK": "Sanskrit (SNSK)",
     "SCAN": "Scandinavian (SCAN)",
@@ -221,6 +223,8 @@ known_differences = {
     "ARC": "ARCH",
     "EDU": "EDUC",
     "LAW": "LAWS",
+    "WMST": "WGST",
+    "JOUR": "JRNL",
 }
 
 
