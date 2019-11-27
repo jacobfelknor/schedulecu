@@ -2,7 +2,6 @@ from django.db import models
 
 from classes.models import Department, Class
 
-
 # Proposed changes:
 """
 have course rating, times taught, intructor
@@ -20,19 +19,20 @@ happening for the class models, see notes there.
 If that doesn't happen, leave these as Chars)
 
 """
-
-
 class Professor(models.Model):
-    fullName = models.CharField(max_length=100, null=True, blank=True)
     firstName = models.CharField(max_length=50)
     lastName = models.CharField(max_length=50)
+
 
 class FCQ(models.Model):
     year = models.CharField(max_length=4)
     semester = models.CharField(max_length=10)
+    section = models.CharField(max_length=4)
+
     courseType = models.CharField(max_length=5)
     online = models.CharField(max_length=1)
     size = models.IntegerField(default=0)
+
     numResponses = models.IntegerField(default=0)
     challenge = models.FloatField(default=0.0)
     learned = models.FloatField(default=0.0)
