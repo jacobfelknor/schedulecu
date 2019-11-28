@@ -23,16 +23,13 @@ class Professor(models.Model):
     firstName = models.CharField(max_length=50)
     lastName = models.CharField(max_length=50)
 
-
 class FCQ(models.Model):
     year = models.CharField(max_length=4)
     semester = models.CharField(max_length=10)
     section = models.CharField(max_length=4)
-
     courseType = models.CharField(max_length=5)
     online = models.CharField(max_length=1)
     size = models.IntegerField(default=0)
-
     numResponses = models.IntegerField(default=0)
     challenge = models.FloatField(default=0.0)
     learned = models.FloatField(default=0.0)
@@ -41,11 +38,9 @@ class FCQ(models.Model):
     profRating = models.FloatField(default=0.0)
     courseSD = models.FloatField(default=0.0) #stand. dev. for course rating
     profSD = models.FloatField(default=0.0) #stand. dev. for professor rating
-
     professor = models.ForeignKey(
         Professor, on_delete=models.CASCADE, related_name="fcqs", null=True
     )
     course = models.ForeignKey(
         Class, on_delete=models.CASCADE, related_name="fcqs"
     )
-

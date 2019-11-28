@@ -6,6 +6,7 @@ from functools import reduce
 from django.db.models import Q
 from django.db.models.functions import Lower, Substr
 from django.http import JsonResponse
+from django.shortcuts import get_object_or_404, render
 from django.shortcuts import render
 from django.views.generic import CreateView, DetailView, ListView, UpdateView
 from rest_framework import serializers
@@ -14,7 +15,7 @@ from classes.models import Department, Class
 from fcq.models import Professor, FCQ
 
 from .forms import SearchForm
-from .serializers import FcqSerializer, ProfessorSerializer
+from .serializers import ProfessorSerializer
 
 # Create your views here.
 
@@ -23,11 +24,6 @@ def fcq_search(request):
     ctx = {}
     ctx["form"] = SearchForm()
     return render(request, "fcq/fcq_search.html", ctx)
-
-
-# this view is unused for now
-def fcq_display(request):
-    return render(request, "fcq/fcq_display.html")
 
 
 def fcq_search_ajax(request):
@@ -50,7 +46,6 @@ def fcq_search_ajax(request):
             for x in keyword
         ),
     ))  
-    total = copy.copy(fcq_obj)
     department = get("department")
     if department:
         department_obj = Department.objects.filter(code__iexact=department).first()
@@ -72,5 +67,24 @@ def fcq_search_ajax(request):
     return JsonResponse(response.data, safe=False)
 
 
-class ProfessorView(DetailView):
-    model = Professor
+def view_professor(request, professor_id):
+    ctx = {}
+    professor_id = int(professor_id)
+    # take advantage of relation for these queries!! :)
+    professor_obj = get_object_or_404(Professor, id=professor_id)
+    professorID = professor_obj.id
+    ctx["professor_id"] = professor_obj.id
+    ctx["firstName"] = professor_obj.firstName
+    ctx["lastName"] = professor_obj.lastName
+
+    fcq = FCQ.objects.filter(professor_id=professorID)
+    ctx["numClasses"] = len(fcq)
+
+    subjects = fcq.order_by().values_list('course__course_subject').distinct()
+    subjectList = [subjects[i][0] for i in range(len(subjects))]
+    subjectFcq = []
+    for i in subjectList:
+        subjectFcq.append(fcq.filter(course__course_subject=i))
+    ctx["subjectList"] = subjectList
+    ctx["subjectFcq"] = subjectFcq
+    return render(request, "fcq/professor_detail.html", ctx)

@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+
+<div class="container-fluid">
+    <div class="row">
+        {% if firstName %}
+        <div>
+            <h1>{{ firstName }}</h1>
+            <br>
+        </div>
+        {% endif %}
+        {% if lastName %}
+        <div>
+            <h1>{{ lastName }}</h1>
+        </div>
+        {% endif %}
+    </div>
+    <div class="row">
+        {% for subject in subjectFcq %} 
+
+        <table>
+            <th> {{ subject.object }} </th>
+        {% for class in subject %}
+            <tr>
+                <!-- <td>{{ class}}</td> -->
+            </tr>
+        {% endfor %}
+        </table>
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock %}
+
+
+{% block javascript %}
+
+
+{% endblock %}
