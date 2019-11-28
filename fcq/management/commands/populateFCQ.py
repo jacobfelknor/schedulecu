@@ -251,20 +251,14 @@ def PopulateFCQ():
             prof = data[9].split(',')
             first = prof[1][1:]
             last = prof[0]
-            prof_obj = Professor.objects.filter(
-                lastName=last,
-                firstName=first,
-            ).first()
+            prof_obj = Professor.objects.filter(lastName=last,firstName=first).first()
             #if professor does not exist, add them
             if not prof_obj:
                 prof_obj = Professor(lastName=last,firstName=first)
                 prof_obj.save()
                 profAdds += 1
-
             if dept_dict[data[5]]:
-                name = html.unescape(
-                    dept_dict[data[5]]
-                )  # some characters like '&' are encoded as 'amp;'
+                name = html.unescape(dept_dict[data[5]])
             else:
                 name = data[5]
             department = Department.objects.filter(name=name).first()
@@ -272,16 +266,11 @@ def PopulateFCQ():
                 department = Department(name=name, code=data[5])
                 department.save()
                 depAdds += 1
-
             # match class if these params match. Omit course title in case of
             # slight inconsitancies (such as trailing spaces)
-            course_obj = Class.objects.filter(
-                department=department, course_subject=data[6]
-            ).first()
+            course_obj = Class.objects.filter(department=department, course_subject=data[6]).first()
             if not course_obj:
-                course_obj = Class(
-                    department=department, course_subject=data[6], course_title=data[8]
-                )
+                course_obj = Class(department=department, course_subject=data[6], course_title=data[8])
                 course_obj.save()
                 courseAdds += 1
         except KeyError:

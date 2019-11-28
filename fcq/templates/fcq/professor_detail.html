@@ -4,31 +4,92 @@
 
 
 <div class="container-fluid">
-    <div class="row">
-        {% if firstName %}
-        <div>
-            <h1>{{ firstName }}</h1>
-            <br>
+    <div class="card col-12 bg-warning">
+        <div class="row" style="padding-top:10px; padding-bottom: 10px;">
+            <div class="col-9">
+                <h1>{{firstName}} {{lastName}}</h1>
+            </div>
+            <div class="col-3 row" style="padding-top:10px;">
+                <p style="padding-top: 10px"><em>Overall Rating</em>:&nbsp;&nbsp;&nbsp;</p>
+                <div id="starRating">
+                    <!-- <i class="fas fa-star fa-2x"></i> -->
+                </div>
+            </div>
         </div>
-        {% endif %}
-        {% if lastName %}
-        <div>
-            <h1>{{ lastName }}</h1>
+        <div class="row" style="font-size: 13px; padding-bottom: 0px;">
+            <div class="col-md-6 col-xl-2 mb-4">
+                <div class="card shadow border-left-primary py-0">
+                    <div class="card-body">
+                        <div class="row align-items-center no-gutters">
+                            <div class="col mr-2">
+                                <div class="text-uppercase font-weight-bold text-xs mb-1"><span># Courses Taught</span></div>
+                                <div class="text-dark font-weight-bold h5 mb-0"><span>{{numClasses}}</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-xl-2 mb-4">
+                <div class="card shadow border-left-primary py-0">
+                    <div class="card-body">
+                        <div class="row align-items-center no-gutters">
+                            <div class="col mr-2">
+                                <div class="text-uppercase font-weight-bold text-xs mb-1"><span>Avg Course Size</span></div>
+                                <div class="text-dark font-weight-bold h5 mb-0"><span>#</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-xl-2 mb-4">
+                <div class="card shadow border-left-primary py-0">
+                    <div class="card-body">
+                        <div class="row align-items-center no-gutters">
+                            <div class="col mr-2">
+                                <div class="text-uppercase font-weight-bold text-xs mb-1"><span>Avg Prof Rating</span></div>
+                                <div class="text-dark font-weight-bold h5 mb-0"><span>#</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-xl-2 mb-4">
+                <div class="card shadow border-left-primary py-0">
+                    <div class="card-body">
+                        <div class="row align-items-center no-gutters">
+                            <div class="col mr-2">
+                                <div class="text-uppercase font-weight-bold text-xs mb-1"><span>Avg Prof Effectiveness</span></div>
+                                <div class="text-dark font-weight-bold h5 mb-0"><span>#</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-xl-2 mb-4">
+                <div class="card shadow border-left-primary py-0">
+                    <div class="card-body">
+                        <div class="row align-items-center no-gutters">
+                            <div class="col mr-2">
+                                <div class="text-uppercase font-weight-bold text-xs mb-1"><span>Avg Course Rating</span></div>
+                                <div class="text-dark font-weight-bold h5 mb-0"><span>#</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-xl-2 mb-4">
+                <div class="card shadow border-left-primary py-0">
+                    <div class="card-body">
+                        <div class="row align-items-center no-gutters">
+                            <div class="col mr-2">
+                                <div class="text-uppercase font-weight-bold text-xs mb-1"><span>Avg Course Challenge</span></div>
+                                <div class="text-dark font-weight-bold h5 mb-0"><span>#</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        {% endif %}
-    </div>
-    <div class="row">
-        {% for subject in subjectFcq %} 
-
-        <table>
-            <th> {{ subject.object }} </th>
-        {% for class in subject %}
-            <tr>
-                <!-- <td>{{ class}}</td> -->
-            </tr>
-        {% endfor %}
-        </table>
-        {% endfor %}
     </div>
 </div>
 
