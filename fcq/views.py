@@ -67,7 +67,7 @@ def fcq_search_ajax(request):
         fcq_obj = fcq_obj.filter(course__course_subject=number)
         
     profList = fcq_obj.order_by().values_list('professor').distinct()
-    professors = Professor.objects.filter(id__in=profList)
+    professors = Professor.objects.filter(id__in=profList).order_by("lastName")
     response = ProfessorSerializer(professors, many=True)
     return JsonResponse(response.data, safe=False)
 
