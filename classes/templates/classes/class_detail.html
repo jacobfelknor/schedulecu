@@ -5,6 +5,14 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-4">
+            <!--
+            <div class="card border-dark">
+                <h5 class="card-header bg-warning">
+                    <a href="{% url 'classes:view' parent_class.id 'all'%}">Class
+                        Homepage</a>
+                </h5>
+            </div>
+            -->
             <!-- Lectures -->
             {% if lectures %}
             <div class="card border-dark">
@@ -179,7 +187,9 @@
             {% if not generic_view %}
             <div class="card border-dark" id="{{ section.id }}">
                 <h3 class="card-header bg-dark text-light">
-                    {{ current_section.parent_class.course_title }}
+
+                    <a href="{% url 'classes:view' parent_class.id 'all'%}"
+                        style="color: white; text-decoration: underline;">{{ current_section.parent_class.course_title }}</a>
                 </h3>
                 <div class="card-body">
                     <table class="table dt-responsive" cellspacing="0" width="100%">
