@@ -111,7 +111,10 @@ def view_professor(request, professor_id):
     stars = (effect + rating + learn) / 3
     ctx["stars"] = stars
 
+    fcq = fcq.order_by('semester')
+    fcq = fcq.order_by('year')
 
+    ctx['fcq'] = fcq
 
 
     subjects = fcq.order_by().values_list('course__course_subject').distinct()
