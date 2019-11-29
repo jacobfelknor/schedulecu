@@ -2,10 +2,10 @@
 
 {% block content %}
 <div class="container-fluid">
-    <div class="card col-12 bg-warning">
+    <div class="card col-12">
         <div class="row" style="padding-top:10px; padding-bottom: 10px;">
             <div class="col-9">
-                <h1>Summary Statistics</h1>
+                <h1>{{firstName}} {{lastName}}</h1>
             </div>
             <div class="col-3">
                 <div id="starRating" style="padding-top: 8px; align-content: right"></div>
@@ -13,7 +13,7 @@
         </div>
         <div class="row" style="font-size: 13px; padding-bottom: 0px;">
             <div class="col-md-6 col-xl-2 mb-4">
-                <div class="card shadow border-left-primary py-0">
+                <div class="card bg-warning shadow border-left-primary py-0">
                     <div class="card-body">
                         <div class="row align-items-center no-gutters">
                             <div class="col mr-2">
@@ -25,7 +25,7 @@
                 </div>
             </div>
             <div class="col-md-6 col-xl-2 mb-4">
-                <div class="card shadow border-left-primary py-0">
+                <div class="card bg-warning shadow border-left-primary py-0">
                     <div class="card-body">
                         <div class="row align-items-center no-gutters">
                             <div class="col mr-2">
@@ -37,7 +37,7 @@
                 </div>
             </div>
             <div class="col-md-6 col-xl-2 mb-4">
-                <div class="card shadow border-left-primary py-0">
+                <div class="card bg-warning shadow border-left-primary py-0">
                     <div class="card-body">
                         <div class="row align-items-center no-gutters">
                             <div class="col mr-2">
@@ -49,7 +49,7 @@
                 </div>
             </div>
             <div class="col-md-6 col-xl-2 mb-4">
-                <div class="card shadow border-left-primary py-0">
+                <div class="card bg-warning shadow border-left-primary py-0">
                     <div class="card-body">
                         <div class="row align-items-center no-gutters">
                             <div class="col mr-2">
@@ -61,7 +61,7 @@
                 </div>
             </div>
             <div class="col-md-6 col-xl-2 mb-4">
-                <div class="card shadow border-left-primary py-0">
+                <div class="card bg-warning shadow border-left-primary py-0">
                     <div class="card-body">
                         <div class="row align-items-center no-gutters">
                             <div class="col mr-2">
@@ -73,7 +73,7 @@
                 </div>
             </div>
             <div class="col-md-6 col-xl-2 mb-4">
-                <div class="card shadow border-left-primary py-0">
+                <div class="card bg-warning shadow border-left-primary py-0">
                     <div class="card-body">
                         <div class="row align-items-center no-gutters">
                             <div class="col mr-2">
@@ -84,14 +84,6 @@
                     </div>
                 </div>
             </div>
-        </div>
-        <br>
-        <br>
-        <br>
-        <br>
-        <div class="border-top border-dark">
-            <br>
-            <h1>Test</h1>
         </div>
         <div class="row">
             <div class="col-5" id="donutchart"></div>
@@ -139,13 +131,13 @@
 <script>
     $(document).ready(function () {
         // setup table scrolling
-        $("#fcq_div").attr("style", `height: ${screen.height * 0.35}px; overflow: auto;`);
+        $("#fcq_div").attr("style", `height: ${screen.height * 0.45}px; overflow: auto;`);
     });
 
     function printStars() {
         var html = '<em>Overall Rating:</em>';
         var count = 0;
-        var stars = ({{stars}})
+        var stars = ({{stars}});
         while(stars > 0.0){
             if(stars < 1.0){
                 if(stars > 0.5){
@@ -163,7 +155,7 @@
                         html += '<i class="fas fa-star-half-alt fa-2x"></i>';
                     }
                     else{
-                        count -= 1
+                        count -= 1;
                     }
                     stars = 0.0;
                 }
@@ -187,21 +179,15 @@
       google.charts.load("current", {packages:["corechart"]});
       google.charts.setOnLoadCallback(drawChart);
       function drawChart() {
-        var data = google.visualization.arrayToDataTable([
-          ['Task', 'Hours per Day'],
-          ['Work',     11],
-          ['Eat',      2],
-          ['Commute',  2],
-          ['Watch TV', 2],
-          ['Sleep',    7]
-        ]);
-
+        var pieData = ({{pieData | safe}});
+        console.log(pieData);
+        var data = google.visualization.arrayToDataTable(pieData);
         var options = {
-            title: 'Taught Subject Distribution',
+            pieSliceText: 'none',
             chartArea: {top:40, bottom:0, left:0, right:0},
             backgroundColor: 'transparent',
             pieHole: 0.4,
-            legend: {position: 'labeled', textStyle: {color: 'white', fontSize: 16}}
+            legend: {position: 'labeled', textStyle: {fontSize: 16}}
         };
 
         var chart = new google.visualization.PieChart(document.getElementById('donutchart'));

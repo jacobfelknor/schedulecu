@@ -109,6 +109,8 @@ def view_professor(request, professor_id):
     ctx["avgLearn"] = learn
 
     stars = (effect + rating + learn) / 3
+    if effect - chal < 0:
+        stars += effect - chal
     ctx["stars"] = stars
 
     fcq = fcq.annotate(
@@ -119,16 +121,27 @@ def view_professor(request, professor_id):
             output_field=IntegerField(),
         )
     ).order_by('-year','-custom_order')
-    ctx['fcq'] = fcq
+    ctx["fcq"] = fcq
 
 
-    subjects = fcq.order_by().values_list('course__course_subject').distinct()
-    subjectList = [subjects[i][0] for i in range(len(subjects))]
-    subjectFcq = []
-    for i in subjectList:
-        subjectFcq.append(fcq.filter(course__course_subject=i))
-    ctx["subjectList"] = subjectList
-    ctx["subjectFcq"] = subjectFcq
+    department_obj = fcq.order_by().values_list('course__department__name').distinct()
+    departments = [x[0] for x in department_obj]
+    deps = [['department','count']]
+    for dep in departments:
+        count = len(fcq.filter(course__department__name=dep))
+        holder = [dep, count]
+        deps.append(holder)
+
+
+    ctx["pieData"] = deps
+
+
+
+    subject_obj = fcq.order_by().values_list('course__course_subject').distinct()
+    subjects = [x[0] for x in subject_obj]
+    subCount = []
+    for sub in subjects:
+        subCount.append(len(fcq.filter(course__course_subject=sub)))
 
 
 
