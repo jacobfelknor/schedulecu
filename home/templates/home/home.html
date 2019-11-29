@@ -35,50 +35,78 @@
 <div id='calendar'></div>
 <script>
     // Access classes needed to be added to the calendar via user -> schedule -> classes
-    // Note: Both users and classes contain references to schedule.
-
+    
     document.addEventListener('DOMContentLoaded', function () {
         var calendarEl = document.getElementById('calendar');
 
         var calendar = new FullCalendar.Calendar(calendarEl, {
             plugins: ['dayGrid', 'timeGrid'],
+            timezone: 'local',
             defaultView: 'timeGridWeek',
             minTime: '06:00:00',
             maxTime: '20:00:00',
-            header: {
-                center: 'addEventButton',
-                left: null,
-                right: null
-            },
+            header: false,
             allDaySlot: false,
-
-            /*
-            customButtons: {
-                addEventButton: {
-                    text: 'add event...',
-                    click: function () {
-                        var dateStr = prompt('Enter a date in YYYY-MM-DD format');
-                        var date = new Date(dateStr + 'T12:00:00'); // will be in local time
-
-                        if (!isNaN(date.valueOf())) { // valid?
-                            calendar.addEvent({
-                                title: 'dynamic event',
-                                start: date,
-                                end: new Date(dateStr + 'T13:00:00'),
-                                allDay: false
-                            });
-                            alert('Great. Now, update your database...');
-                        } else {
-                            alert('Invalid date.');
-                        }
-                    }
-                }
-            } */
-
-            
+            now: '2020-01-12',
+            visibleRange: {
+                start: '2020-01-12',
+                end: '2020-01-19'
+            }
         });
 
+        {% for class in class_list %}
+            var baseTime = new Date('January 12, 2020 0:00:00');
+
+            var startString = '{{class.start_time}}';
+            var splitStartTime = startString.split(/ |:/);
+            console.log(splitStartTime);
+            var startHour = parseInt(splitStartTime[0], 10);
+            var startMinute = parseInt(splitStartTime[1], 10);
+            var StartAMPM = splitStartTime[2];
+            var startTime = new Date('January 12, 2020 0:00:00');
+
+            startTime.setHours(startHour, startMinute);
+            
+
+
+            var endString = '{{class.end_time}}';
+            var splitEndTime = endString.split(' |:');
+            var endHour = parseInt(splitEndTime[0], 10);
+            var endMinute = parseInt(splitEndTime[1], 10);
+            var endAMPM = splitEndTime[2];
+            var endTime = new Date('January 12, 2020 0:00:00');
+
+
+            console.log(startTime);
+            endTime.setHours(endHour, endMinute);
+
+            var classDays = '{{class.days}}';
+            var replaceM = classDays.replace('M', '1');
+            var replaceT = replaceM.replace('T', '2');
+            var replaceW = replaceT.replace('W', '3');
+            var replaceTh = replaceW.replace('TH', '4');
+            var classDaysNum = replaceTh.replace('F', '5');
+            var classDaysArray = classDaysNum.split('');
+            console.log(classDaysArray);
+
+            {% for day in classDaysArray %}
+                console.log("woohoo");
+                var weekDay = parseInt(day, 10);
+                startTime.setDate(weekDay);
+                endTime.setDate(weekDay);
+                calendar.addEvent({
+                    title: '{{class.course_title}}',
+                    start: startTime,
+                    end: endTime
+                });
+            {% endfor %}
+
+            console.log(startTime);
+
+        {% endfor %}
+
         calendar.render();
+        console.log(calendar.getEvents());
     });
 
 </script>
