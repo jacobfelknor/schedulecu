@@ -284,13 +284,13 @@ def PopulateFCQ():
             online=data[13],
             size=data[14],
             numResponses=data[15],
-            challenge=data[19],
-            learned=data[20],
-            courseRating=data[21],
-            profEffect=data[22],
-            profRating=data[25],
-            courseSD=data[26],
-            profSD=data[27],
+            challenge=round(float(data[19])*5/6,2),
+            learned=round(float(data[20])*5/6,2),
+            courseRating=round(float(data[21])*5/6,2),
+            profEffect=round(float(data[22])*5/6,2),
+            profRating=round(float(data[25])*5/6,2),
+            courseSD=round(float(data[26])*5/6,2),
+            profSD=round(float(data[27])*5/6,2),
             professor=prof_obj,
             course=course_obj,
         ).first()
@@ -303,13 +303,13 @@ def PopulateFCQ():
             fcq.online = data[13]
             fcq.size = data[14]
             fcq.numResponses = data[15]
-            fcq.challenge = data[19]
-            fcq.learned = data[20]
-            fcq.courseRating = data[21]
-            fcq.profEffect = data[22]
-            fcq.profRating = data[25]
-            fcq.courseSD = data[26]
-            fcq.profSD = data[27]
+            fcq.challenge = round(float(data[19])*5/6,2)
+            fcq.learned = round(float(data[20])*5/6,2)
+            fcq.courseRating = round(float(data[21])*5/6,2)
+            fcq.profEffect = round(float(data[22])*5/6,2)
+            fcq.profRating = round(float(data[25])*5/6,2)
+            fcq.courseSD = round(float(data[26])*5/6,2)
+            fcq.profSD = round(float(data[27])*5/6,2)
             fcq.professor = prof_obj
             fcq.course = course_obj
             try:

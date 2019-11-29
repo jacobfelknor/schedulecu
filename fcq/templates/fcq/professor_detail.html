@@ -9,11 +9,8 @@
             <div class="col-9">
                 <h1>{{firstName}} {{lastName}}</h1>
             </div>
-            <div class="col-3 row" style="padding-top:10px;">
-                <p style="padding-top: 10px"><em>Overall Rating</em>:&nbsp;&nbsp;&nbsp;</p>
-                <div id="starRating">
-                    <!-- <i class="fas fa-star fa-2x"></i> -->
-                </div>
+            <div class="col-3">
+                <div id="starRating" style="padding-top: 8px; align-content: right"></div>
             </div>
         </div>
         <div class="row" style="font-size: 13px; padding-bottom: 0px;">
@@ -34,20 +31,8 @@
                     <div class="card-body">
                         <div class="row align-items-center no-gutters">
                             <div class="col mr-2">
-                                <div class="text-uppercase font-weight-bold text-xs mb-1"><span>Avg Course Size</span></div>
-                                <div class="text-dark font-weight-bold h5 mb-0"><span>#</span></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-6 col-xl-2 mb-4">
-                <div class="card shadow border-left-primary py-0">
-                    <div class="card-body">
-                        <div class="row align-items-center no-gutters">
-                            <div class="col mr-2">
                                 <div class="text-uppercase font-weight-bold text-xs mb-1"><span>Avg Prof Rating</span></div>
-                                <div class="text-dark font-weight-bold h5 mb-0"><span>#</span></div>
+                                <div class="text-dark font-weight-bold h5 mb-0"><span>{{avgRating}}</span></div>
                             </div>
                         </div>
                     </div>
@@ -59,7 +44,7 @@
                         <div class="row align-items-center no-gutters">
                             <div class="col mr-2">
                                 <div class="text-uppercase font-weight-bold text-xs mb-1"><span>Avg Prof Effectiveness</span></div>
-                                <div class="text-dark font-weight-bold h5 mb-0"><span>#</span></div>
+                                <div class="text-dark font-weight-bold h5 mb-0"><span>{{avgEffect}}</span></div>
                             </div>
                         </div>
                     </div>
@@ -71,7 +56,7 @@
                         <div class="row align-items-center no-gutters">
                             <div class="col mr-2">
                                 <div class="text-uppercase font-weight-bold text-xs mb-1"><span>Avg Course Rating</span></div>
-                                <div class="text-dark font-weight-bold h5 mb-0"><span>#</span></div>
+                                <div class="text-dark font-weight-bold h5 mb-0"><span>{{avgCourse}}</span></div>
                             </div>
                         </div>
                     </div>
@@ -83,7 +68,19 @@
                         <div class="row align-items-center no-gutters">
                             <div class="col mr-2">
                                 <div class="text-uppercase font-weight-bold text-xs mb-1"><span>Avg Course Challenge</span></div>
-                                <div class="text-dark font-weight-bold h5 mb-0"><span>#</span></div>
+                                <div class="text-dark font-weight-bold h5 mb-0"><span>{{avgChal}}</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-xl-2 mb-4">
+                <div class="card shadow border-left-primary py-0">
+                    <div class="card-body">
+                        <div class="row align-items-center no-gutters">
+                            <div class="col mr-2">
+                                <div class="text-uppercase font-weight-bold text-xs mb-1"><span>Avg Amount Learned</span></div>
+                                <div class="text-dark font-weight-bold h5 mb-0"><span>{{avgLearn}}</span></div>
                             </div>
                         </div>
                     </div>
@@ -97,6 +94,53 @@
 
 
 {% block javascript %}
+<script>
+    function printStars() {
+        var html = '<em>Overall Rating:</em>';
+        var count = 0;
+        var stars = ({{stars}})
+        while(stars > 0.0){
+            if(stars < 1.0){
+                if(stars > 0.5){
+                    if((stars - 0.5) >= 0.25){
+                        html += '<i class="fas fa-star fa-2x"></i>';
+                        stars -= 1.0;
+                    }
+                    else{
+                        html += '<i class="fas fa-star-half-alt fa-2x"></i>';
+                        stars = 0.0;
+                    }
+                }
+                else{
+                    if((stars - 0.25) >= 0){
+                        html += '<i class="fas fa-star-half-alt fa-2x"></i>';
+                    }
+                    else{
+                        count -= 1
+                    }
+                    stars = 0.0;
+                }
+            }else{
+                html += '<i class="fas fa-star fa-2x"></i>';
+                stars -= 1.0;
+            }
+            count += 1;
+        }
+        while(count < 5){
+            html += '<i class="far fa-star fa-2x"></i>';
+            count += 1;
+        }
 
 
+
+        document.getElementById("starRating").innerHTML = html;
+        console.log(count);
+
+
+    }
+
+    window.onload = printStars();
+
+
+</script>
 {% endblock %}

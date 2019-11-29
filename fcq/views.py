@@ -69,16 +69,50 @@ def fcq_search_ajax(request):
 
 def view_professor(request, professor_id):
     ctx = {}
-    professor_id = int(professor_id)
-    # take advantage of relation for these queries!! :)
-    professor_obj = get_object_or_404(Professor, id=professor_id)
+    professor_id = int(professor_id) #fix parameter type
+    professor_obj = get_object_or_404(Professor, id=professor_id) #get professor object
+
+    #get professor's basic info
     professorID = professor_obj.id
     ctx["professor_id"] = professor_obj.id
     ctx["firstName"] = professor_obj.firstName
     ctx["lastName"] = professor_obj.lastName
 
+    #get all fcqs for professor
     fcq = FCQ.objects.filter(professor_id=professorID)
-    ctx["numClasses"] = len(fcq)
+    count = len(fcq)
+    students = 0
+    effect = 0.0
+    rating = 0.0
+    course = 0.0
+    chal = 0.0
+    learn = 0.0
+    for fcq_obj in fcq:
+        students += fcq_obj.size
+        effect += fcq_obj.profEffect
+        rating += fcq_obj.profRating
+        course += fcq_obj.courseRating
+        chal += fcq_obj.challenge
+        learn += fcq_obj.learned
+    students = int(students/count)
+    effect = round(effect/count,2)
+    rating = round(rating/count,2)
+    course = round(course/count,2)
+    chal = round(chal/count,2)
+    learn = round(learn/count,2)
+    ctx["numClasses"] = count
+    ctx["avgSize"] = students
+    ctx["avgEffect"] = effect
+    ctx["avgRating"] = rating
+    ctx["avgCourse"] = course
+    ctx["avgChal"] = chal
+    ctx["avgLearn"] = learn
+
+    stars = (effect + rating + learn) / 3
+    ctx["stars"] = stars
+
+
+
 
     subjects = fcq.order_by().values_list('course__course_subject').distinct()
     subjectList = [subjects[i][0] for i in range(len(subjects))]
@@ -87,4 +121,9 @@ def view_professor(request, professor_id):
         subjectFcq.append(fcq.filter(course__course_subject=i))
     ctx["subjectList"] = subjectList
     ctx["subjectFcq"] = subjectFcq
+
+
+
+
+
     return render(request, "fcq/professor_detail.html", ctx)
