@@ -3,7 +3,7 @@ import re
 import copy
 from functools import reduce
 
-from django.db.models import Q
+from django.db.models import Q, Case, When, Value, IntegerField
 from django.db.models.functions import Lower, Substr
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, render
@@ -111,9 +111,14 @@ def view_professor(request, professor_id):
     stars = (effect + rating + learn) / 3
     ctx["stars"] = stars
 
-    fcq = fcq.order_by('semester')
-    fcq = fcq.order_by('year')
-
+    fcq = fcq.annotate(
+        custom_order=Case(
+            When(semester='Spring', then=Value(1)),
+            When(semester='Summer', then=Value(2)),
+            When(semester='Fall', then=Value(3)),
+            output_field=IntegerField(),
+        )
+    ).order_by('-year','-custom_order')
     ctx['fcq'] = fcq
 
 
