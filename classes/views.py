@@ -8,6 +8,9 @@ from django.shortcuts import get_object_or_404, render
 from django.views.generic import CreateView, DetailView, ListView, UpdateView
 
 from classes.models import Class, Department, Section
+from audit.models import Prerequisite
+from completedclasses.models import CompletedClasses
+from schedules.models import Schedule
 
 from .forms import SearchForm
 from .serializers import ClassSerializer
@@ -82,15 +85,66 @@ def view_section(request, class_id, section_id):
     ctx["labs"] = labs
     ctx["seminars"] = seminars
     ctx["other"] = other
-    #ctx["completed"] = request.user.completed.classes.all()
-    # only add to schedule functionality if user is logged in
-    if request.user.is_authenticated and not ctx["generic_view"]:
-        # if self.object in self.request.user.schedule.classes.all():
-        #     ctx["in_schedule"] = True
-        ctx["in_schedule"] = current_section.in_schedule(request.user)
+
+    # Build prereq and coreq lists
+    prereqs = Prerequisite.objects.filter(
+        classes=parent_class).filter(audit=None)
+    completed_prereqs = []
+    incomplete_prereqs = []
+    completed_coreqs = []
+    incomplete_coreqs = []
 
     if request.user.is_authenticated:
+        # complete = Prerequisite.objects.filter(
+        #     classes=parent_class, corequisite=False, __possibleClasses__classes__in= CompletedClasses.objects.filter(
+        #    classes__in=[y for x in prereqs.all() for y in x.possibleClasses.all()], user=request.user).
+        #    )
+
+        # All of user's completed classes that apply to these prereqs
+        # Prerequisite.objects.filter(classes=parent_class, corequisite=False)
+        # CompletedClasses.objects.filter(
+        #     classes__in=[y for x in prereqs.all() for y in x.possibleClasses.all()], user=request.user)
+
+        # All classes that apply
+        # [x.classes.all() for x in CompletedClasses.objects.filter(classes__in=[y for x in prereqs.all() for y in x.possibleClasses.all()]).all()]
+
+        for prereq in prereqs:
+            possibleClasses = [x for x in prereq.possibleClasses.all()]
+            in_completed = CompletedClasses.objects.filter(
+                classes__in=possibleClasses, user=request.user).exists()
+
+            if prereq.corequisite:
+                in_coreq = Schedule.objects.filter(
+                    classes__parent_class__in=possibleClasses, user=request.user).exists()
+                if not in_completed and not in_coreq:
+                    incomplete_coreqs += [prereq]
+                else:
+                    completed_coreqs += [prereq]
+            else:
+                if not in_completed:
+                    incomplete_prereqs += [prereq]
+                else:
+                    completed_prereqs += [prereq]
+
         if parent_class in request.user.completed.classes.all():
             ctx["in_completed"] = True
+
+        if not ctx["generic_view"]:
+            # if self.object in self.request.user.schedule.classes.all():
+            #     ctx["in_schedule"] = True
+            ctx["in_schedule"] = current_section.in_schedule(request.user)
+    else:
+        for prereq in prereqs:
+            if prereq.corequisite:
+                incomplete_coreqs += [prereq]
+            else:
+                incomplete_prereqs += [prereq]
+
+    ctx["completed_prereqs"] = completed_prereqs
+    ctx["incomplete_prereqs"] = incomplete_prereqs
+    ctx["completed_coreqs"] = completed_coreqs
+    ctx["incomplete_coreqs"] = incomplete_coreqs
+    # ctx["prereqs"] = {prereq: prereq.possibleClasses.all()
+    #                  for prereq in prereqs}
 
     return render(request, "classes/class_detail.html", ctx)

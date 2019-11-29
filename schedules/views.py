@@ -58,13 +58,11 @@ def add_to_schedule(request):
             for failed in failures:
                 possibleClasses = [x for x in failed.possibleClasses.all()]
                 output += "("
-                # return str(failed)
                 for possibleClass in possibleClasses:
                     print(possibleClass)
                     output += possibleClass.department.code + \
                         str(possibleClass.course_subject) + " or "
                 output = output[:-4] + ") and "
-                #output += ") and ("
             return output[:-5]
 
         # INCOMPLETE MESSAGING. make this nicer
