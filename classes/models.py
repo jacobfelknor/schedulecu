@@ -62,6 +62,13 @@ class Class(models.Model):
                 empty.append(field)
         return empty
 
+    @property
+    def has_sections(self):
+        if len(self.sections.all()):
+            return True
+        else:
+            return False
+
 
 class Section(models.Model):
     """
@@ -88,7 +95,7 @@ class Section(models.Model):
     )
     schedule = models.ManyToManyField(Schedule, related_name="classes")
 
-    def in_schedule(self, user):  # broken for now
+    def in_schedule(self, user):
         if self in user.schedule.classes.all():
             return True
         else:

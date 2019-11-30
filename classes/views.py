@@ -32,10 +32,7 @@ def search_ajax(request):
     keyword_query = reduce(
         operator.and_,
         (
-            (
-                Q(course_title__icontains=x)
-                | Q(course_subject__icontains=x)
-            )
+            (Q(course_title__icontains=x) | Q(course_subject__icontains=x))
             for x in keyword
         ),
     )
@@ -48,7 +45,12 @@ def search_ajax(request):
         query = Q(department=department_obj) & keyword_query
     else:
         query = keyword_query
-    classes = Class.objects.filter(query).order_by("course_subject")
+    # only show classes with sections
+    classes = [
+        x
+        for x in Class.objects.filter(query).order_by("course_subject")
+        if x.has_sections
+    ]
     response = ClassSerializer(classes, many=True)
     return JsonResponse(response.data, safe=False)
 
