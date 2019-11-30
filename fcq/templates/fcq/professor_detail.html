@@ -1,0 +1,202 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="card col-12">
+        <div class="row" style="padding-top:10px; padding-bottom: 10px;">
+            <div class="col-9">
+                <h1>{{firstName}} {{lastName}}</h1>
+            </div>
+            <div class="col-3">
+                <div id="starRating" style="padding-top: 8px; align-content: right"></div>
+            </div>
+        </div>
+        <div class="row" style="font-size: 13px; padding-bottom: 0px;">
+            <div class="col-md-6 col-xl-2 mb-4">
+                <div class="card bg-warning shadow border-left-primary py-0">
+                    <div class="card-body">
+                        <div class="row align-items-center no-gutters">
+                            <div class="col mr-2">
+                                <div class="text-uppercase font-weight-bold text-xs mb-1"><span># Courses Taught</span></div>
+                                <div class="text-dark font-weight-bold h5 mb-0"><span>{{numClasses}}</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-xl-2 mb-4">
+                <div class="card bg-warning shadow border-left-primary py-0">
+                    <div class="card-body">
+                        <div class="row align-items-center no-gutters">
+                            <div class="col mr-2">
+                                <div class="text-uppercase font-weight-bold text-xs mb-1"><span>Avg Prof Rating</span></div>
+                                <div class="text-dark font-weight-bold h5 mb-0"><span>{{avgRating}}</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-xl-2 mb-4">
+                <div class="card bg-warning shadow border-left-primary py-0">
+                    <div class="card-body">
+                        <div class="row align-items-center no-gutters">
+                            <div class="col mr-2">
+                                <div class="text-uppercase font-weight-bold text-xs mb-1"><span>Avg Prof Effectiveness</span></div>
+                                <div class="text-dark font-weight-bold h5 mb-0"><span>{{avgEffect}}</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-xl-2 mb-4">
+                <div class="card bg-warning shadow border-left-primary py-0">
+                    <div class="card-body">
+                        <div class="row align-items-center no-gutters">
+                            <div class="col mr-2">
+                                <div class="text-uppercase font-weight-bold text-xs mb-1"><span>Avg Course Rating</span></div>
+                                <div class="text-dark font-weight-bold h5 mb-0"><span>{{avgCourse}}</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-xl-2 mb-4">
+                <div class="card bg-warning shadow border-left-primary py-0">
+                    <div class="card-body">
+                        <div class="row align-items-center no-gutters">
+                            <div class="col mr-2">
+                                <div class="text-uppercase font-weight-bold text-xs mb-1"><span>Avg Course Challenge</span></div>
+                                <div class="text-dark font-weight-bold h5 mb-0"><span>{{avgChal}}</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-xl-2 mb-4">
+                <div class="card bg-warning shadow border-left-primary py-0">
+                    <div class="card-body">
+                        <div class="row align-items-center no-gutters">
+                            <div class="col mr-2">
+                                <div class="text-uppercase font-weight-bold text-xs mb-1"><span>Avg Amount Learned</span></div>
+                                <div class="text-dark font-weight-bold h5 mb-0"><span>{{avgLearn}}</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br>
+        <br>
+        <div class="row">
+            <div class="col-5" id="donutchart"></div>
+            <div class="col-7 text-center" id="fcq_div">
+                <div class="row">
+                    <div class="card border-0">
+                    <table class="table table-borderless dt-responsive table-striped">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th colspan="8">Full Course Catalog</th>
+                            </tr>
+                            <tr>
+                                <th class="sticky-top">Year</th>
+                                <th class="sticky-top">Term</th>
+                                <th class="sticky-top">Subject</th>
+                                <th class="sticky-top">Course</th>
+                                <th class="sticky-top">Section</th>
+                                <th class="sticky-top">Course Title</th>
+                                <th class="sticky-top">Type</th>
+                                <th class="sticky-top">Had Online Section</th>
+                            </tr>
+                        </thead>
+                        <tbody id="fcq_table" style="overflow-y: scroll; height: 200px;">
+                            {% for i in fcq %}
+                            <tr>
+                                <td>{{i.year}}</td>
+                                <td>{{i.semester}}</td>
+                                <td>{{i.course.department.code}}</td>
+                                <td>{{i.course.course_subject}}</td>
+                                <td>{{i.section}}</td>
+                                <td>{{i.course.course_title}}</td>
+                                <td>{{i.courseType}}</td>
+                                <td>{{i.online}}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+{% block javascript %}
+<script>
+    $(document).ready(function () {
+        // setup table scrolling
+        $("#fcq_div").attr("style", `height: ${screen.height * 0.45}px; overflow: auto;`);
+    });
+
+    function printStars() {
+        var html = '<em>Overall Rating:</em>';
+        var count = 0;
+        var stars = ({{stars}});
+        while(stars > 0.0){
+            if(stars < 1.0){
+                if(stars > 0.5){
+                    if((stars - 0.5) >= 0.25){
+                        html += '<i class="fas fa-star fa-2x"></i>';
+                        stars -= 1.0;
+                    }
+                    else{
+                        html += '<i class="fas fa-star-half-alt fa-2x"></i>';
+                        stars = 0.0;
+                    }
+                }
+                else{
+                    if((stars - 0.25) >= 0){
+                        html += '<i class="fas fa-star-half-alt fa-2x"></i>';
+                    }
+                    else{
+                        count -= 1;
+                    }
+                    stars = 0.0;
+                }
+            }else{
+                html += '<i class="fas fa-star fa-2x"></i>';
+                stars -= 1.0;
+            }
+            count += 1;
+        }
+        while(count < 5){
+            html += '<i class="far fa-star fa-2x"></i>';
+            count += 1;
+        }
+        document.getElementById("starRating").innerHTML = html;
+        console.log(count);
+    }
+    window.onload = printStars();
+    </script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+      google.charts.load("current", {packages:["corechart"]});
+      google.charts.setOnLoadCallback(drawChart);
+      function drawChart() {
+        var pieData = ({{pieData | safe}});
+        console.log(pieData);
+        var data = google.visualization.arrayToDataTable(pieData);
+        var options = {
+            pieSliceText: 'none',
+            chartArea: {top:40, bottom:0, left:0, right:0},
+            backgroundColor: 'transparent',
+            pieHole: 0.4,
+            legend: {position: 'labeled', textStyle: {fontSize: 16}}
+        };
+
+        var chart = new google.visualization.PieChart(document.getElementById('donutchart'));
+        chart.draw(data, options);
+      }
+    </script>
+{% endblock %}

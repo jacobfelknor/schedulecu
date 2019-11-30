@@ -1,8 +1,6 @@
-from django.contrib.postgres.fields import ArrayField
 from django.db import models
 
 from classes.models import Department, Class
-
 
 # Proposed changes:
 """
@@ -26,42 +24,24 @@ If that doesn't happen, leave these as Chars)
 class Professor(models.Model):
     firstName = models.CharField(max_length=50)
     lastName = models.CharField(max_length=50)
-    mainDepartment = models.CharField(max_length=50)
-    """ calc averages/data on command, not predetermined """
-    # numClasses = models.IntegerField()
-    # avgClassSize = models.IntegerField()
-    # avgInstRating = models.FloatField()
-    # avgCourseRating = models.FloatField()
-    # avgChallenge = models.FloatField()
-    # courseList = ArrayField(models.CharField(max_length=50))
-    # timesCourseTaught = ArrayField(models.IntegerField())
-    # courseRating = ArrayField(models.FloatField())
-    # courseInstRating = ArrayField(models.FloatField())
-    # courseChallenge = ArrayField(models.FloatField())
-    # classIndex = ArrayField(models.IntegerField())
 
 
 class FCQ(models.Model):
-    course_rating = models.FloatField(null=True)
-    course_intructor_rating = models.FloatField(null=True)
-    course_challenge = models.FloatField(null=True)
-    level = models.CharField(max_length=50)
-    online = models.CharField(max_length=50)
-    size = models.IntegerField()
-
-    parent_section = models.ForeignKey(
-        Class, null=True, on_delete=models.SET_NULL, related_name="fcqs"
-    )
+    year = models.CharField(max_length=4)
+    semester = models.CharField(max_length=10)
+    section = models.CharField(max_length=4)
+    courseType = models.CharField(max_length=5)
+    online = models.CharField(max_length=1)
+    size = models.IntegerField(default=0)
+    numResponses = models.IntegerField(default=0)
+    challenge = models.FloatField(default=0.0)
+    learned = models.FloatField(default=0.0)
+    courseRating = models.FloatField(default=0.0)
+    profEffect = models.FloatField(default=0.0)  # effectiveness of professor
+    profRating = models.FloatField(default=0.0)
+    courseSD = models.FloatField(default=0.0)  # stand. dev. for course rating
+    profSD = models.FloatField(default=0.0)  # stand. dev. for professor rating
     professor = models.ForeignKey(
-        Professor, null=True, on_delete=models.SET_NULL, related_name="fcqs"
+        Professor, on_delete=models.CASCADE, related_name="fcqs", null=True
     )
-    """ link back to section... this is repeated data """
-    # index = models.IntegerField()
-    # year = models.CharField(max_length=50)
-    # semester = models.CharField(max_length=50)
-    # department = models.CharField(max_length=50)
-    # course = models.CharField(max_length=50)
-    # section = models.CharField(max_length=50)
-    # courseTitle = models.CharField(max_length=200)
-    # courseType = models.CharField(max_length=50)
-
+    course = models.ForeignKey(Class, on_delete=models.CASCADE, related_name="fcqs")
