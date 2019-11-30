@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 
-class TeacherSerializer(serializers.Serializer):
+class ProfessorSerializer(serializers.Serializer):
     firstName = serializers.CharField()
     lastName = serializers.CharField()
     mainDepartment = serializers.CharField()

@@ -10,10 +10,10 @@ from django.views.generic import CreateView, DetailView, ListView, UpdateView
 from rest_framework import serializers
 
 from classes.models import Department
-from fcq.models import Teacher
+from fcq.models import Professor
 
 from .forms import SearchForm
-from .serializers import TeacherSerializer
+from .serializers import ProfessorSerializer
 
 # Create your views here.
 
@@ -57,10 +57,10 @@ def fcq_search_ajax(request):
         )  # this feels sort of hackish...
         number_query = Q(courseList__contains=[number])
         query &= number_query
-    teachers = Teacher.objects.filter(query).order_by("lastName")
-    response = TeacherSerializer(teachers, many=True)
+    professors = Professor.objects.filter(query).order_by("lastName")
+    response = ProfessorSerializer(professors, many=True)
     return JsonResponse(response.data, safe=False)
 
 
-class TeacherView(DetailView):
-    model = Teacher
+class ProfessorView(DetailView):
+    model = Professor
