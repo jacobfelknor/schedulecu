@@ -176,8 +176,8 @@
         <div class="col-8">
             {% if not generic_view %}
             <div class="card border-dark" id="{{ section.id }}">
-                <h3 class="card-header bg-dark text-light"><a href="{% url 'classes:view' parent_class.id 'all' %}">
-                    {{ current_section.parent_class.course_title }}</a>
+                <h3 class="card-header bg-dark text-light">
+                    {{ current_section.parent_class.course_title }}
                 </h3>
                 <div class="card-body">
                     <table class="table dt-responsive" cellspacing="0" width="100%">
@@ -230,6 +230,10 @@
                             Schedule</button></a>
                     {% endif %}
                     {% endif %}
+                    <a href="{% url 'classes:view' parent_class.id 'all' %}"><button class="btn btn-outline-dark"><i
+                                class="fa fa-info-circle" aria-hidden="true"></i>
+                            View Class Page</button>
+                    </a>
                 </div>
             </div> <!-- card -->
 
@@ -245,8 +249,10 @@
                                 <div class="card-body">
                                     <div class="row align-items-center no-gutters">
                                         <div class="col mr-2">
-                                            <div class="text-uppercase font-weight-bold text-xs mb-1"><span># Semesters Taught</span></div>
-                                            <div class="text-dark font-weight-bold h5 mb-0"><span>{{numSem}}</span></div>
+                                            <div class="text-uppercase font-weight-bold text-xs mb-1"><span># Semesters
+                                                    Taught</span></div>
+                                            <div class="text-dark font-weight-bold h5 mb-0"><span>{{numSem}}</span>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -257,8 +263,10 @@
                                 <div class="card-body">
                                     <div class="row align-items-center no-gutters">
                                         <div class="col mr-2">
-                                            <div class="text-uppercase font-weight-bold text-xs mb-1"><span>Avg Course Rating</span></div>
-                                            <div class="text-dark font-weight-bold h5 mb-0"><span>{{avgCourse}}</span></div>
+                                            <div class="text-uppercase font-weight-bold text-xs mb-1"><span>Avg Course
+                                                    Rating</span></div>
+                                            <div class="text-dark font-weight-bold h5 mb-0"><span>{{avgCourse}}</span>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -269,8 +277,10 @@
                                 <div class="card-body">
                                     <div class="row align-items-center no-gutters">
                                         <div class="col mr-2">
-                                            <div class="text-uppercase font-weight-bold text-xs mb-1"><span>Avg Course Challenge</span></div>
-                                            <div class="text-dark font-weight-bold h5 mb-0"><span>{{avgChall}}</span></div>
+                                            <div class="text-uppercase font-weight-bold text-xs mb-1"><span>Avg Course
+                                                    Challenge</span></div>
+                                            <div class="text-dark font-weight-bold h5 mb-0"><span>{{avgChall}}</span>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -278,7 +288,7 @@
                         </div>
                     </div>
                 </div>
-            </div>  
+            </div>
             {% endif %}
             {% if user.is_authenticated %}
             <div class="card border-dark">
