@@ -49,8 +49,8 @@ def search_ajax(request):
     if department:
         sections = sections.filter(parent_class__department__code=department)
     sections = sections.order_by(
-        "parent_class__department", "parent_class__course_subject"
-    ).distinct("parent_class__department", "parent_class__course_subject")
+        "parent_class__department__code", "parent_class__course_subject"
+    ).distinct("parent_class__department__code", "parent_class__course_subject")
 
     response = SectionSerializer(sections, many=True)
     return JsonResponse(response.data, safe=False)
