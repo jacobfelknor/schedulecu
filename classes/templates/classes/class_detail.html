@@ -24,9 +24,9 @@
                         <tr {% if section.id == current_section.id %} style="background: gold;" {% endif %}>
                             <td><a href="{% url 'classes:view' parent_class.id section.id %}">{{ section.parent_class.department.code }}
                                     {{ section.parent_class.course_subject }} ({{ section.class_component }})</a></td>
-                            {% if section.instructor_name %}
-                            <td>{{ section.instructor_name }}</td>
-                            {% else %}
+                            {% if section.professor.full_name %}
+                            <td><a href="{{ section.professor.get_absolute_url }}">{{ section.professor.full_name }}</a>
+                                {% else %}
                             <td>N/A</td>
                             {% endif %}
                             <td>{{ section.start_time }}-{{ section.end_time }}</td>
@@ -57,8 +57,9 @@
                         <tr {% if section.id == current_section.id %} style="background: gold;" {% endif %}>
                             <td><a href="{% url 'classes:view' parent_class.id section.id %}">{{ section.parent_class.department.code }}
                                     {{ section.parent_class.course_subject }} ({{ section.class_component }})</a></td>
-                            {% if section.instructor_name %}
-                            <td>{{ section.instructor_name }}</td>
+                            {% if section.professor.full_name %}
+                            <td><a href="{{ section.professor.get_absolute_url }}">{{ section.professor.full_name }}</a>
+                            </td>
                             {% else %}
                             <td>N/A</td>
                             {% endif %}
@@ -91,9 +92,9 @@
                         <tr {% if section.id == current_section.id %} style="background: gold;" {% endif %}>
                             <td><a href="{% url 'classes:view' parent_class.id section.id %}">{{ section.parent_class.department.code }}
                                     {{ section.parent_class.course_subject }} ({{ section.class_component }})</a></td>
-                            {% if section.instructor_name %}
-                            <td>{{ section.instructor_name }}</td>
-                            {% else %}
+                            {% if section.professor.full_name %}
+                            <td><a href="{{ section.professor.get_absolute_url }}">{{ section.professor.full_name }}</a>
+                                {% else %}
                             <td>N/A</td>
                             {% endif %}
                             <td>{{ section.start_time }}-{{ section.end_time }}</td>
@@ -124,9 +125,9 @@
                         <tr {% if section.id == current_section.id %} style="background: gold;" {% endif %}>
                             <td><a href="{% url 'classes:view' parent_class.id section.id %}">{{ section.parent_class.department.code }}
                                     {{ section.parent_class.course_subject }} ({{ section.class_component }})</a></td>
-                            {% if section.instructor_name %}
-                            <td>{{ section.instructor_name }}</td>
-                            {% else %}
+                            {% if section.professor.full_name %}
+                            <td><a href="{{ section.professor.get_absolute_url }}">{{ section.professor.full_name }}</a>
+                                {% else %}
                             <td>N/A</td>
                             {% endif %}
                             <td>{{ section.start_time }}-{{ section.end_time }}</td>
@@ -157,9 +158,9 @@
                         <tr {% if section.id == current_section.id %} style="background: gold;" {% endif %}>
                             <td><a href="{% url 'classes:view' parent_class.id section.id %}">{{ section.parent_class.department.code }}
                                     {{ section.parent_class.course_subject }} ({{ section.class_component }})</a></td>
-                            {% if section.instructor_name %}
-                            <td>{{ section.instructor_name }}</td>
-                            {% else %}
+                            {% if section.professor.full_name %}
+                            <td><a href="{{ section.professor.get_absolute_url }}">{{ section.professor.full_name }}</a>
+                                {% else %}
                             <td>N/A</td>
                             {% endif %}
                             <td>{{ section.start_time }}-{{ section.end_time }}</td>
@@ -186,9 +187,11 @@
                                     {{ current_section.parent_class.course_subject }}
                                     ({{ current_section.class_component }})</td>
                                 <td><b>Section:</b> <br>{{ current_section.section_number }}</td>
-                                {% if current_section.instructor_name %}
-                                <td><b>Instructor:</b> <br>{{ current_section.instructor_name }}</td>
-                                {% else %}
+                                {% if current_section.professor.full_name %}
+                                <td><b>Instructor:</b> <br>
+                                    <a
+                                        href="{{ current_section.professor.get_absolute_url }}">{{ current_section.professor.full_name }}</a>
+                                    {% else %}
                                 <td><b>Instructor:</b> <br>N/A</td>
                                 {% endif %}
                             </tr>

@@ -1,11 +1,10 @@
-import os
 import html
+import os
 
 from django.core.management.base import BaseCommand, CommandError
-from django.db import transaction
+from django.db import DatabaseError, transaction
 
-from fcq.models import Professor, FCQ, Department, Class
-
+from fcq.models import FCQ, Class, Department, Professor
 
 dept_dict = {
     "ACCT": "Accounting (ACCT)",
@@ -232,8 +231,8 @@ known_differences = {
 
 def PopulateFCQ():
     directory = os.path.dirname(os.path.abspath(__file__))
-    filename = os.path.join(directory, 'clean_fcq.csv')
-    f = open(filename, 'r')
+    filename = os.path.join(directory, "clean_fcq.csv")
+    f = open(filename, "r")
     failures = 0
     fcqAdds = 0
     depAdds = 0
@@ -248,15 +247,17 @@ def PopulateFCQ():
             data[5] = adjust_code
         # create new department/class object here, and link it to the section
         try:
-            prof = data[9].split(',')
+            prof = data[9].split(",")
             first = prof[1][1:]
             last = prof[0]
-            prof_obj = Professor.objects.filter(lastName=last,firstName=first).first()
-            #if professor does not exist, add them
+            prof_obj = Professor.objects.filter(lastName=last, firstName=first).first()
+            # if professor does not exist, throw error
+            # Professor command should be ran first!!!
             if not prof_obj:
-                prof_obj = Professor(lastName=last,firstName=first)
-                prof_obj.save()
-                profAdds += 1
+                print(
+                    "ERROR: Professor not found.\n Did you run the populateProfs command yet?"
+                )
+                exit(0)
             if dept_dict[data[5]]:
                 name = html.unescape(dept_dict[data[5]])
             else:
@@ -268,9 +269,13 @@ def PopulateFCQ():
                 depAdds += 1
             # match class if these params match. Omit course title in case of
             # slight inconsitancies (such as trailing spaces)
-            course_obj = Class.objects.filter(department=department, course_subject=data[6]).first()
+            course_obj = Class.objects.filter(
+                department=department, course_subject=data[6]
+            ).first()
             if not course_obj:
-                course_obj = Class(department=department, course_subject=data[6], course_title=data[8])
+                course_obj = Class(
+                    department=department, course_subject=data[6], course_title=data[8]
+                )
                 course_obj.save()
                 courseAdds += 1
         except KeyError:
@@ -284,13 +289,13 @@ def PopulateFCQ():
             online=data[13],
             size=data[14],
             numResponses=data[15],
-            challenge=round(float(data[19])*5/6,2),
-            learned=round(float(data[20])*5/6,2),
-            courseRating=round(float(data[21])*5/6,2),
-            profEffect=round(float(data[22])*5/6,2),
-            profRating=round(float(data[25])*5/6,2),
-            courseSD=round(float(data[26])*5/6,2),
-            profSD=round(float(data[27])*5/6,2),
+            challenge=round(float(data[19]) * 5 / 6, 2),
+            learned=round(float(data[20]) * 5 / 6, 2),
+            courseRating=round(float(data[21]) * 5 / 6, 2),
+            profEffect=round(float(data[22]) * 5 / 6, 2),
+            profRating=round(float(data[25]) * 5 / 6, 2),
+            courseSD=round(float(data[26]) * 5 / 6, 2),
+            profSD=round(float(data[27]) * 5 / 6, 2),
             professor=prof_obj,
             course=course_obj,
         ).first()
@@ -303,32 +308,39 @@ def PopulateFCQ():
             fcq.online = data[13]
             fcq.size = data[14]
             fcq.numResponses = data[15]
-            fcq.challenge = round(float(data[19])*5/6,2)
-            fcq.learned = round(float(data[20])*5/6,2)
-            fcq.courseRating = round(float(data[21])*5/6,2)
-            fcq.profEffect = round(float(data[22])*5/6,2)
-            fcq.profRating = round(float(data[25])*5/6,2)
-            fcq.courseSD = round(float(data[26])*5/6,2)
-            fcq.profSD = round(float(data[27])*5/6,2)
+            fcq.challenge = round(float(data[19]) * 5 / 6, 2)
+            fcq.learned = round(float(data[20]) * 5 / 6, 2)
+            fcq.courseRating = round(float(data[21]) * 5 / 6, 2)
+            fcq.profEffect = round(float(data[22]) * 5 / 6, 2)
+            fcq.profRating = round(float(data[25]) * 5 / 6, 2)
+            fcq.courseSD = round(float(data[26]) * 5 / 6, 2)
+            fcq.profSD = round(float(data[27]) * 5 / 6, 2)
             fcq.professor = prof_obj
             fcq.course = course_obj
             try:
                 with transaction.atomic():
                     fcq.save()
                     fcqAdds += 1
-            except:
+            except DatabaseError:
                 print(data)
                 failures += 1
-    print("Added {} departments, {} professors, {} courses, and {} FCQ's with {} failures".format(depAdds, profAdds, courseAdds, fcqAdds, failures))
+                continue
+    print(
+        "Added {} departments, {} professors, {} courses, and {} FCQ's with {} failures".format(
+            depAdds, profAdds, courseAdds, fcqAdds, failures
+        )
+    )
     f.close()  # close file
     if failures == 0:
         return True  # for testing
     else:
         return False
 
+
 class Command(BaseCommand):
     print("Filling FCQ and Professor database tables...")
-    print("This will take ~5 minutes")
+    # print("This will take ~5 minutes")
+
     def handle(self, *args, **kwargs):
         # Return values are for tests. test kwarg flag will be set if used with test
         in_test = kwargs.pop("test", False)

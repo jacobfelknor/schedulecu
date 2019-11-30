@@ -1,4 +1,5 @@
 from django.db import models
+
 from schedules.models import Schedule
 
 # Create your models here.
@@ -85,13 +86,15 @@ class Section(models.Model):
     end_time = models.CharField(max_length=10, null=True, blank=True)
     days = models.CharField(max_length=10, null=True, blank=True)
     building_room = models.CharField(max_length=40, null=True, blank=True)
-    instructor_name = models.CharField(max_length=50, null=True, blank=True)
     max_enrollment = models.IntegerField()
     campus = models.CharField(max_length=15)
 
-    # Relations
+    # Relations (null=True to avoid Django complaining, but should never be null)
+    professor = models.ForeignKey(
+        "fcq.Professor", on_delete=models.CASCADE, related_name="sections", null=True
+    )  # NOTE: Using string rep of model to avoid circular imports
     parent_class = models.ForeignKey(
-        Class, on_delete=models.CASCADE, related_name="sections"
+        Class, on_delete=models.CASCADE, related_name="sections", null=True
     )
     schedule = models.ManyToManyField(Schedule, related_name="classes")
 

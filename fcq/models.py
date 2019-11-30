@@ -1,6 +1,8 @@
 from django.db import models
+from django.shortcuts import reverse
 
-from classes.models import Department, Class
+from classes.models import Class, Department
+
 
 # Proposed changes:
 """
@@ -24,6 +26,13 @@ If that doesn't happen, leave these as Chars)
 class Professor(models.Model):
     firstName = models.CharField(max_length=50)
     lastName = models.CharField(max_length=50)
+
+    def get_absolute_url(self):
+        return reverse("fcq:view", args=[str(self.id)])
+
+    @property
+    def full_name(self):
+        return "{}, {}".format(self.lastName, self.firstName)
 
 
 class FCQ(models.Model):

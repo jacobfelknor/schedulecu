@@ -32,20 +32,12 @@ def fcq_search_ajax(request):
     else:
         get = request.POST.get
 
-    results = FCQ.objects
-
     keyword = get("keyword", "")
     keyword = re.split("\W", keyword)
-    fcq_obj = FCQ.objects.filter(
+    professors = Professor.objects.filter(
         reduce(
             operator.and_,
-            (
-                (
-                    Q(professor__firstName__icontains=x)
-                    | Q(professor__lastName__icontains=x)
-                )
-                for x in keyword
-            ),
+            ((Q(firstName__icontains=x) | Q(lastName__icontains=x)) for x in keyword),
         )
     )
     department = get("department")
@@ -55,16 +47,18 @@ def fcq_search_ajax(request):
             # return no results if department is not found
             return JsonResponse({})
         else:
-            fcq_obj = fcq_obj.filter(course__department__code=department)
+            professors = professors.filter(
+                fcqs__course__department__code=department
+            ).distinct()
 
     number = get("number")
     if number:
         number = int(number)
         print(type(number), number)
-        fcq_obj = fcq_obj.filter(course__course_subject=number)
+        professors = professors.filter(fcqs__course__course_subject=number)
 
-    profList = fcq_obj.order_by().values_list("professor").distinct()
-    professors = Professor.objects.filter(id__in=profList).order_by("lastName")
+    # profList = fcq_obj.order_by().values_list("professor").distinct()
+    # professors = Professor.objects.filter(id__in=profList).order_by("lastName")
     response = ProfessorSerializer(professors, many=True)
     return JsonResponse(response.data, safe=False)
 
@@ -85,62 +79,65 @@ def view_professor(request, professor_id):
     # get all fcqs for professor
     fcq = FCQ.objects.filter(professor_id=professorID)
     count = len(fcq)
-    students = 0
-    effect = 0.0
-    rating = 0.0
-    course = 0.0
-    chal = 0.0
-    learn = 0.0
-    for fcq_obj in fcq:
-        students += fcq_obj.size
-        effect += fcq_obj.profEffect
-        rating += fcq_obj.profRating
-        course += fcq_obj.courseRating
-        chal += fcq_obj.challenge
-        learn += fcq_obj.learned
-    students = int(students / count)
-    effect = round(effect / count, 2)
-    rating = round(rating / count, 2)
-    course = round(course / count, 2)
-    chal = round(chal / count, 2)
-    learn = round(learn / count, 2)
-    ctx["numClasses"] = count
-    ctx["avgSize"] = students
-    ctx["avgEffect"] = effect
-    ctx["avgRating"] = rating
-    ctx["avgCourse"] = course
-    ctx["avgChal"] = chal
-    ctx["avgLearn"] = learn
+    if count != 0:  # avoid a divide by zero
+        students = 0
+        effect = 0.0
+        rating = 0.0
+        course = 0.0
+        chal = 0.0
+        learn = 0.0
+        for fcq_obj in fcq:
+            students += fcq_obj.size
+            effect += fcq_obj.profEffect
+            rating += fcq_obj.profRating
+            course += fcq_obj.courseRating
+            chal += fcq_obj.challenge
+            learn += fcq_obj.learned
+        students = int(students / count)
+        effect = round(effect / count, 2)
+        rating = round(rating / count, 2)
+        course = round(course / count, 2)
+        chal = round(chal / count, 2)
+        learn = round(learn / count, 2)
+        ctx["numClasses"] = count
+        ctx["avgSize"] = students
+        ctx["avgEffect"] = effect
+        ctx["avgRating"] = rating
+        ctx["avgCourse"] = course
+        ctx["avgChal"] = chal
+        ctx["avgLearn"] = learn
 
-    stars = (effect + rating + learn) / 3
-    if effect - chal < 0:
-        stars += effect - chal
-    ctx["stars"] = stars
+        stars = (effect + rating + learn) / 3
+        if effect - chal < 0:
+            stars += effect - chal
+        ctx["stars"] = stars
 
-    fcq = fcq.annotate(
-        custom_order=Case(
-            When(semester="Spring", then=Value(1)),
-            When(semester="Summer", then=Value(2)),
-            When(semester="Fall", then=Value(3)),
-            output_field=IntegerField(),
+        fcq = fcq.annotate(
+            custom_order=Case(
+                When(semester="Spring", then=Value(1)),
+                When(semester="Summer", then=Value(2)),
+                When(semester="Fall", then=Value(3)),
+                output_field=IntegerField(),
+            )
+        ).order_by("-year", "-custom_order")
+        ctx["fcq"] = fcq
+
+        department_obj = (
+            fcq.order_by().values_list("course__department__name").distinct()
         )
-    ).order_by("-year", "-custom_order")
-    ctx["fcq"] = fcq
+        departments = [x[0] for x in department_obj]
+        deps = [["department", "count"]]
+        for dep in departments:
+            count = len(fcq.filter(course__department__name=dep))
+            holder = [dep, count]
+            deps.append(holder)
 
-    department_obj = fcq.order_by().values_list("course__department__name").distinct()
-    departments = [x[0] for x in department_obj]
-    deps = [["department", "count"]]
-    for dep in departments:
-        count = len(fcq.filter(course__department__name=dep))
-        holder = [dep, count]
-        deps.append(holder)
+        ctx["pieData"] = deps
 
-    ctx["pieData"] = deps
-
-    subject_obj = fcq.order_by().values_list("course__course_subject").distinct()
-    subjects = [x[0] for x in subject_obj]
-    subCount = []
-    for sub in subjects:
-        subCount.append(len(fcq.filter(course__course_subject=sub)))
+        subject_obj = fcq.order_by().values_list("course__course_subject").distinct()
+        subjects = [x[0] for x in subject_obj]
+        subCount = []
+        for sub in subjects:
+            subCount.append(len(fcq.filter(course__course_subject=sub)))
 
     return render(request, "fcq/professor_detail.html", ctx)
