@@ -25,14 +25,15 @@
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css"
     integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
   <!-- Font Awesome v4.7.0 -->
-  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"
-    integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+  <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"
+    integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous"> -->
+  <!-- USING LOCAL FONT AWESOME NOW -->
+  <!--load all fontAwesome icon styles -->
+  <link href="{% static 'fontAwesome/css/all.css' %}" rel="stylesheet">
 
   <!-- Project-specific CSS -->
   <link href="{% static 'css/project.css' %}" rel="stylesheet">
 
-  <!--load all fontAwesome icon styles -->
-  <link href="{% static 'fontAwesome/css/all.css' %}" rel="stylesheet">
   {% block css %}
   {% endblock %}
 
@@ -77,11 +78,11 @@
             {{ user.get_full_name }}</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="{% url 'logout' %}"><span class="fa fa-sign-out"></span> Sign Out</a>
+          <a class="nav-link" href="{% url 'logout' %}"><span class="fas fa-sign-out-alt"></span> Sign Out</a>
         </li>
         {% else %}
         <li class="nav-item">
-          <a class="nav-link" href="{% url 'login' %}"><span class="fa fa-sign-in"></span> Sign In</a>
+          <a class="nav-link" href="{% url 'login' %}"><span class="fas fa-sign-in-alt"></span> Sign In</a>
         </li>
         {% endif %}
       </ul>
