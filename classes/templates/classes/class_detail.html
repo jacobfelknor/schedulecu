@@ -176,8 +176,8 @@
         <div class="col-8">
             {% if not generic_view %}
             <div class="card border-dark" id="{{ section.id }}">
-                <h3 class="card-header bg-dark text-light">
-                    {{ current_section.parent_class.course_title }}
+                <h3 class="card-header bg-dark text-light"><a href="{% url 'classes:view' parent_class.id 'all' %}">
+                    {{ current_section.parent_class.course_title }}</a>
                 </h3>
                 <div class="card-body">
                     <table class="table dt-responsive" cellspacing="0" width="100%">
@@ -235,12 +235,50 @@
 
             {% else %}
             <div class="card border-dark">
-                <div class="jumbotron bg-white">
+                <div class="jumbotron bg-white" style="padding-bottom: 0px;">
                     <h1 class="display">{{ parent_class.department.code }}
                         {{ parent_class.course_subject }} - {{ parent_class.course_title }}</h1>
                     <p class="lead">To view more information, choose a section from the list to the left</p>
+                    <div class="row" style="padding-top: 20px">
+                        <div class="col-md-6 col-xl-4 mb-4">
+                            <div class="card bg-warning shadow border-left-primary py-0">
+                                <div class="card-body">
+                                    <div class="row align-items-center no-gutters">
+                                        <div class="col mr-2">
+                                            <div class="text-uppercase font-weight-bold text-xs mb-1"><span># Semesters Taught</span></div>
+                                            <div class="text-dark font-weight-bold h5 mb-0"><span>{{numSem}}</span></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-xl-4 mb-4">
+                            <div class="card bg-warning shadow border-left-primary py-0">
+                                <div class="card-body">
+                                    <div class="row align-items-center no-gutters">
+                                        <div class="col mr-2">
+                                            <div class="text-uppercase font-weight-bold text-xs mb-1"><span>Avg Course Rating</span></div>
+                                            <div class="text-dark font-weight-bold h5 mb-0"><span>{{avgCourse}}</span></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-xl-4 mb-4">
+                            <div class="card bg-warning shadow border-left-primary py-0">
+                                <div class="card-body">
+                                    <div class="row align-items-center no-gutters">
+                                        <div class="col mr-2">
+                                            <div class="text-uppercase font-weight-bold text-xs mb-1"><span>Avg Course Challenge</span></div>
+                                            <div class="text-dark font-weight-bold h5 mb-0"><span>{{avgChall}}</span></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </div>
+            </div>  
             {% endif %}
             {% if user.is_authenticated %}
             <div class="card border-dark">

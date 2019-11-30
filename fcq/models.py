@@ -50,7 +50,5 @@ class FCQ(models.Model):
     profRating = models.FloatField(default=0.0)
     courseSD = models.FloatField(default=0.0)  # stand. dev. for course rating
     profSD = models.FloatField(default=0.0)  # stand. dev. for professor rating
-    professor = models.ForeignKey(
-        Professor, on_delete=models.CASCADE, related_name="fcqs", null=True
-    )
+    professor = models.ForeignKey(Professor, on_delete=models.CASCADE, related_name="fcqs", null=True)
     course = models.ForeignKey(Class, on_delete=models.CASCADE, related_name="fcqs")

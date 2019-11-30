@@ -8,6 +8,7 @@ from django.shortcuts import get_object_or_404, render
 from django.views.generic import CreateView, DetailView, ListView, UpdateView
 
 from classes.models import Class, Department, Section
+from fcq.models import FCQ
 
 from .forms import SearchForm
 from .serializers import ClassSerializer
@@ -86,4 +87,35 @@ def view_section(request, class_id, section_id):
     if request.user.is_authenticated and not ctx["generic_view"]:
         ctx["in_schedule"] = current_section.in_schedule(request.user)
         ctx["schedule"] = request.user.schedule.classes.all().order_by("start_time")
+
+
+
+    # get number of semesters taught
+    fcqs = FCQ.objects.filter(course=parent_class)
+    yearList = fcqs.order_by().values_list("year").distinct()
+    numSemesters = 0
+    for i in range(len(yearList)):
+        numSemesters += len(fcqs.filter(year=yearList[i][0]).order_by().values_list("semester").distinct())
+    ctx["numSem"] = numSemesters
+
+    #get avg course rating
+    ratings = fcqs.order_by().values_list("courseRating")
+    lenRat = len(ratings)
+    sumRatings = 0
+    for i in range(lenRat):
+        sumRatings += ratings[i][0]
+    avgCourse = round(sumRatings/lenRat,2)
+    ctx["avgCourse"] = avgCourse
+
+    #get avg course challenge
+    challenge = fcqs.order_by().values_list("challenge")
+    lenChal = len(challenge)
+    sumChall = 0
+    for i in range(lenChal):
+        sumChall += challenge[i][0]
+    avgChall = round(sumChall/lenChal,2)
+    ctx["avgChall"] = avgChall
+
+
+
     return render(request, "classes/class_detail.html", ctx)
