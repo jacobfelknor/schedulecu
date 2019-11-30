@@ -86,6 +86,7 @@ def view_section(request, class_id, section_id):
     # only add to schedule functionality if user is logged in
     if request.user.is_authenticated and not ctx["generic_view"]:
         ctx["in_schedule"] = current_section.in_schedule(request.user)
+    if request.user.is_authenticated:
         ctx["schedule"] = request.user.schedule.classes.all().order_by("start_time")
 
     # get number of semesters taught
