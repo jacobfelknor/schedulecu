@@ -11,6 +11,7 @@ from classes.models import Class, Department, Section
 from fcq.models import FCQ
 
 from .forms import SearchForm
+from .serializers import SectionSerializer
 from .serializers import ClassSerializer
 
 # Create your views here.
@@ -30,29 +31,40 @@ def search_ajax(request):
 
     keyword = get("keyword", "")
     keyword = re.split("\W", keyword)
-    keyword_query = reduce(
-        operator.and_,
-        (
-            (Q(course_title__icontains=x) | Q(course_subject__icontains=x))
-            for x in keyword
-        ),
+    sections = Section.objects.filter(
+        reduce(
+            operator.and_,
+            ((Q(professor__firstName__icontains=x) | Q(professor__lastName__icontains=x) | Q(parent_class__course_title__icontains=x) | Q(parent_class__course_subject__icontains=x)) for x in keyword),
+        )
     )
     department = get("department")
     if department:
-        department_obj = Department.objects.filter(code__iexact=department).first()
-        if not department_obj:
-            # return no results if department is not found
-            return JsonResponse({})
-        query = Q(department=department_obj) & keyword_query
-    else:
-        query = keyword_query
-    # only show classes with sections
-    classes = [
-        x
-        for x in Class.objects.filter(query).order_by("course_subject")
-        if x.has_sections
-    ]
-    response = ClassSerializer(classes, many=True)
+        sections = sections.filter(parent_class__department__code=department)
+    sections = sections.order_by('parent_class__department','parent_class__course_subject').distinct('parent_class__department','parent_class__course_subject')
+    # keyword_query = reduce(
+    #     operator.and_,
+    #     (
+    #         (Q(course_title__icontains=x) | Q(course_subject__icontains=x))
+    #         for x in keyword
+    #     ),
+    # )
+    # department = get("department")
+    # if department:
+    #     department_obj = Department.objects.filter(code__iexact=department).first()
+    #     if not department_obj:
+    #         # return no results if department is not found
+    #         return JsonResponse({})
+    #     query = Q(department=department_obj) & keyword_query
+    # else:
+    #     query = keyword_query
+    # # only show classes with sections
+    # classes = [
+    #     x
+    #     for x in Class.objects.filter(query).order_by("course_subject")
+    #     if x.has_sections
+    # ]
+    response = SectionSerializer(sections, many=True)
+    # response = ClassSerializer(classes, many=True)
     return JsonResponse(response.data, safe=False)
 
 
@@ -102,18 +114,24 @@ def view_section(request, class_id, section_id):
     ratings = fcqs.order_by().values_list("courseRating")
     lenRat = len(ratings)
     sumRatings = 0
-    for i in range(lenRat):
-        sumRatings += ratings[i][0]
-    avgCourse = round(sumRatings/lenRat,2)
+    if lenRat > 0:
+        for i in range(lenRat):
+            sumRatings += ratings[i][0]
+        avgCourse = round(sumRatings/lenRat,2)
+    else:
+        avgCourse = "N/A"
     ctx["avgCourse"] = avgCourse
 
     #get avg course challenge
     challenge = fcqs.order_by().values_list("challenge")
     lenChal = len(challenge)
     sumChall = 0
-    for i in range(lenChal):
-        sumChall += challenge[i][0]
-    avgChall = round(sumChall/lenChal,2)
+    if lenChal > 0:
+        for i in range(lenChal):
+            sumChall += challenge[i][0]
+        avgChall = round(sumChall/lenChal,2)
+    else:
+        avgChall = "N/A"
     ctx["avgChall"] = avgChall
 
 
