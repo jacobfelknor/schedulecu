@@ -5,14 +5,6 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-4">
-            <!--
-            <div class="card border-dark">
-                <h5 class="card-header bg-warning">
-                    <a href="{% url 'classes:view' parent_class.id 'all'%}">Class
-                        Homepage</a>
-                </h5>
-            </div>
-            -->
             <!-- Lectures -->
             {% if lectures %}
             <div class="card border-dark">
@@ -32,9 +24,9 @@
                         <tr {% if section.id == current_section.id %} style="background: gold;" {% endif %}>
                             <td><a href="{% url 'classes:view' parent_class.id section.id %}">{{ section.parent_class.department.code }}
                                     {{ section.parent_class.course_subject }} ({{ section.class_component }})</a></td>
-                            {% if section.instructor_name %}
-                            <td>{{ section.instructor_name }}</td>
-                            {% else %}
+                            {% if section.professor.full_name %}
+                            <td><a href="{{ section.professor.get_absolute_url }}">{{ section.professor.full_name }}</a>
+                                {% else %}
                             <td>N/A</td>
                             {% endif %}
                             <td>{{ section.start_time }}-{{ section.end_time }}</td>
@@ -65,8 +57,9 @@
                         <tr {% if section.id == current_section.id %} style="background: gold;" {% endif %}>
                             <td><a href="{% url 'classes:view' parent_class.id section.id %}">{{ section.parent_class.department.code }}
                                     {{ section.parent_class.course_subject }} ({{ section.class_component }})</a></td>
-                            {% if section.instructor_name %}
-                            <td>{{ section.instructor_name }}</td>
+                            {% if section.professor.full_name %}
+                            <td><a href="{{ section.professor.get_absolute_url }}">{{ section.professor.full_name }}</a>
+                            </td>
                             {% else %}
                             <td>N/A</td>
                             {% endif %}
@@ -98,11 +91,10 @@
                         {% for section in labs %}
                         <tr {% if section.id == current_section.id %} style="background: gold;" {% endif %}>
                             <td><a href="{% url 'classes:view' parent_class.id section.id %}">{{ section.parent_class.department.code }}
-                                    {{ section.parent_class.course_subject }} ({{ section.class_component }})</a>
-                            </td>
-                            {% if section.instructor_name %}
-                            <td>{{ section.instructor_name }}</td>
-                            {% else %}
+                                    {{ section.parent_class.course_subject }} ({{ section.class_component }})</a></td>
+                            {% if section.professor.full_name %}
+                            <td><a href="{{ section.professor.get_absolute_url }}">{{ section.professor.full_name }}</a>
+                                {% else %}
                             <td>N/A</td>
                             {% endif %}
                             <td>{{ section.start_time }}-{{ section.end_time }}</td>
@@ -132,11 +124,10 @@
                         {% for section in seminars %}
                         <tr {% if section.id == current_section.id %} style="background: gold;" {% endif %}>
                             <td><a href="{% url 'classes:view' parent_class.id section.id %}">{{ section.parent_class.department.code }}
-                                    {{ section.parent_class.course_subject }} ({{ section.class_component }})</a>
-                            </td>
-                            {% if section.instructor_name %}
-                            <td>{{ section.instructor_name }}</td>
-                            {% else %}
+                                    {{ section.parent_class.course_subject }} ({{ section.class_component }})</a></td>
+                            {% if section.professor.full_name %}
+                            <td><a href="{{ section.professor.get_absolute_url }}">{{ section.professor.full_name }}</a>
+                                {% else %}
                             <td>N/A</td>
                             {% endif %}
                             <td>{{ section.start_time }}-{{ section.end_time }}</td>
@@ -166,11 +157,10 @@
                         {% for section in other %}
                         <tr {% if section.id == current_section.id %} style="background: gold;" {% endif %}>
                             <td><a href="{% url 'classes:view' parent_class.id section.id %}">{{ section.parent_class.department.code }}
-                                    {{ section.parent_class.course_subject }} ({{ section.class_component }})</a>
-                            </td>
-                            {% if section.instructor_name %}
-                            <td>{{ section.instructor_name }}</td>
-                            {% else %}
+                                    {{ section.parent_class.course_subject }} ({{ section.class_component }})</a></td>
+                            {% if section.professor.full_name %}
+                            <td><a href="{{ section.professor.get_absolute_url }}">{{ section.professor.full_name }}</a>
+                                {% else %}
                             <td>N/A</td>
                             {% endif %}
                             <td>{{ section.start_time }}-{{ section.end_time }}</td>
@@ -187,9 +177,7 @@
             {% if not generic_view %}
             <div class="card border-dark" id="{{ section.id }}">
                 <h3 class="card-header bg-dark text-light">
-
-                    <a href="{% url 'classes:view' parent_class.id 'all'%}"
-                        style="color: white; text-decoration: underline;">{{ current_section.parent_class.course_title }}</a>
+                    {{ current_section.parent_class.course_title }}
                 </h3>
                 <div class="card-body">
                     <table class="table dt-responsive" cellspacing="0" width="100%">
@@ -199,9 +187,11 @@
                                     {{ current_section.parent_class.course_subject }}
                                     ({{ current_section.class_component }})</td>
                                 <td><b>Section:</b> <br>{{ current_section.section_number }}</td>
-                                {% if current_section.instructor_name %}
-                                <td><b>Instructor:</b> <br>{{ current_section.instructor_name }}</td>
-                                {% else %}
+                                {% if current_section.professor.full_name %}
+                                <td><b>Instructor:</b> <br>
+                                    <a
+                                        href="{{ current_section.professor.get_absolute_url }}">{{ current_section.professor.full_name }}</a>
+                                    {% else %}
                                 <td><b>Instructor:</b> <br>N/A</td>
                                 {% endif %}
                             </tr>
@@ -242,6 +232,10 @@
 
 
                     {% endif %}
+                    <a href="{% url 'classes:view' parent_class.id 'all' %}"><button class="btn btn-outline-dark"><i
+                                class="fa fa-info-circle" aria-hidden="true"></i>
+                            View Class Page</button>
+                    </a>
                 </div>
             </div> <!-- card -->
 
@@ -251,6 +245,50 @@
                     <h1 class="display">{{ parent_class.department.code }}
                         {{ parent_class.course_subject }} - {{ parent_class.course_title }}</h1>
                     <p class="lead">To view more information, choose a section from the list to the left</p>
+                    <div class="row" style="padding-top: 20px">
+                        <div class="col-md-6 col-xl-4 mb-4">
+                            <div class="card bg-warning shadow border-left-primary py-0">
+                                <div class="card-body">
+                                    <div class="row align-items-center no-gutters">
+                                        <div class="col mr-2">
+                                            <div class="text-uppercase font-weight-bold text-xs mb-1"><span># Semesters
+                                                    Taught</span></div>
+                                            <div class="text-dark font-weight-bold h5 mb-0"><span>{{numSem}}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-xl-4 mb-4">
+                            <div class="card bg-warning shadow border-left-primary py-0">
+                                <div class="card-body">
+                                    <div class="row align-items-center no-gutters">
+                                        <div class="col mr-2">
+                                            <div class="text-uppercase font-weight-bold text-xs mb-1"><span>Avg Course
+                                                    Rating</span></div>
+                                            <div class="text-dark font-weight-bold h5 mb-0"><span>{{avgCourse}}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-xl-4 mb-4">
+                            <div class="card bg-warning shadow border-left-primary py-0">
+                                <div class="card-body">
+                                    <div class="row align-items-center no-gutters">
+                                        <div class="col mr-2">
+                                            <div class="text-uppercase font-weight-bold text-xs mb-1"><span>Avg Course
+                                                    Challenge</span></div>
+                                            <div class="text-dark font-weight-bold h5 mb-0"><span>{{avgChall}}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <h3>Prereqs:</h3><br>
                     <p>{% for prereq in completed_prereqs %}{% for class in prereq.possibleClasses.all %}{% if forloop.first %}<span
                             style="color: green;">({% endif %}{{class.department.code}}{{class.course_subject}}{% if not forloop.last %}
@@ -273,6 +311,7 @@
                         ({% endif %}{{class.department.code}}{{class.course_subject}}{% if not forloop.last %} or
                         {% else %}){% endif %}{% endfor %}{% if not forloop.last %} and {% endif %}{% endfor %}
                     </p>
+
                     {% if user.is_authenticated %}
                     {% if not in_completed %}
                     <a href="{% url 'completedclasses:add_to_completed_classes' %}?class_id={{ parent_class.id }}"
@@ -293,14 +332,44 @@
                 </div>
             </div>
             {% endif %}
+            {% if user.is_authenticated %}
             <div class="card border-dark">
                 <div class="card-header bg-dark text-light">
                     <h2>Your Schedule</h2>
                 </div>
-                <div class="card-body" style="height: 500px;">
-                    SCHEDULE GOES HERE
+                <div class="card-body">
+                    {% if not user.schedule.is_empty %}
+                    <table class="table dt-responsive" cellspacing="0" width="100%">
+                        <thead>
+                            <tr>
+                                <th>Class Name</th>
+                                <th>Class Type</th>
+                                <th>Building</th>
+                                <th>Days</th>
+                                <th>Time</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for section in schedule %}
+                            <tr>
+                                <td>{{ section.parent_class.department.code }}
+                                    {{ section.parent_class.course_subject }} -
+                                    {{ section.parent_class.course_title }}
+                                </td>
+                                <td>{{ section.class_component }}</td>
+                                <td>{{ section.building_room }}</td>
+                                <td>{{ section.days }}</td>
+                                <td>{{ section.start_time }}-{{ section.end_time }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    {% else %}
+                    <h5>Your Schedule is Empty!</h5>
+                    {% endif %}
                 </div>
             </div>
+            {% endif %}
         </div>
     </div>
 </div>

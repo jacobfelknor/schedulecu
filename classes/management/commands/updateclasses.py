@@ -1,9 +1,14 @@
 import html
+import operator
+import re
+from functools import reduce
 
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
+from django.db.models import Q
 
 from classes.models import Class, Department, Section
+from fcq.models import Professor
 
 dept_dict = {
     "ACCT": "Accounting (ACCT)",
@@ -89,6 +94,7 @@ dept_dict = {
     "GEOG": "Geography (GEOG)",
     "GEOL": "Geological Sciences (GEOL)",
     "GRMN": "German (GRMN)",
+    "GSAP": "Global Studies Residential Academic Program (GSAP)",
     "GSLL": "Germanic &amp; Slavic Lang &amp; Lit (GSLL)",
     "GRAD": "Graduate School (GRAD)",
     "GRTE": "Graduate Teacher Education (GRTE)",
@@ -168,6 +174,7 @@ dept_dict = {
     "REAL": "Real Estate (REAL)",
     "RCPR": "Reciprocal Exchange (RCPR)",
     "RLST": "Religious Studies (RLST)",
+    "RSEI": "Renewable & Sustainable Energy Institute (RSEI)",
     "RUSS": "Russian (RUSS)",
     "SNSK": "Sanskrit (SNSK)",
     "SCAN": "Scandinavian (SCAN)",
@@ -221,6 +228,8 @@ known_differences = {
     "ARC": "ARCH",
     "EDU": "EDUC",
     "LAW": "LAWS",
+    "WMST": "WGST",
+    "JOUR": "JRNL",
 }
 
 
@@ -264,6 +273,20 @@ def PopulateClasses():
             failures += 1
             continue
         ############################
+        # get instructor object, create one if not found
+        name_q = re.split("\W", data[12])
+        professor = Professor.objects.filter(
+            reduce(
+                operator.and_,
+                (
+                    (Q(firstName__icontains=x) | Q(lastName__icontains=x))
+                    for x in name_q
+                ),
+            )
+        ).first()
+        if not professor:
+            professor = Professor(firstName=name_q[1], lastName=name_q[0])
+            professor.save()
         section_obj = Section.objects.filter(
             parent_class=class_obj,
             section_number=data[2],
@@ -275,7 +298,7 @@ def PopulateClasses():
             end_time=data[9],
             days=data[10],
             building_room=data[11],
-            instructor_name=data[12],
+            professor=professor,
             max_enrollment=data[13],
             campus=data[14],
         ).first()
@@ -291,7 +314,7 @@ def PopulateClasses():
             course.end_time = data[9]
             course.days = data[10]
             course.building_room = data[11]
-            course.instructor_name = data[12]
+            course.professor = professor
             course.max_enrollment = data[13]
             course.campus = data[14]
             try:
@@ -313,7 +336,7 @@ class Command(BaseCommand):
     print(
         "Updating classes with class_schedule.csv found in classes/management/commands"
     )
-    print("This will take ~30 seconds")
+    # print("This will take ~30 seconds")
 
     def handle(self, *args, **kwargs):
         # Return values are for tests. test kwarg flag will be set if used with test

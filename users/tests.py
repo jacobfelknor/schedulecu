@@ -1,6 +1,7 @@
 from django.test import TestCase
 
 from classes.models import Class, Department, Section
+from fcq.models import Professor
 from users.forms import UserSignUpForm
 from users.models import User
 
@@ -25,6 +26,7 @@ class UserTestCase(TestCase):
         test_class = Class.objects.create(
             department=test_department, course_subject=1350, course_title="random math"
         )
+        test_professor = Professor.objects.create(firstName="Billy", lastName="Joe")
         test_section = Section.objects.create(
             parent_class=test_class,
             section_number="100",
@@ -36,7 +38,7 @@ class UserTestCase(TestCase):
             end_time="10:50 AM",
             days="MWF",
             building_room="MATH100",
-            instructor_name="McMathson,Mathy",
+            professor=test_professor,
             max_enrollment=200,
             campus="Main Campus",
         )
