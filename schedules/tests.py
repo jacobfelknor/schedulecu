@@ -1,7 +1,8 @@
 from django.contrib.auth import login
 from django.test import Client, TestCase
 
-from classes.models import Class, Department
+from classes.models import Class, Department, Section
+from fcq.models import Professor
 from users.forms import UserSignUpForm
 from users.models import User
 
@@ -9,8 +10,8 @@ from users.models import User
 
 # Create class for each test case, inherit Django's TestCase class
 class ScheduleTestCase(TestCase):
-    class_id = None
-    class_obj = None
+    section_id = None
+    section_obj = None
     # function that gets called first
     def setUp(self):
         """ Set up new user using UserSignUp Form to test schedule. Uses similar method as in the user test
@@ -21,25 +22,27 @@ class ScheduleTestCase(TestCase):
         )
         # Class being made to add to schedule
         test_class = Class.objects.create(
-            department=test_department,
-            course_subject=1350,
+            department=test_department, course_subject=1350, course_title="random cs"
+        )
+        test_professor = Professor.objects.create(firstName="Billy", lastName="Joe")
+        test_section = Section.objects.create(
+            parent_class=test_class,
             section_number="100",
             session="B",
             class_number="12345",
             credit="4",
-            course_title="random cs",
             class_component="LEC",
             start_time="10:00 AM",
             end_time="10:50 AM",
             days="MWF",
             building_room="MATH100",
-            instructor_name="McMathson,Mathy",
+            professor=test_professor,
             max_enrollment=200,
             campus="Main Campus",
         )
-        # Save this class' id/obj for later use
-        self.class_id = test_class.id
-        self.class_obj = test_class
+        # Save this section's id/obj for later use
+        self.section_id = test_section.id
+        self.section_obj = test_section
 
         # Ensure blank form is not valid
         form = UserSignUpForm({})
@@ -82,10 +85,10 @@ class ScheduleTestCase(TestCase):
             username="testing123", password="SuperSecretPassword123"
         )  # login user
         c.get(
-            "/schedules/add_to_schedule/", {"class_id": self.class_id}
+            "/schedules/add_to_schedule/", {"section_id": self.section_id}
         )  # make request to view to add class to schedule
         self.assertEqual(len(user.schedule.classes.all()), 1)  # confirm class was added
 
         self.assertEqual(
-            user.schedule.classes.first(), self.class_obj
+            user.schedule.classes.first(), self.section_obj
         )  # confirm class was added correctly

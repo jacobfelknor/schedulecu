@@ -28,10 +28,6 @@
                     <thead class="thead-dark">
                         <tr>
                             <th class="sticky-top">Instructor Name</th>
-                            <th class="sticky-top">Main Department</th>
-                            <th class="sticky-top">Average Rating</th>
-                            <th class="sticky-top">Average Challenge</th>
-                            <th class="sticky-top"># of Classes Taught</th>
                         </tr>
                     </thead>
                     <tbody id="result_table" style="overflow-y: scroll; height: 200px;">
@@ -128,10 +124,7 @@
                 $("#result_table").html("");
                 var html = "";
                 for (var i = 0; i < result.length; i++) {
-                    html += `<tr><td>${result[i].lastName}, ${result[i].firstName}</td>\
-                        <td>${result[i].mainDepartment}</td>
-                        <td>${result[i].avgCourseRating}</td><td>${result[i].avgChallenge}</td>
-                        <td>${result[i].numClasses}</td></tr>`;
+                    html += `<tr><td><a href="{% url 'fcq:view' 0 %}">${result[i].lastName} ${result[i].firstName}</a></td>\ </tr>`.replace(/0/, result[i].id);
                 }
                 $("#result_table").html(html);
             })
@@ -155,7 +148,4 @@
         sessionStorage.removeItem("fcq_number_search");
     }
 </script>
-
-
-
 {% endblock %}
