@@ -7,4 +7,6 @@
 # Using this file to avoid our project being classified as "CSS" because
 # of our inclusion of the font-awesome source in our repo
 
-- schedulecu/static/fontAwesome/* linguist-vendored
+# Font Awesome
+- (^|/)font-?awesome\.(css|less|scss|styl)$
+- (^|/)font-?awesome/.*\.(css|less|scss|styl)$
