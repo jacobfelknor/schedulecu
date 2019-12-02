@@ -1,7 +1,9 @@
 from django.test import TestCase
-from users.models import User
+
+from classes.models import Class, Department, Section
+from fcq.models import Professor
 from users.forms import UserSignUpForm
-from classes.models import Class, Department
+from users.models import User
 
 # Model unit test
 
@@ -19,25 +21,24 @@ class UserTestCase(TestCase):
             major="APPM",
         )
 
-        test_department = Department.objects.create(
-            name="Applied Math (APPM)", code="APPM"
-        )
-
-        # Class being made just for the department so I can make sure users enter valid majors
+        test_department = Department.objects.create(name="Applied Math", code="APPM")
+        # Class being made to add to schedule
         test_class = Class.objects.create(
-            department=test_department,
-            course_subject=1350,
+            department=test_department, course_subject=1350, course_title="random math"
+        )
+        test_professor = Professor.objects.create(firstName="Billy", lastName="Joe")
+        test_section = Section.objects.create(
+            parent_class=test_class,
             section_number="100",
             session="B",
             class_number="12345",
             credit="4",
-            course_title="The big sad calculus",
             class_component="LEC",
             start_time="10:00 AM",
             end_time="10:50 AM",
             days="MWF",
             building_room="MATH100",
-            instructor_name="McMathson,Mathy",
+            professor=test_professor,
             max_enrollment=200,
             campus="Main Campus",
         )

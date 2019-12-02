@@ -1,4 +1,5 @@
 from django.db import models
+
 from schedules.models import Schedule
 
 # Create your models here.
@@ -43,26 +44,14 @@ class Department(models.Model):
 
 
 class Class(models.Model):
+    """ 
+    General class model. Only one instance for each class
+    """
 
-    # Database
-    # department = models.CharField(max_length=4)
-    course_subject = models.IntegerField()
-    section_number = models.CharField(max_length=5)
-    session = models.CharField(max_length=5)
-    class_number = models.IntegerField()
-    credit = models.CharField(max_length=5)
+    # Fields
     course_title = models.CharField(max_length=50)
-    class_component = models.CharField(max_length=10)
-    start_time = models.CharField(max_length=10, null=True, blank=True)
-    end_time = models.CharField(max_length=10, null=True, blank=True)
-    days = models.CharField(max_length=10, null=True, blank=True)
-    building_room = models.CharField(max_length=40, null=True, blank=True)
-    instructor_name = models.CharField(max_length=50, null=True, blank=True)
-    max_enrollment = models.IntegerField()
-    campus = models.CharField(max_length=15)
-
+    course_subject = models.IntegerField()
     # Relations
-    schedule = models.ManyToManyField(Schedule, related_name="classes")
     department = models.ForeignKey(
         Department, on_delete=models.CASCADE, related_name="classes"
     )
@@ -74,3 +63,43 @@ class Class(models.Model):
                 empty.append(field)
         return empty
 
+    @property
+    def has_sections(self):
+        if len(self.sections.all()):
+            return True
+        else:
+            return False
+
+
+class Section(models.Model):
+    """
+    Specific Class instance. includes details about a general class
+    """
+
+    # Fields
+    section_number = models.CharField(max_length=5)
+    session = models.CharField(max_length=5)
+    class_number = models.IntegerField()
+    credit = models.CharField(max_length=5)
+    class_component = models.CharField(max_length=10)
+    start_time = models.CharField(max_length=10, null=True, blank=True)
+    end_time = models.CharField(max_length=10, null=True, blank=True)
+    days = models.CharField(max_length=10, null=True, blank=True)
+    building_room = models.CharField(max_length=40, null=True, blank=True)
+    max_enrollment = models.IntegerField()
+    campus = models.CharField(max_length=15)
+
+    # Relations (null=True to avoid Django complaining, but should never be null)
+    professor = models.ForeignKey(
+        "fcq.Professor", on_delete=models.CASCADE, related_name="sections", null=True
+    )  # NOTE: Using string rep of model to avoid circular imports
+    parent_class = models.ForeignKey(
+        Class, on_delete=models.CASCADE, related_name="sections", null=True
+    )
+    schedule = models.ManyToManyField(Schedule, related_name="classes")
+
+    def in_schedule(self, user):
+        if self in user.schedule.classes.all():
+            return True
+        else:
+            return False

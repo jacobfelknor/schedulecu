@@ -7,6 +7,7 @@ app_name = "classes"
 urlpatterns = [
     path("search/", views.search, name="search"),
     path("search_ajax/", views.search_ajax, name="search_ajax"),
-    path("view/<pk>/", views.ClassView.as_view(), name="view"),
+    # path("view/<class_id>/", views.view_class, name="view"),
+    path("view/<class_id>/<section_id>/", views.view_section, name="view"),
 ]
 

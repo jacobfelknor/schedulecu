@@ -1,0 +1,10 @@
+# Vendored files and directories are excluded from language
+# statistics.
+#
+# Lines in this file are Regexps that are matched against the file
+# pathname.
+#
+# This file tells github to ignore files in the given directory
+# for language stats. We don't want our project classified as 
+# "CSS" because we have included the fontAwesome library
+schedulecu/static/fontAwesome/* linguist-vendored

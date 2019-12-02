@@ -6,7 +6,7 @@ class SearchForm(forms.Form):
     keyword = forms.CharField(
         label="",
         widget=forms.TextInput(
-            attrs={"placeholder": "Class Name, Class Code, Instructor"}
+            attrs={"placeholder": "Class Name or Class Code"}
         ),
         required=False,
     )
