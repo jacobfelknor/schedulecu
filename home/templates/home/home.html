@@ -31,8 +31,11 @@
 {% endblock %}
 
 {% block content %}
-
-<div id='calendar'></div>
+<div class="container-fluid">
+    <div class="card border-0" style ="width: 75%;">
+        <div id='calendar'></div>
+    </div>
+</div>
 <script>
     // Access classes needed to be added to the calendar via user -> schedule -> classes
     
@@ -88,10 +91,12 @@
             var classDaysNum = replaceTh.replace('F', '5');
             var classDaysArray = classDaysNum.split('');
             console.log(classDaysArray);
+            console.log('ttest');
 
+            // loop is not executing at all
             {% for day in classDaysArray %}
                 console.log("woohoo");
-                var weekDay = parseInt(day, 10);
+                var weekDay = parseInt({{day}}, 10);
                 startTime.setDate(weekDay);
                 endTime.setDate(weekDay);
                 calendar.addEvent({
@@ -101,7 +106,7 @@
                 });
             {% endfor %}
 
-            console.log(startTime);
+            console.log("woop");
 
         {% endfor %}
 
