@@ -96,18 +96,6 @@ def view_section(request, class_id, section_id):
     incomplete_coreqs = []
 
     if request.user.is_authenticated:
-        # complete = Prerequisite.objects.filter(
-        #     classes=parent_class, corequisite=False, __possibleClasses__classes__in= CompletedClasses.objects.filter(
-        #    classes__in=[y for x in prereqs.all() for y in x.possibleClasses.all()], user=request.user).
-        #    )
-
-        # All of user's completed classes that apply to these prereqs
-        # Prerequisite.objects.filter(classes=parent_class, corequisite=False)
-        # CompletedClasses.objects.filter(
-        #     classes__in=[y for x in prereqs.all() for y in x.possibleClasses.all()], user=request.user)
-
-        # All classes that apply
-        # [x.classes.all() for x in CompletedClasses.objects.filter(classes__in=[y for x in prereqs.all() for y in x.possibleClasses.all()]).all()]
 
         for prereq in prereqs:
             possibleClasses = [x for x in prereq.possibleClasses.all()]
@@ -131,9 +119,8 @@ def view_section(request, class_id, section_id):
             ctx["in_completed"] = True
 
         if not ctx["generic_view"]:
-            # if self.object in self.request.user.schedule.classes.all():
-            #     ctx["in_schedule"] = True
             ctx["in_schedule"] = current_section.in_schedule(request.user)
+        ctx["schedule"] = request.user.schedule.classes.all().order_by("start_time")
     else:
         for prereq in prereqs:
             if prereq.corequisite:
@@ -145,13 +132,6 @@ def view_section(request, class_id, section_id):
     ctx["incomplete_prereqs"] = incomplete_prereqs
     ctx["completed_coreqs"] = completed_coreqs
     ctx["incomplete_coreqs"] = incomplete_coreqs
-    # ctx["prereqs"] = {prereq: prereq.possibleClasses.all()
-    #                  for prereq in prereqs}
-    # only add to schedule functionality if user is logged in
-    if request.user.is_authenticated and not ctx["generic_view"]:
-        ctx["in_schedule"] = current_section.in_schedule(request.user)
-    if request.user.is_authenticated:
-        ctx["schedule"] = request.user.schedule.classes.all().order_by("start_time")
 
     # get number of semesters taught
     fcqs = FCQ.objects.filter(course=parent_class)
