@@ -11,8 +11,7 @@ from classes.models import Class
 def home(request):
     if request.user.is_authenticated:
         class_list = request.user.schedule.classes.all()
-        length = len(class_list)
-        context = {'class_list':class_list, 'length': length}
+        context = {'class_list':class_list}
         return render(request, "home/home.html", context)
 
     return render(request, "home/home.html")
