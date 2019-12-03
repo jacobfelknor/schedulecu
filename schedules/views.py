@@ -5,7 +5,8 @@ from audit.models import Prerequisite
 from .models import Schedule
 from completedclasses.models import CompletedClasses
 from django.contrib import messages
-
+from django.utils.html import format_html
+from django.template import Template, Context
 # Create your views here.
 
 
@@ -59,13 +60,14 @@ def add_to_schedule(request):
                 possibleClasses = [x for x in failed.possibleClasses.all()]
                 output += "("
                 for possibleClass in possibleClasses:
-                    output += '<a href={}'.format(
-                        r'"{% url "classes: view" ' + str(possibleClass.id) + r' "all" %}" >')
-                    output += possibleClass.department.code + \
-                        str(possibleClass.course_subject) + "</a> or "
+                    output += '<a href="{}">{}</a> or '.format(
+                        r"{% url 'classes:view' " +
+                        str(possibleClass.id) + r" 'all' %}",
+                        possibleClass.department.code + str(possibleClass.course_subject))
+
                 output = output[:-4] + ") and "
-            print(output[:-5])
-            return output[:-5]
+            t = Template(output[:-5])
+            return t.render(Context())
 
         if len(prereq_failures) > 0:
             messages.success(
@@ -82,14 +84,6 @@ def add_to_schedule(request):
             )
 
     return redirect("classes:view", class_id=class_id, section_id=add_section_id)
-
-
-"""
-<a href = "{% url 'classes:view' parent_class.id 'all' %}" > <button class = "btn btn-outline-dark" > <i
-                                class = "fa fa-info-circle" aria-hidden = "true" > </i >
-                            View Class Page</button>
-                    </a>
-"""
 
 
 def remove_from_schedule(request):
