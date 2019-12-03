@@ -289,7 +289,8 @@
                             </div>
                         </div>
                     </div>
-                    <h3>Prereqs:</h3><br>
+                    {% if completed_prereqs or incomplete_prereqs %}
+                    <h3>Prerequisites:</h3><br>
                     <p>{% for prereq in completed_prereqs %}{% for class in prereq.possibleClasses.all %}{% if forloop.first %}<span
                             style="color: green;">({% endif %}{{class.department.code}}{{class.course_subject}}{% if not forloop.last %}
                             or
@@ -300,7 +301,9 @@
                         ({% endif %}{{class.department.code}}{{class.course_subject}}{% if not forloop.last %} or
                         {% else %}){% endif %}{% endfor %}{% if not forloop.last %} and {% endif %}{% endfor %}
                     </p>
-                    <h3>Coreqs:</h3><br>
+                    {% endif %}
+                    {% if completed_coreqs or incomplete_coreqs %}
+                    <h3>Corequisites:</h3><br>
                     <p>{% for coreq in completed_coreqs %}{% for class in coreq.possibleClasses.all %}{% if forloop.first %}<span
                             style="color: green;">({% endif %}{{class.department.code}}{{class.course_subject}}{% if not forloop.last %}
                             or
@@ -311,7 +314,7 @@
                         ({% endif %}{{class.department.code}}{{class.course_subject}}{% if not forloop.last %} or
                         {% else %}){% endif %}{% endfor %}{% if not forloop.last %} and {% endif %}{% endfor %}
                     </p>
-
+                    {% endif %}
                     {% if user.is_authenticated %}
                     {% if not in_completed %}
                     <a href="{% url 'completedclasses:add_to_completed_classes' %}?class_id={{ parent_class.id }}"

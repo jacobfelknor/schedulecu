@@ -59,24 +59,14 @@ def add_to_schedule(request):
                 possibleClasses = [x for x in failed.possibleClasses.all()]
                 output += "("
                 for possibleClass in possibleClasses:
-                    print(possibleClass)
+                    output += '<a href={}'.format(
+                        r'"{% url "classes: view" ' + str(possibleClass.id) + r' "all" %}" >')
                     output += possibleClass.department.code + \
-                        str(possibleClass.course_subject) + " or "
+                        str(possibleClass.course_subject) + "</a> or "
                 output = output[:-4] + ") and "
+            print(output[:-5])
             return output[:-5]
 
-        # INCOMPLETE MESSAGING. make this nicer
-        '''
-        messages.success(
-            request,
-            "To add this class, add the prerequisites " +
-            str(list(set([y.department.code + str(y.course_subject) for x in prereq_failures for y in x.possibleClasses.all()]))) +
-            "and the corequisites " +
-            str(list(set([y.department.code +
-                          str(y.course_subject) for x in coreq_failures for y in x.possibleClasses.all()]))),
-            extra_tags="danger",
-        )
-        '''
         if len(prereq_failures) > 0:
             messages.success(
                 request,
@@ -92,6 +82,14 @@ def add_to_schedule(request):
             )
 
     return redirect("classes:view", class_id=class_id, section_id=add_section_id)
+
+
+"""
+<a href = "{% url 'classes:view' parent_class.id 'all' %}" > <button class = "btn btn-outline-dark" > <i
+                                class = "fa fa-info-circle" aria-hidden = "true" > </i >
+                            View Class Page</button>
+                    </a>
+"""
 
 
 def remove_from_schedule(request):
