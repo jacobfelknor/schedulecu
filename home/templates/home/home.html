@@ -25,7 +25,13 @@
 {% block content %}
 <div class="container-fluid" style="text-align:center;">
     <div class="card border-0" style="width: 75%; display:inline-block;">
-        <h1>Your Schedule</h1>
+        <h2 class="card-header bg-warning">
+            {% if user.is_authenticated %}
+            Your Schedule
+            {% else %}
+            <a href="{% url 'login' %}">Sign In</a> to view your schedule</h1>
+            {% endif %}
+        </h2>
         <div id='calendar'></div>
     </div>
 </div>
