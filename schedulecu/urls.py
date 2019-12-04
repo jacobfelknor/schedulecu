@@ -29,4 +29,5 @@ urlpatterns = [
     path("schedules/", include("schedules.urls")),
     path("contact/", include("contact.urls")),
     path("fcq/", include("fcq.urls")),
+    path("completedclasses/", include("completedclasses.urls")),
 ]

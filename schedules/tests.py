@@ -9,10 +9,13 @@ from users.models import User
 # Model unit test
 
 # Create class for each test case, inherit Django's TestCase class
+
+
 class ScheduleTestCase(TestCase):
     section_id = None
     section_obj = None
     # function that gets called first
+
     def setUp(self):
         """ Set up new user using UserSignUp Form to test schedule. Uses similar method as in the user test
             Tests whether or not the user's schedule is assigned correctly on creation
@@ -44,6 +47,10 @@ class ScheduleTestCase(TestCase):
         self.section_id = test_section.id
         self.section_obj = test_section
 
+        # Save class id/obj for later use
+        self.class_id = test_class.id
+        self.class_obj = test_class
+
         # Ensure blank form is not valid
         form = UserSignUpForm({})
         self.assertFalse(form.is_valid())
@@ -65,7 +72,6 @@ class ScheduleTestCase(TestCase):
                 "password2": "SuperSecretPassword123",
             }
         )
-        print(form.errors)
         # Valid input
         self.assertTrue(form.is_valid())
         form.save()
@@ -85,9 +91,12 @@ class ScheduleTestCase(TestCase):
             username="testing123", password="SuperSecretPassword123"
         )  # login user
         c.get(
-            "/schedules/add_to_schedule/", {"section_id": self.section_id}
+            "/schedules/add_to_schedule/",
+            {"section_id": self.section_id,
+             "class_id": self.class_id}
         )  # make request to view to add class to schedule
-        self.assertEqual(len(user.schedule.classes.all()), 1)  # confirm class was added
+        self.assertEqual(len(user.schedule.classes.all()),
+                         1)  # confirm class was added
 
         self.assertEqual(
             user.schedule.classes.first(), self.section_obj

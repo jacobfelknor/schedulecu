@@ -1,6 +1,7 @@
 from django.db import models
 
 from schedules.models import Schedule
+from completedclasses.models import CompletedClasses
 
 # Create your models here.
 
@@ -55,6 +56,8 @@ class Class(models.Model):
     department = models.ForeignKey(
         Department, on_delete=models.CASCADE, related_name="classes"
     )
+    completed = models.ManyToManyField(
+        CompletedClasses, related_name="classes")
 
     def empty_fields(self):
         empty = []
@@ -96,6 +99,7 @@ class Section(models.Model):
     parent_class = models.ForeignKey(
         Class, on_delete=models.CASCADE, related_name="sections", null=True
     )
+
     schedule = models.ManyToManyField(Schedule, related_name="classes")
 
     def in_schedule(self, user):
