@@ -28,7 +28,7 @@
                         <tr>
                             <th class="sticky-top">Course Number</th>
                             <th class="sticky-top">Course Title</th>
-                            <th class="sticky-top">Credits</th>
+                            <th class="sticky-top"># Total Sections</th>
                         </tr>
                     </thead>
                     <tbody id="result_table">
@@ -47,7 +47,7 @@
 
     $(document).ready(function () {
         // setup table scrolling
-        $("#result_div").attr("style", `height: ${screen.height * 0.77}px; overflow: auto;`);
+        $("#result_div").attr("style", `height: ${screen.height * 0.67}px; overflow: auto;`);
         // set placeholder for department field (not working through django side)
         $("#id_department").attr("placeholder", "Any Subject");
         // retrieve values from sessionStorage
@@ -99,16 +99,17 @@
             };
             $.ajax(args).then(function (result) {
                 console.log(result);
-                var duplicate_check = {}
+
                 // Code depending on result
                 $("#result_table").html("");
                 var html = "";
+                // for (var i = 0; i < result.length; i++) {
+                //     html += `<tr><td><a href="{% url 'classes:view' 0 'all' %}">${result[i].department} ${result[i].course_number}</a></td>\
+                //         <td>${result[i].course_title}</td></tr>`.replace(/0/, result[i].course_id);
+                // }
                 for (var i = 0; i < result.length; i++) {
-                    if (duplicate_check[result[i].department] !== result[i].course_subject && result[i].credit != 0) {
-                        html += `<tr><td><a href="{% url 'classes:view' 0 %}">${result[i].department} ${result[i].course_subject}</a></td>\
-                        <td>${result[i].course_title}</td><td>${result[i].credit}</td></tr>`.replace(/0/, result[i].id);
-                        duplicate_check[result[i].department] = result[i].course_subject;
-                    }
+                    html += `<tr><td><a href="{% url 'classes:view' 0 'all' %}">${result[i].department} ${result[i].course_subject}</a></td>\
+                        <td>${result[i].course_title}</td><td>${result[i].num_sections}</td></tr>`.replace(/0/, result[i].course_id);
                 }
                 $("#result_table").html(html);
             })

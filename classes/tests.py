@@ -11,4 +11,6 @@ class ClassTestCase(TestCase):
 
     def testClassImport(self):
         # this command (updateclasses) will return false if any failures occur
-        self.assertTrue(Command.handle(Command))
+        self.assertTrue(
+            Command.handle(Command, test=True)
+        )  # call with test option (kwarg)

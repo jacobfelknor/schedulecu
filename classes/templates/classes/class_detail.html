@@ -2,94 +2,341 @@
 
 {% block content %}
 
-<div class="container">
-    <div class="card border-dark">
-        <h3 class="card-header bg-dark text-light">
-            {{ class.course_title }}
-        </h3>
-        <div class="card-body">
-            <table class="table dt-responsive" cellspacing="0" width="100%">
-                <tbody>
-                    <tr>
-                        <td><b>Department/Number:</b> <br>{{ class.department.code }} {{ class.course_subject }}
-                            ({{ class.class_component }})</td>
-                        <td><b>Section:</b> <br>{{ class.section_number }}</td>
-                        {% if class.instructor_name %}
-                        <td><b>Instructor:</b> <br>{{ class.instructor_name }}</td>
-                        {% else %}
-                        <td><b>Instructor:</b> <br>N/A</td>
-                        {% endif %}
-                    </tr>
-                    <tr>
-                        <td><b>Days:</b> <br>{{ class.days }}</td>
-                        <td><b>Time:</b> <br>{{ class.start_time }}-{{ class.end_time }}</td>
-                        {% if class.max_enrollment %}
-                        <td><b>Max Enrollment:</b><br> {{ class.max_enrollment }}</td>
-                        {% else %}
-                        <td><br></td>
-                        {% endif %}
-                    </tr>
-                    <tr>
-                        <td><b>Location:</b> <br>{{ class.building_room }}</td>
-                        <td><b>Campus:</b> <br>{{ class.campus }}</td>
-                        {% if class.credit %}
-                        <td><b>Credits:</b><br> {{ class.credit }}</td>
-                        {% else %}
-                        <td><br></td>
-                        {% endif %}
-                    </tr>
-                </tbody>
-            </table>
-            {% if user.is_authenticated %}
-            {% if not in_schedule %}
-            <a href="{% url 'schedules:add_to_schedule' %}?class_id={{ class.id }}"><button
-                    class="btn btn-outline-success"><i class="fa fa-plus-circle" aria-hidden="true"></i> Add to
-                    Schedule</button></a>
-            {% else %}
-            <a href="{% url 'schedules:remove_from_schedule' %}?class_id={{ class.id }}"><button
-                    class="btn btn-outline-danger"><i class="fa fa-minus-circle" aria-hidden="true"></i> Remove from
-                    Schedule</button></a>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-4">
+            <!-- Lectures -->
+            {% if lectures %}
+            <div class="card border-dark">
+                <h5 class="card-header bg-warning">
+                    Lectures
+                </h5>
+                <table class="table dt-responsive table-striped" cellspacing="0" width="100%">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>Course Number</th>
+                            <th>Instructor</th>
+                            <th>Time</th>
+                        </tr>
+                    </thead>
+                    <tbody id="result_table">
+                        {% for section in lectures %}
+                        <tr {% if section.id == current_section.id %} style="background: gold;" {% endif %}>
+                            <td><a href="{% url 'classes:view' parent_class.id section.id %}">{{ section.parent_class.department.code }}
+                                    {{ section.parent_class.course_subject }} ({{ section.class_component }})</a></td>
+                            {% if section.professor.full_name %}
+                            <td><a href="{{ section.professor.get_absolute_url }}">{{ section.professor.full_name }}</a>
+                                {% else %}
+                            <td>N/A</td>
+                            {% endif %}
+                            <td>{{ section.start_time }}-{{ section.end_time }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div> <!-- card -->
             {% endif %}
+            <!-- End Lectures -->
+
+            <!-- Recitations -->
+            {% if recitations %}
+            <div class="card border-dark">
+                <h5 class="card-header bg-warning">
+                    Recitations
+                </h5>
+                <table class="table dt-responsive table-striped" cellspacing="0" width="100%">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>Course Number</th>
+                            <th>Instructor</th>
+                            <th>Time</th>
+                        </tr>
+                    </thead>
+                    <tbody id="result_table">
+                        {% for section in recitations %}
+                        <tr {% if section.id == current_section.id %} style="background: gold;" {% endif %}>
+                            <td><a href="{% url 'classes:view' parent_class.id section.id %}">{{ section.parent_class.department.code }}
+                                    {{ section.parent_class.course_subject }} ({{ section.class_component }})</a></td>
+                            {% if section.professor.full_name %}
+                            <td><a href="{{ section.professor.get_absolute_url }}">{{ section.professor.full_name }}</a>
+                            </td>
+                            {% else %}
+                            <td>N/A</td>
+                            {% endif %}
+                            <td>{{ section.start_time }}-{{ section.end_time }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div> <!-- card -->
+            {% endif %}
+            <!-- End Recitaions -->
+
+
+            <!-- Labs -->
+            {% if labs %}
+            <div class="card border-dark">
+                <h5 class="card-header bg-warning">
+                    Labs
+                </h5>
+                <table class="table dt-responsive table-striped" cellspacing="0" width="100%">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>Course Number</th>
+                            <th>Instructor</th>
+                            <th>Time</th>
+                        </tr>
+                    </thead>
+                    <tbody id="result_table">
+                        {% for section in labs %}
+                        <tr {% if section.id == current_section.id %} style="background: gold;" {% endif %}>
+                            <td><a href="{% url 'classes:view' parent_class.id section.id %}">{{ section.parent_class.department.code }}
+                                    {{ section.parent_class.course_subject }} ({{ section.class_component }})</a></td>
+                            {% if section.professor.full_name %}
+                            <td><a href="{{ section.professor.get_absolute_url }}">{{ section.professor.full_name }}</a>
+                                {% else %}
+                            <td>N/A</td>
+                            {% endif %}
+                            <td>{{ section.start_time }}-{{ section.end_time }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div> <!-- card -->
+            {% endif %}
+            <!-- End Labs -->
+
+            <!-- Seminars -->
+            {% if seminars %}
+            <div class="card border-dark">
+                <h5 class="card-header bg-warning">
+                    Seminars
+                </h5>
+                <table class="table dt-responsive table-striped" cellspacing="0" width="100%">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>Course Number</th>
+                            <th>Instructor</th>
+                            <th>Time</th>
+                        </tr>
+                    </thead>
+                    <tbody id="result_table">
+                        {% for section in seminars %}
+                        <tr {% if section.id == current_section.id %} style="background: gold;" {% endif %}>
+                            <td><a href="{% url 'classes:view' parent_class.id section.id %}">{{ section.parent_class.department.code }}
+                                    {{ section.parent_class.course_subject }} ({{ section.class_component }})</a></td>
+                            {% if section.professor.full_name %}
+                            <td><a href="{{ section.professor.get_absolute_url }}">{{ section.professor.full_name }}</a>
+                                {% else %}
+                            <td>N/A</td>
+                            {% endif %}
+                            <td>{{ section.start_time }}-{{ section.end_time }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div> <!-- card -->
+            {% endif %}
+            <!-- End seminars -->
+
+            <!-- Other -->
+            {% if other %}
+            <div class="card border-dark">
+                <h5 class="card-header bg-warning">
+                    Other sections
+                </h5>
+                <table class="table dt-responsive table-striped" cellspacing="0" width="100%">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>Course Number</th>
+                            <th>Instructor</th>
+                            <th>Time</th>
+                        </tr>
+                    </thead>
+                    <tbody id="result_table">
+                        {% for section in other %}
+                        <tr {% if section.id == current_section.id %} style="background: gold;" {% endif %}>
+                            <td><a href="{% url 'classes:view' parent_class.id section.id %}">{{ section.parent_class.department.code }}
+                                    {{ section.parent_class.course_subject }} ({{ section.class_component }})</a></td>
+                            {% if section.professor.full_name %}
+                            <td><a href="{{ section.professor.get_absolute_url }}">{{ section.professor.full_name }}</a>
+                                {% else %}
+                            <td>N/A</td>
+                            {% endif %}
+                            <td>{{ section.start_time }}-{{ section.end_time }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div> <!-- card -->
+            {% endif %}
+            <!-- End other -->
+
+        </div>
+        <div class="col-8">
+            {% if not generic_view %}
+            <div class="card border-dark" id="{{ section.id }}">
+                <h3 class="card-header bg-dark text-light">
+                    {{ current_section.parent_class.course_title }}
+                </h3>
+                <div class="card-body">
+                    <table class="table dt-responsive" cellspacing="0" width="100%">
+                        <tbody>
+                            <tr>
+                                <td><b>Department/Number:</b> <br>{{ current_section.parent_class.department.code }}
+                                    {{ current_section.parent_class.course_subject }}
+                                    ({{ current_section.class_component }})</td>
+                                <td><b>Section:</b> <br>{{ current_section.section_number }}</td>
+                                {% if current_section.professor.full_name %}
+                                <td><b>Instructor:</b> <br>
+                                    <a
+                                        href="{{ current_section.professor.get_absolute_url }}">{{ current_section.professor.full_name }}</a>
+                                    {% else %}
+                                <td><b>Instructor:</b> <br>N/A</td>
+                                {% endif %}
+                            </tr>
+                            <tr>
+                                <td><b>Days:</b> <br>{{ current_section.days }}</td>
+                                <td><b>Time:</b> <br>{{ current_section.start_time }}-{{ current_section.end_time }}
+                                </td>
+                                {% if current_section.max_enrollment %}
+                                <td><b>Max Enrollment:</b><br> {{ current_section.max_enrollment }}</td>
+                                {% else %}
+                                <td><br></td>
+                                {% endif %}
+                            </tr>
+                            <tr>
+                                <td><b>Location:</b> <br>{{ current_section.building_room }}</td>
+                                <td><b>Campus:</b> <br>{{ current_section.campus }}</td>
+                                {% if current_section.credit %}
+                                <td><b>Credits:</b><br> {{ current_section.credit }}</td>
+                                {% else %}
+                                <td><br></td>
+                                {% endif %}
+                            </tr>
+                        </tbody>
+                    </table>
+                    {% if user.is_authenticated %}
+                    {% if not in_schedule %}
+                    <a
+                        href="{% url 'schedules:add_to_schedule' %}?class_id={{ parent_class.id }}&section_id={{ current_section.id }}"><button
+                            class="btn btn-outline-success"><i class="fa fa-plus-circle" aria-hidden="true"></i> Add to
+                            Schedule</button></a>
+                    {% else %}
+                    <a
+                        href="{% url 'schedules:remove_from_schedule' %}?class_id={{ parent_class.id }}&section_id={{ current_section.id }}"><button
+                            class="btn btn-outline-danger"><i class="fa fa-minus-circle" aria-hidden="true"></i> Remove
+                            from
+                            Schedule</button></a>
+                    {% endif %}
+                    {% endif %}
+                    <a href="{% url 'classes:view' parent_class.id 'all' %}"><button class="btn btn-outline-dark"><i
+                                class="fa fa-info-circle" aria-hidden="true"></i>
+                            View Class Page</button>
+                    </a>
+                </div>
+            </div> <!-- card -->
+
+            {% else %}
+            <div class="card border-dark">
+                <div class="jumbotron bg-white" style="padding-bottom: 0px;">
+                    <h1 class="display">{{ parent_class.department.code }}
+                        {{ parent_class.course_subject }} - {{ parent_class.course_title }}</h1>
+                    <p class="lead">To view more information, choose a section from the list to the left</p>
+                    <div class="row" style="padding-top: 20px">
+                        <div class="col-md-6 col-xl-4 mb-4">
+                            <div class="card bg-warning shadow border-left-primary py-0">
+                                <div class="card-body">
+                                    <div class="row align-items-center no-gutters">
+                                        <div class="col mr-2">
+                                            <div class="text-uppercase font-weight-bold text-xs mb-1"><span># Semesters
+                                                    Taught</span></div>
+                                            <div class="text-dark font-weight-bold h5 mb-0"><span>{{numSem}}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-xl-4 mb-4">
+                            <div class="card bg-warning shadow border-left-primary py-0">
+                                <div class="card-body">
+                                    <div class="row align-items-center no-gutters">
+                                        <div class="col mr-2">
+                                            <div class="text-uppercase font-weight-bold text-xs mb-1"><span>Avg Course
+                                                    Rating</span></div>
+                                            <div class="text-dark font-weight-bold h5 mb-0"><span>{{avgCourse}}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-xl-4 mb-4">
+                            <div class="card bg-warning shadow border-left-primary py-0">
+                                <div class="card-body">
+                                    <div class="row align-items-center no-gutters">
+                                        <div class="col mr-2">
+                                            <div class="text-uppercase font-weight-bold text-xs mb-1"><span>Avg Course
+                                                    Challenge</span></div>
+                                            <div class="text-dark font-weight-bold h5 mb-0"><span>{{avgChall}}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            {% if user.is_authenticated %}
+            <div class="card border-dark">
+                <div class="card-header bg-dark text-light">
+                    <h2>Your Schedule</h2>
+                </div>
+                <div class="card-body">
+                    {% if not user.schedule.is_empty %}
+                    <table class="table dt-responsive" cellspacing="0" width="100%">
+                        <thead>
+                            <tr>
+                                <th>Class Name</th>
+                                <th>Class Type</th>
+                                <th>Building</th>
+                                <th>Days</th>
+                                <th>Time</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for section in schedule %}
+                            <tr>
+                                <td>{{ section.parent_class.department.code }}
+                                    {{ section.parent_class.course_subject }} - {{ section.parent_class.course_title }}
+                                </td>
+                                <td>{{ section.class_component }}</td>
+                                <td>{{ section.building_room }}</td>
+                                <td>{{ section.days }}</td>
+                                <td>{{ section.start_time }}-{{ section.end_time }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    {% else %}
+                    <h5>Your Schedule is Empty!</h5>
+                    {% endif %}
+                </div>
+            </div>
             {% endif %}
         </div>
-    </div> <!-- card -->
-    <div class="card border-dark">
-        <h5 class="card-header bg-warning">
-            Related Classes
-        </h5>
-        <table class="table dt-responsive table-striped" cellspacing="0" width="100%">
-            <thead class="thead-dark">
-                <tr>
-                    <th>Course Number</th>
-                    <th>Course Title</th>
-                    <th>Section #</th>
-                    <th>Instructor</th>
-                    <th>Time</th>
-                    <th>Room</th>
-                    <th>Credit</th>
-                </tr>
-            </thead>
-            <tbody id="result_table">
-                {% for class in related %}
-                <tr>
-                    <td><a href="{% url 'classes:view' class.id %}">{{ class.department.code }}
-                            {{ class.course_subject }} ({{ class.class_component }})</a></td>
-                    <td>{{ class.course_title }}</td>
-                    <td>{{ class.section_number }}</td>
-                    {% if class.instructor_name %}
-                    <td>{{ class.instructor_name }}</td>
-                    {% else %}
-                    <td>N/A</td>
-                    {% endif %}
-                    <td>{{ class.start_time }}-{{ class.end_time }}</td>
-                    <td>{{ class.building_room }}</td>
-                    <td>{{ class.credit }}</td>
-                </tr>
-
-                {% endfor %}
-            </tbody>
-        </table>
-    </div> <!-- card -->
+    </div>
 </div>
+
+{% endblock %}
+
+
+{% block javascript %}
+<script>
+
+</script>
 
 {% endblock %}
