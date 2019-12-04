@@ -273,7 +273,7 @@ def PopulateClasses():
             failures += 1
             continue
         ############################
-        # get instructor object, create one if not found
+        # get instructor object, set to none if not found
         name_q = re.split("\W", data[12])
         professor = Professor.objects.filter(
             reduce(
@@ -284,9 +284,8 @@ def PopulateClasses():
                 ),
             )
         ).first()
-        if not professor:
-            professor = Professor(firstName=name_q[1], lastName=name_q[0])
-            professor.save()
+        if not professor or name_q == ['']:
+            professor = None
         section_obj = Section.objects.filter(
             parent_class=class_obj,
             section_number=data[2],
