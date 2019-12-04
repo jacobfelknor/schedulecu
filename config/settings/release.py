@@ -38,14 +38,12 @@ BASE_DIR = os.path.dirname(os.path.dirname(
 
 
 ALLOWED_HOSTS = ["0.0.0.0", "localhost", "schedulecu.herokuapp.com"]
-print(ALLOWED_HOSTS)
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get("secret_key", secret_key)
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get("DEBUG", False)
-print(DEBUG)
 
 # Application definition
 INSTALLED_APPS = [
