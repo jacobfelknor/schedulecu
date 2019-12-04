@@ -6,3 +6,4 @@ __pycache__/
 keys.py
 hackits/
 venv.instructions
+.env

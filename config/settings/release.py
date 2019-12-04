@@ -13,21 +13,6 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 import os
 import django_heroku
 
-try:
-    from .keys import db_password, secret_key, email_password
-except ImportError as e:
-    print(
-        "\n***********************************\n\nWARNING: {}. Using default configuration. This should ONLY be used by Travis for build testing.\n\n***********************************\n".format(
-            e
-        )
-    )
-    db_password = ""
-    secret_key = (
-        "3u57j-w!+4m_k-f1(or!1d_n4bmrwi!+a@x9xvdt^r0qs(jj@!"
-    )  # NOTE: This is an alternate secret key for build testing ONLY!
-    email_password = (
-        ""
-    )  # NOTE: no way to test sending emails, since our password is necessary.
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(
@@ -38,7 +23,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = secret_key
+SECRET_KEY = os.environ['secret_key']
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
@@ -108,7 +93,7 @@ DATABASES = {
         "ENGINE": "django.db.backends.postgresql",
         "NAME": "schedulecu",
         "USER": "postgres",
-        "PASSWORD": db_password,
+        "PASSWORD": os.environ['db_password'],
         "HOST": "localhost",
         "PORT": "5432",
     }
@@ -134,7 +119,7 @@ EMAIL_HOST = "smtp.gmail.com"
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
 EMAIL_HOST_USER = "scheduleCU@gmail.com"
-EMAIL_HOST_PASSWORD = email_password
+EMAIL_HOST_PASSWORD = os.environ['email_password']
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/
