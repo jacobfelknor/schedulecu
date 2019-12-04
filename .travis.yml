@@ -10,7 +10,7 @@ env:
     -DJANGO=2.2.6 DB=postgresql
 
 install:
-    - pip install -r requirements/base.txt
+    - pip install -r requirements.txt
 
 before_script:
     - psql -c 'create database travis_ci_test;' -U postgres
