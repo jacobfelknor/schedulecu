@@ -63,7 +63,7 @@
         var j = 0;
 
         // class_list is the list of classes the signed-in user has in their schedule
-        for (course in {{class_list}}){
+        {% for course in  class_list %}
 
             // The week displayed is the first week of the semester
             var baseTime = new Date('January 12, 2020 0:00:00');
@@ -127,7 +127,7 @@
             }
             j++;
 
-        }
+        {% endfor %}
 
         calendar.render();
         console.log(calendar.getEvents());
