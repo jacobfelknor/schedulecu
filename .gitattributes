@@ -8,3 +8,4 @@
 # for language stats. We don't want our project classified as 
 # "CSS" because we have included the fontAwesome library
 schedulecu/static/fontAwesome/* linguist-vendored
+schedulecu/static/packages/* linguist-vendored
