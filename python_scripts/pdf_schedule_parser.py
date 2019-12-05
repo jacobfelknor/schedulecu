@@ -157,7 +157,7 @@ def has_numbers(str_input):
 
 
 # Generating all possible weekday codes
-weekdays = ["M", "T", "W", "TH", "F"]
+weekdays = ["M", "T", "W", "TH", "F", "M-F", "M-TH"]
 weekday_list = []
 for i in range(1, len(weekdays) + 1):
     weekday_list += ["".join(x) for x in combinations(weekdays, i)]
@@ -332,11 +332,11 @@ def create_course(raw_row):
         data_iterator += 1
 
     # These components are not required, using Regex to find them
-    # raw_row_data = " ".join(flattened_subdata[data_iterator:]).replace("-", "")
-    raw_row_data = " ".join(flattened_subdata).replace("-", "")
+
+    raw_row_data = " ".join(flattened_subdata)  # .replace("-", "")
     # Pull out class time
     full_time = re.search(
-        "[0-9]{2}:[0-9]{2} [PA][M]  [0-9]{2}:[0-9]{2} [PA][M]", raw_row_data
+        "[0-9]{2}:[0-9]{2} [PA][M] - [0-9]{2}:[0-9]{2} [PA][M]", raw_row_data
     )
     if full_time == None:
         # This is expected to happen in quite a few cases
@@ -355,12 +355,24 @@ def create_course(raw_row):
     #        break
     for day_index in range(len(raw_row)):
         if raw_row[day_index] in weekday_list:
+            if raw_row[day_index] == "M-F":
+                raw_row[day_index] = "MTWTHF"
+            if raw_row[day_index] == "M-TH":
+                raw_row[day_index] = "MTWTH"
             class_data += [raw_row[day_index]]
+
+            if "-" in raw_row[day_index]:
+                print("FOUND_CASE_1"*10)
             break
     else:
         # Possible day is lumped in with some other element (probably class)
         for elem in raw_row_data.split(" "):
             if elem in weekday_list:
+                # Small fixes
+                if elem == "M-F":
+                    elem = "MTWTHF"
+                if elem == "M-TH":
+                    elem = "MTWTH"
                 class_data += [elem]
                 day_index = 0
                 break
@@ -429,7 +441,6 @@ def create_course(raw_row):
     elif "SeeAca" in class_data[11]:
         class_data[11] = "See Academic Dept for Room Info"
 
-    # print(class_data)
     return 0, class_data
 
     # end = timer()
