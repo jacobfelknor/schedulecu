@@ -340,49 +340,15 @@
                 <div class="card-header bg-dark text-light">
                     <h2>Your Schedule</h2>
                 </div>
-                <div class="card-body">
-                    {% if not user.schedule.is_empty %}
-                    <table class="table dt-responsive" cellspacing="0" width="100%">
-                        <thead>
-                            <tr>
-                                <th>Class Name</th>
-                                <th>Class Type</th>
-                                <th>Building</th>
-                                <th>Days</th>
-                                <th>Time</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for section in schedule %}
-                            <tr>
-                                <td>{{ section.parent_class.department.code }}
-                                    {{ section.parent_class.course_subject }} -
-                                    {{ section.parent_class.course_title }}
-                                </td>
-                                <td>{{ section.class_component }}</td>
-                                <td>{{ section.building_room }}</td>
-                                <td>{{ section.days }}</td>
-                                <td>{{ section.start_time }}-{{ section.end_time }}</td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                    {% else %}
-                    <h5>Your Schedule is Empty!</h5>
-                    {% endif %}
-                </div>
+                <div id="calendar"></div>
+
             </div>
             {% endif %}
         </div>
     </div>
 </div>
 
-{% endblock %}
-
-
-{% block javascript %}
-<script>
-
-</script>
+<!-- Code for calendar -->
+{% include "home/calendar.html" %}
 
 {% endblock %}
