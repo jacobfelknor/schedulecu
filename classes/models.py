@@ -1,7 +1,8 @@
 from django.db import models
+from django.shortcuts import reverse
 
-from schedules.models import Schedule
 from completedclasses.models import CompletedClasses
+from schedules.models import Schedule
 
 # Create your models here.
 
@@ -56,8 +57,10 @@ class Class(models.Model):
     department = models.ForeignKey(
         Department, on_delete=models.CASCADE, related_name="classes"
     )
-    completed = models.ManyToManyField(
-        CompletedClasses, related_name="classes")
+    completed = models.ManyToManyField(CompletedClasses, related_name="classes")
+
+    def get_absolute_url(self):
+        return reverse("classes:view", args=[str(self.id), "all"])
 
     def empty_fields(self):
         empty = []
@@ -107,3 +110,6 @@ class Section(models.Model):
             return True
         else:
             return False
+
+    def get_absolute_url(self):
+        return reverse("classes:view", args=[str(self.parent_class.id), str(self.id)])

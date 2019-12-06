@@ -128,7 +128,9 @@
                 title: '{{course.parent_class.course_title}}',
                 start: startTime,
                 end: endTime,
-                backgroundColor: colors[j]
+                backgroundColor: colors[j],
+                textColor: "black",
+                url: "{{ course.get_absolute_url }}"
             })
         }
         j++;
