@@ -88,8 +88,7 @@ def view_section(request, class_id, section_id):
     ctx["other"] = other
 
     # Build prereq and coreq lists
-    prereqs = Prerequisite.objects.filter(
-        classes=parent_class).filter(audit=None)
+    prereqs = Prerequisite.objects.filter(classes=parent_class).filter(audit=None)
     completed_prereqs = []
     incomplete_prereqs = []
     completed_coreqs = []
@@ -100,11 +99,13 @@ def view_section(request, class_id, section_id):
         for prereq in prereqs:
             possibleClasses = [x for x in prereq.possibleClasses.all()]
             in_completed = CompletedClasses.objects.filter(
-                classes__in=possibleClasses, user=request.user).exists()
+                classes__in=possibleClasses, user=request.user
+            ).exists()
 
             if prereq.corequisite:
                 in_coreq = Schedule.objects.filter(
-                    classes__parent_class__in=possibleClasses, user=request.user).exists()
+                    classes__parent_class__in=possibleClasses, user=request.user
+                ).exists()
                 if not in_completed and not in_coreq:
                     incomplete_coreqs += [prereq]
                 else:
