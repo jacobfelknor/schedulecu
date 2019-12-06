@@ -343,6 +343,14 @@
                 <div id="calendar"></div>
 
             </div>
+            {% else %}
+            <div class="card border-dark">
+                <div class="card-header bg-dark text-light">
+                    <h2><a href="{% url 'login' %}">Sign In</a> to view your schedule</h2>
+                </div>
+                <div id="calendar"></div>
+
+            </div>
             {% endif %}
         </div>
     </div>
