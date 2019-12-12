@@ -55,12 +55,22 @@ def search_ajax(request):
     #     "parent_class__department__code", "parent_class__course_subject"
     # ).distinct("parent_class__department__code", "parent_class__course_subject")
 
-    # mySQL does not support distinct(.....)
+    # mySQL does not support distinct(.....). workaround here
     sections = sections.order_by(
         "parent_class__department__code", "parent_class__course_subject"
-    ).distinct()
+    )
+    seen = {}
+    response_sections = []
+    for x in sections:
+        if not seen.get(
+            f"{x.parent_class.department.code}{x.parent_class.course_subject}"
+        ):
+            response_sections.append(x)
+            seen[
+                f"{x.parent_class.department.code}{x.parent_class.course_subject}"
+            ] = True
 
-    response = SectionSerializer(sections, many=True)
+    response = SectionSerializer(response_sections, many=True)
     return JsonResponse(response.data, safe=False)
 
 
