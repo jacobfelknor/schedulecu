@@ -1,7 +1,7 @@
 # schedulecu
 [![Build Status](https://travis-ci.com/jacobfelknor/schedulecu.svg?branch=master)](https://travis-ci.com/jacobfelknor/schedulecu)
 
-Link to project site: http://schedulecu.herokuapp.com/
+Link to project site: http://schedulecu.herokuapp.com/ or https://schedulecu.pythonanywhere.com
 
 ScheduleCU is a course scheduler for CU students. Students can search for classes, view details about each class (time, professor, section number, locations) as well as suggestions for alternate sections. Once a class is found, a student can add it to their schedule for planning (Schedule CU does NOT actually sign you up for classes, it is intended for planning ONLY). Students can also view FCQ data on their professors as well.
 
