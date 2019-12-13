@@ -105,8 +105,8 @@ Linux/Mac:
 python3 manage.py migrate
 ```
 
-Initialize the database
-This step will populate the database with all of our collected data. This will take a while, please be patient
+Initialize the database:\
+This step will populate the database with all of our collected data. This will take a while, please be patient\
 Windows:
 ```bash
 python manage.py initdb
