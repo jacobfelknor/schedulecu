@@ -4,19 +4,6 @@
 
 {% block content %}
 
-<!-- <div class="container-fluid" style="text-align:center;">
-    <div class="card border-dark" style="width: 75%; display:inline-block;">
-        <h2 class="card-header bg-warning">
-            {% if user.is_authenticated %}
-                Your Schedule
-            {% else %}
-                <a href="{% url 'login' %}">Sign In</a> to view your schedule</h1>
-            {% endif %}
-        </h2>
-        <div id='calendar'></div>
-    </div>
-</div> -->
-
 <div class="jumbotron bg-white">
     <h1 class="display-3" style="text-align: center;">Welcome to ScheduleCU!</h1>
     <br>
@@ -54,4 +41,5 @@
         </table>
     </div>
 </div>
+
 {% endblock %}

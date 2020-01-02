@@ -60,5 +60,17 @@
             <a href="{% url 'users:edit_info' user.username %}"><button class="btn btn-outline-dark">Edit</button></a>
         </div>
     </div>
+</div>
 
-    {% endblock %}
+<div class="card col-12 border-dark">
+    <div class="card-header bg-dark text-light">
+        <h2>Your Schedule</h2>
+    </div>
+    <div id="calendar"></div>
+
+</div>
+
+<!-- Code for calendar -->
+{% include "home/calendar.html" %}
+
+{% endblock %}

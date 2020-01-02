@@ -7,6 +7,8 @@ from django.urls import reverse, reverse_lazy
 from django.views import generic
 from django.views.generic import CreateView, DetailView, ListView, UpdateView
 
+from schedules.models import Schedule
+
 from .forms import UserAccountForm, UserSignUpForm
 from .models import User
 
@@ -44,6 +46,8 @@ def view_profile(request, username):
     else:
         ctx["profile_complete"] = True
 
+    ctx["schedule"] = request.user.schedule.classes.all().order_by("start_time")
+    
     return render(request, "users/view_profile.html", ctx)
 
 
