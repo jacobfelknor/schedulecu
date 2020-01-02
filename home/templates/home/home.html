@@ -1,20 +1,57 @@
 {% extends "base.html" %}
 
+{% load static %}
+
 {% block content %}
-<div class="container-fluid" style="text-align:center;">
+
+<!-- <div class="container-fluid" style="text-align:center;">
     <div class="card border-dark" style="width: 75%; display:inline-block;">
         <h2 class="card-header bg-warning">
             {% if user.is_authenticated %}
-            Your Schedule
+                Your Schedule
             {% else %}
-            <a href="{% url 'login' %}">Sign In</a> to view your schedule</h1>
+                <a href="{% url 'login' %}">Sign In</a> to view your schedule</h1>
             {% endif %}
         </h2>
         <div id='calendar'></div>
     </div>
+</div> -->
+
+<div class="jumbotron bg-white">
+    <h1 class="display-3" style="text-align: center;">Welcome to ScheduleCU!</h1>
+    <br>
+    <br>
+    <br>
+    <p class="lead">ScheduleCU is a course scheduler for CU students. Students can search for classes, view details about each class (time, professor, section number, locations) as well as suggestions for alternate sections. Once a class is found, a student can add it to their schedule for planning (Schedule CU does NOT actually sign you up for classes, it is intended for planning ONLY). Students can also view FCQ data on their professors as well.</p>
+
+    <br>
+    <br>
+
+    <div class="row">
+        <table>
+            <tr style="text-align: center;">
+                <td>
+                    <h4>Search For Classes</h4>
+                </td>
+                <td>
+                    <h4>View CU Professor Profiles</h4>
+                </td>
+                <td>
+                    <h4>Plan Your CU Schedule</h4>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <img class="col-12" style="margin: 0px; padding: 10px;" src="{% static 'images/class_search.png' %}">
+                </td>
+                <td>
+                    <img class="col-12" style="margin: 0px; padding: 10px;" src="{% static 'images/professor_profile.png' %}">
+                </td>
+                <td>
+                    <img class="col-12" style="margin: 0px; padding: 10px;" src="{% static 'images/class_search.png' %}">
+                </td>
+            </tr>
+        </table>
+    </div>
 </div>
-
-<!-- Code for calendar -->
-{% include "home/calendar.html" %}
-
 {% endblock %}

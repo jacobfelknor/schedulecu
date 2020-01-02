@@ -48,13 +48,16 @@
         aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
-      <a class="navbar-brand" href="{% url 'home:home' %}">
+      <a class="navbar-brand" href="{% url 'home:home' %}" style="color: white;">
         <img src="{% static 'images/CU.JPG' %}" width="30" height="30" class="d-inline-block align-top" alt="">
         ScheduleCU
       </a>
 
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'home:home' %}">Home</a>
+          </li>
           <li class="nav-item">
             <a class="nav-link" href="{% url 'classes:search' %}">Class Search</a>
           </li>
