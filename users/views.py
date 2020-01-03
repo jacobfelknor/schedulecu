@@ -36,6 +36,19 @@ def login_redirect(request):
 
 
 @login_required
+def view_settings(request, username):
+    if request.user.username != username:
+        raise PermissionDenied()
+    ctx = {}
+    user = request.user
+    if user.empty_fields():
+        ctx["profile_complete"] = False
+    else:
+        ctx["profile_complete"] = True    
+    return render(request, "users/view_settings.html", ctx)
+
+
+@login_required
 def view_profile(request, username):
     if request.user.username != username:
         raise PermissionDenied()
@@ -45,9 +58,7 @@ def view_profile(request, username):
         ctx["profile_complete"] = False
     else:
         ctx["profile_complete"] = True
-
     ctx["schedule"] = request.user.schedule.classes.all().order_by("start_time")
-    
     return render(request, "users/view_profile.html", ctx)
 
 

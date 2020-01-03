@@ -67,7 +67,7 @@ def change_password(request):
             update_session_auth_hash(request, user)  # Important!
             messages.success(
                 request, "Your password was successfully updated!")
-            return redirect("users:view_profile", username=request.user.username)
+            return redirect("users:view_settings", username=request.user.username)
         else:
             messages.error(request, "Please correct the error below.")
     else:

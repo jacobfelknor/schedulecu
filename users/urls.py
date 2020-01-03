@@ -9,6 +9,7 @@ urlpatterns = [
     path("signup/", views.UserSignUpView.as_view(), name="signup"),
     path("password/", forms.change_password, name="change_password"),
     path("<username>/view/", views.view_profile, name="view_profile"),
+    path("<username>/settings/", views.view_settings, name="view_settings"),
     path(
         "<username>/edit-profile/",
         views.EditUserAccountView.as_view(),
