@@ -21,3 +21,8 @@ class User(AbstractUser):
             if self.__dict__[field] == None or self.__dict__[field] == "":
                 empty.append(field)
         return empty
+
+
+class Document(models.Model):
+    document = models.FileField(upload_to='documents/')
+    uploaded_at = models.DateTimeField(auto_now_add=True)

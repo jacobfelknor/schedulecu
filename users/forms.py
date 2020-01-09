@@ -13,11 +13,18 @@ from django.urls import reverse_lazy
 
 from ajax_select.fields import AutoCompleteField
 
-from .models import User
+from .models import User, Document
 from classes.models import Class, Department
 from schedules.models import Schedule
 from audit.models import Audit
 from completedclasses.models import CompletedClasses
+
+
+class DocumentForm(forms.ModelForm):
+    class Meta:
+        model = Document
+        fields = ('document', )
+
 
 
 class UserSignUpForm(UserCreationForm):

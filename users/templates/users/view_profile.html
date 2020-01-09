@@ -54,6 +54,28 @@
     </div>
 </div>
 
+
+
+<div class="container-fluid">
+    <div class="card">
+        <ul>
+            <li>
+                <a href="{% url 'users:model_form_upload' %}">Model Form Upload</a>
+            </li>
+        </ul>
+
+        <p>Uploaded files:</p>
+        <ul>
+        {% for obj in documents %}
+            <li>
+                <a href="/users{{ obj.document.url }}">{{ obj.document.name }}</a>
+                <small>(Uploaded at: {{ obj.uploaded_at }})</small>
+            </li>
+        {% endfor %}
+        </ul>
+    </div>
+</div>
+
 <!-- Code for calendar -->
 {% include "home/calendar.html" %}
 

@@ -9,8 +9,8 @@ from django.views.generic import CreateView, DetailView, ListView, UpdateView
 
 from schedules.models import Schedule
 
-from .forms import UserAccountForm, UserSignUpForm
-from .models import User
+from .forms import UserAccountForm, UserSignUpForm, DocumentForm
+from .models import User, Document
 
 # Create your views here.
 
@@ -59,6 +59,10 @@ def view_profile(request, username):
     else:
         ctx["profile_complete"] = True
     ctx["schedule"] = request.user.schedule.classes.all().order_by("start_time")
+    
+    documents = Document.objects.all()
+    ctx["documents"] = documents
+
     return render(request, "users/view_profile.html", ctx)
 
 
@@ -86,3 +90,17 @@ class EditUserAccountView(
 
     # def get_success_url(self, *args, **kwargs):
     #     return reverse("accounts.views.view_account")
+
+
+def model_form_upload(request):
+    if request.method == 'POST':
+        username = request.user.username
+        form = DocumentForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('users:view_profile', username)
+    else:
+        form = DocumentForm()
+    return render(request, 'users/model_form_upload.html', {
+        'form': form
+    })
