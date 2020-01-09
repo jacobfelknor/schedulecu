@@ -11,5 +11,5 @@ class Command(BaseCommand):
         """ initialize database using the commands in the correct order """
         populateProfs.Command.handle(populateProfs.Command)
         updateclasses.Command.handle(updateclasses.Command)
-        # populateFCQ.Command.handle(populateFCQ.Command)
+        populateFCQ.Command.handle(populateFCQ.Command)
         addprereqs.Command.handle(addprereqs.Command)
