@@ -94,20 +94,34 @@ def model_form_upload(request):
         username = request.user.username
         form = DocumentForm(request.POST, request.FILES)
         if form.is_valid():
-            ctx = {}
             auditObject = form.save()
-            course_history = readAudit(auditObject)
-            ctx["course_history"] = course_history
-            documents = Document.objects.all()
-            ctx["schedule"] = request.user.schedule.classes.all().order_by("start_time")
-            for document in documents:
-                document.delete()
-            return redirect('users:view_profile', username)
+            if not confirmAudit(auditObject):
+                form = DocumentForm()
+            else:
+                course_history = readAudit(auditObject)
+                documents = Document.objects.all()
+                for document in documents:
+                    document.delete()
+                return redirect('users:view_profile', username)
     else:
         form = DocumentForm()
     return render(request, 'users/model_form_upload.html', {
         'form': form
     })
+
+
+def confirmAudit(auditObject):
+    audit = PyPDF2.PdfFileReader(auditObject.document)
+    numPages = audit.numPages
+    offset = len(str(numPages))
+    test = 'THE FAMILY EDUCATIONAL RIGHTS AND PRIVACY ACT (FERPA) OF1974 SET FORTH REQUIREMENTS REGARDING THE PRIVACY OFSTUDENT RECORDS. THESE REQUIREMENTS GOVERN WHO THESERECORDS MAY BE RELEASED TO, WHO CAN ACCESS THESE RECORDS,AS WELL AS THE ACCURACY OF THE DATA IN THESE RECORDS.ALL FACULTY, STAFF AND STUDENTS SHOULD GUARD THEPROTECTION AND PRIVACY OF THIS DOCUMENT.THIS EVALUATION IS PROVIDED FOR ADVISEMENT; IT IS NOT ANOFFICIAL RECORD. PLEASE REPORT ANY ADDITIONS ORCORRECTIONS TO YOUR ACADEMIC ADVISOR.'
+    page = audit.getPage(0)
+    pageText = page.extractText()
+    if test in pageText:
+        return True
+    else:
+        return False
+
 
 def readAudit(auditObject):
     audit = PyPDF2.PdfFileReader(auditObject.document)
@@ -144,11 +158,6 @@ def readAudit(auditObject):
                     course_data.append(j)
 
     #change the following substrings so we correctly parse lines of text:
-    #   CSPB
-    #   LDSP
-    #   SPAN
-    #   SUST
-    #   FARR
     #Also, parse lines at 'TermCourseCreditsGradeTitle' if said substring exists
     for i in range(len(course_data)):
         if 'CSPB' in course_data[i]:
