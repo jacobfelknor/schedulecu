@@ -53,9 +53,15 @@ class FileValidator(object):
         )
 
 
+def update_filename(instance, filename):
+    path = "documents/"
+    format = "audit"
+    return os.path.join(path, format)
+
+
 class Document(models.Model):
     validate_file = FileValidator(content_types=('application/pdf',))
-    document = models.FileField(upload_to='documents/', validators=[validate_file])
+    document = models.FileField(upload_to=update_filename, validators=[validate_file])
     uploaded_at = models.DateTimeField(auto_now_add=True)
 
     def delete(self, *args, **kwargs):
