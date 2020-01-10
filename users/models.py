@@ -2,6 +2,7 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.urls import reverse
 from django.conf import settings
+from classes.models import Class
 import os
 
 import magic
@@ -67,3 +68,11 @@ class Document(models.Model):
     def delete(self, *args, **kwargs):
         os.remove(os.path.join(settings.MEDIA_ROOT, self.document.name))
         super(Document,self).delete(*args,**kwargs)
+
+
+# class UserAuditEntry(models.Model):
+#     user = models.ForeignKey(User, on_delete=models.CASCADE)
+#     course = models.ForeignKey(Class, on_delete=models.CASCADE)
+#     year = models.CharField(max_length=5)
+#     semester = models.CharField(max_length=5)
+#     grade = models.CharField(max_length=5)
