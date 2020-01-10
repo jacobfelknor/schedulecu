@@ -1,6 +1,10 @@
-django==2.2.8
-psycopg2==2.8.3
-django-crispy-forms==1.7.2
-PyPDF2==1.26.0
+Django==2.2.8
 django-ajax-selects==1.7.1
+django-crispy-forms==1.7.2
 djangorestframework==3.10.2
+libmagic==1.0
+psycopg2==2.8.3
+PyPDF2==1.26.0
+python-magic-bin==0.4.14
+pytz==2019.3
+sqlparse==0.3.0
