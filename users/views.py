@@ -12,6 +12,8 @@ from schedules.models import Schedule
 from .forms import UserAccountForm, UserSignUpForm, DocumentForm
 from .models import User, Document
 
+import PyPDF2
+
 # Create your views here.
 
 
@@ -66,9 +68,7 @@ def view_profile(request, username):
     return render(request, "users/view_profile.html", ctx)
 
 
-class EditUserAccountView(
-    UpdateView
-):  # Note that we are using UpdateView and not FormView
+class EditUserAccountView(UpdateView):  # Note that we are using UpdateView and not FormView
     model = User
     form_class = UserAccountForm
     template_name = "users/user_update.html"
@@ -97,10 +97,17 @@ def model_form_upload(request):
         username = request.user.username
         form = DocumentForm(request.POST, request.FILES)
         if form.is_valid():
-            form.save()
+            file = form.save()
+            test(file)
+            documents = Document.objects.all()
+            for document in documents:
+                document.delete()
             return redirect('users:view_profile', username)
     else:
         form = DocumentForm()
     return render(request, 'users/model_form_upload.html', {
         'form': form
     })
+
+def test(file):
+    print(file)
