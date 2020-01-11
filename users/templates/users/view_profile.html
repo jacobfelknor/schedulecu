@@ -91,12 +91,7 @@
 <div class="container-fluid">
     <div class="card">
         <div class="row">
-            <div class="col-md-4 col-xl-4 mb-4">
-                <div class="card">
-                    <p>insert stats</p>
-                </div>
-            </div>
-            <div id="result_div" class="col-md-8 col-xl-8 mb-8">
+            <div id="result_div" class="col-md-12 col-xl-12 mb-12">
                 <table class="table dt-responsive table-striped" cellspacing="0" style="text-align: center; margin-right: 100px;">
                     <thead class="thead-dark">
                         <tr>
@@ -128,6 +123,9 @@
                 </table>
             </div>
         </div>
+        <div class="col-md-6 col-xl-6 mb-6">
+            <div style="width: 100%; height: 400px;" id="donutchart"></div>
+        </div>
     </div>
 </div>
 {% endif %}
@@ -139,10 +137,29 @@
 
 {% block javascript %}
 <script>
-
     $(document).ready(function () {
         // setup table scrolling
-        $("#result_div").attr("style", `height: ${screen.height * 0.67}px; overflow: auto;`);
+        $("#result_div").attr("style", `height: ${screen.height * 0.5}px; overflow: auto;`);
     });
+</script>
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script type="text/javascript">
+    google.charts.load("current", { packages: ["corechart"] });
+    google.charts.setOnLoadCallback(drawChart);
+    function drawChart() {
+        var pieData = ({{ pieData | safe }});
+        console.log(pieData);
+        var data = google.visualization.arrayToDataTable(pieData);
+        var options = {
+            pieSliceText: 'none',
+            chartArea: { top: 40, bottom: 0, left: 0, right: 0 },
+            backgroundColor: 'transparent',
+            pieHole: 0.4,
+            legend: { position: 'labeled', textStyle: { fontSize: 16 } }
+        };
+
+        var chart = new google.visualization.PieChart(document.getElementById('donutchart'));
+        chart.draw(data, options);
+    };
 </script>
 {% endblock %}

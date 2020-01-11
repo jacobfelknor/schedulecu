@@ -63,7 +63,19 @@ def view_profile(request, username):
     ctx["schedule"] = request.user.schedule.classes.all().order_by("start_time")
     
     if UserAuditEntry.has_audit(user):
-        ctx["audit"] = UserAuditEntry.get_audit(user)
+        audit = UserAuditEntry.objects.filter(user=user)
+        auditList = UserAuditEntry.get_audit(user)
+        ctx["audit"] = auditList
+        department_obj = (
+            audit.order_by().values_list("course__department__name").distinct()
+        )
+        departments = [x[0] for x in department_obj]
+        deps = [["department", "count"]]
+        for dep in departments:
+            count = len(audit.filter(course__department__name=dep))
+            holder = [dep, count]
+            deps.append(holder)
+        ctx["pieData"] = deps
     
     return render(request, "users/view_profile.html", ctx)
 

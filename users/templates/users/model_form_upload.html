@@ -1,12 +1,127 @@
-  
 {% extends 'base.html' %}
 
-{% block content %}
-  <form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Upload</button>
-  </form>
+{% load static %}
 
-  <p><a href="{% url 'users:view_profile' user.username %}">Return to home</a></p>
+{% block content %}
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-md-4 col-xl-4 mb-4">
+			<div class="card" style="position: -webkit-sticky; /* Safari */position: sticky; top: 0;">
+				<h1 class="card-header bg-warning" style="text-align: center;">Upload Audit</h1>
+				<table>
+					<tr>
+						<td>
+							<form method="post" enctype="multipart/form-data" style="padding-top: 40px;">
+								<div class="row col-12">
+								    {% csrf_token %}
+								    {{ form.as_p }}
+								    <button type="submit" class="btn btn-outline-dark">Upload</button>
+								</div>
+					  		</form>
+					  	</td>
+		  			</tr>
+
+		  			<tr>
+		  				<td>
+		  					<u><h5 style="padding-top: 40px;">Data Usage:</h5></u>
+		  				</td>
+		  			</tr>
+		  			<tr>
+		  				<td>
+		  					<p style="padding-bottom: 30px;">No personal information will be stored or be made available to the public. Once the PDF audit file has been uploaded, THE ONLY DATA THAT WILL BE READ ARE PREVIOUS COURSES THE USER HAS TAKEN. Once all the necessary data (on a user's course history) has been read and entered into the database, the uploaded PDF audit will be IMMIDIATELY DELETED. No files will be permanently stored on the server to prevent unauthorized access.</p>
+		  				</td>
+		  			</tr>
+
+
+		  			<tr>
+		  				<td>
+		  					<a href="{% url 'users:view_profile' user.username %}"><button class="btn btn-outline-dark" style="width: 100%;">Return to Profile</button></a>
+		  				</td>
+		  			</tr>
+			  	</table>
+			</div>
+		</div>
+		<div class="col-md-8 col-xl-8 mb-8">
+			<div class="card" style="height: 100%;">
+				<h1 class="card-header bg-warning" style="text-align: center;">How to Download Audit as PDF</h1>
+				<table class="table">
+					<col width="10%">
+  					<col width="90%">
+					<tr>
+						<td class="bg-dark">
+							<h1 class="bg-warning" style="text-align: center;">1</h1>
+						</td>
+						<td>
+							<a href="https://buffportal.colorado.edu" target="_blank"><u><h3>Login to Buff Portal</h3></u></a>
+							<img class="col-12" style="margin: 0px; padding: 10px;" src="{% static 'images/login.png' %}">
+						</td>
+					</tr>
+					<tr>
+						<td class="bg-dark">
+							<h1 class="bg-warning" style="text-align: center;">2</h1>
+						</td>
+						<td>
+							<u><h3>In the sidebar menu, select "Classes & Registration"</h3></u>
+							<img class="col-12" style="margin: 0px; padding: 10px;" src="{% static 'images/home.png' %}">
+						</td>
+					</tr>
+					<tr>
+						<td class="bg-dark">
+							<h1 class="bg-warning" style="text-align: center;">3</h1>
+						</td>
+						<td>
+							<u><h3>Expand the "Academic Advising" drop-down menu</h3></u>
+							<img class="col-12" style="margin: 0px; padding: 10px;" src="{% static 'images/dropdown.png' %}">
+						</td>
+					</tr>
+					<tr>
+						<td class="bg-dark">
+							<h1 class="bg-warning" style="text-align: center;">4</h1>
+						</td>
+						<td>
+							<u><h3>Select "Degree Audit"</h3></u>
+							<img class="col-12" style="margin: 0px; padding: 10px;" src="{% static 'images/link.png' %}">
+						</td>
+					</tr>
+					<tr>
+						<td class="bg-dark">
+							<h1 class="bg-warning" style="text-align: center;">5</h1>
+						</td>
+						<td>
+							<u><h3>Expand the advanced audit settings</h3></u>
+							<img class="col-12" style="margin: 0px; padding: 10px;" src="{% static 'images/advanced.png' %}">
+						</td>
+					</tr>
+					<tr>
+						<td class="bg-dark">
+							<h1 class="bg-warning" style="text-align: center;">6</h1>
+						</td>
+						<td>
+							<u><h3>Set the format of the audit to PDF and run the audit</h3></u>
+							<img class="col-12" style="margin: 0px; padding: 10px;" src="{% static 'images/pdf.png' %}">
+						</td>
+					</tr>
+					<tr>
+						<td class="bg-dark">
+							<h1 class="bg-warning" style="text-align: center;">7</h1>
+						</td>
+						<td>
+							<u><h3>Select "View Audit"</h3></u>
+							<img class="col-12" style="margin: 0px; padding: 10px;" src="{% static 'images/view.png' %}">
+						</td>
+					</tr>
+					<tr>
+						<td class="bg-dark">
+							<h1 class="bg-warning" style="text-align: center;">8</h1>
+						</td>
+						<td>
+							<u><h3>Download the audit as a PDF</h3></u>
+							<img class="col-12" style="margin: 0px; padding: 10px;" src="{% static 'images/download.png' %}">
+						</td>
+					</tr>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>
 {% endblock %}
