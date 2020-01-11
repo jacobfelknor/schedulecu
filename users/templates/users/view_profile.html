@@ -44,6 +44,38 @@
                 </tbody>
             </table>
             </div>
+            <div class="card border-dark" style="width: 100%;">
+                <h1 class="card-header bg-warning">CU Audit</h1>
+                <table class="table dt-responsive" cellspacing="0" width="100%">
+                {% if audit %}
+                <tbody>
+                    <tr>
+                        <td>
+                            <h1>Congrats on uploading your audit!</h1>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <a href="{% url 'users:reset_audit' %}"><button class="btn btn-outline-dark">Reset Audit Data</button></a>
+                        </td>
+                    </tr>
+                </tbody>
+                {% else %}
+                <tbody>
+                    <tr>
+                        <td>
+                            <h1>You have not upload a CU Audit</h1>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <a href="{% url 'users:model_form_upload' %}"><button class="btn btn-outline-dark">Upload Audit</button></a>
+                        </td>
+                    </tr>
+                </tbody>
+                {% endif %}
+            </table>
+            </div>
         </div>
         <div class="col-md-8 col-xl-8 mb-8">
             <div class="card border-dark" style="width: 100%;">
@@ -55,28 +87,62 @@
 </div>
 
 
-
+{% if audit %}
 <div class="container-fluid">
     <div class="card">
-        <ul>
-            <li>
-                <a href="{% url 'users:model_form_upload' %}">Model Form Upload</a>
-            </li>
-        </ul>
-
-        <p>Uploaded files:</p>
-        <ul>
-        {% for obj in documents %}
-            <li>
-                <a href="/users{{ obj.document.url }}">{{ obj.document.name }}</a>
-                <small>(Uploaded at: {{ obj.uploaded_at }})</small>
-            </li>
-        {% endfor %}
-        </ul>
+        <div class="row">
+            <div class="col-md-4 col-xl-4 mb-4">
+                <div class="card">
+                    <p>insert stats</p>
+                </div>
+            </div>
+            <div id="result_div" class="col-md-8 col-xl-8 mb-8">
+                <table class="table dt-responsive table-striped" cellspacing="0" style="text-align: center; margin-right: 100px;">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th colspan="7">Course History</th>
+                        </tr>
+                        <tr>
+                            <th class="sticky-top">Year</td>
+                            <th class="sticky-top">Semester</td>
+                            <th class="sticky-top">Department</td>
+                            <th class="sticky-top">Course #</td>
+                            <th class="sticky-top">Course Title</td>
+                            <th class="sticky-top">Credits</td>
+                            <th class="sticky-top">Grade Received</td>
+                        </tr>
+                    </thead>
+                    <tbody style="overflow-y: scroll; height: 200px;">
+                        {% for entry in audit %}
+                        <tr>
+                            <td>{{entry.year}}</td>
+                            <td>{{entry.semester}}</td>
+                            <td>{{entry.course.department.name}}</td>
+                            <td>{{entry.course.course_subject}}</td>
+                            <td>{{entry.course.course_title}}</td>
+                            <td>{{entry.credits}}</td>
+                            <td>{{entry.grade}}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 </div>
+{% endif %}
 
 <!-- Code for calendar -->
 {% include "home/calendar.html" %}
 
+{% endblock %}
+
+{% block javascript %}
+<script>
+
+    $(document).ready(function () {
+        // setup table scrolling
+        $("#result_div").attr("style", `height: ${screen.height * 0.67}px; overflow: auto;`);
+    });
+</script>
 {% endblock %}

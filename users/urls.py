@@ -17,6 +17,7 @@ urlpatterns = [
         views.EditUserAccountView.as_view(),
         name="edit_info",
     ),
+    path("reset_audit/", views.reset_audit, name="reset_audit"),
 ]
 
 if settings.DEBUG:

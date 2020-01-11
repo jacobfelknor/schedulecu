@@ -10,6 +10,7 @@ from django.views.generic import CreateView, DetailView, ListView, UpdateView
 from useraudits.management.commands.AddUserAudit import addEntries, removeEntries
 
 from schedules.models import Schedule
+from useraudits.models import UserAuditEntry
 
 from .forms import UserAccountForm, UserSignUpForm, DocumentForm
 from .models import User, Document
@@ -56,14 +57,14 @@ def view_settings(request, username):
 def view_profile(request, username):
     if request.user.username != username:
         raise PermissionDenied()
+    
     ctx = {}
     user = request.user
-    if user.empty_fields():
-        ctx["profile_complete"] = False
-    else:
-        ctx["profile_complete"] = True
     ctx["schedule"] = request.user.schedule.classes.all().order_by("start_time")
-
+    
+    if UserAuditEntry.has_audit(user):
+        ctx["audit"] = UserAuditEntry.get_audit(user)
+    
     return render(request, "users/view_profile.html", ctx)
 
 
@@ -91,6 +92,8 @@ class EditUserAccountView(UpdateView):  # Note that we are using UpdateView and 
     #     return reverse("accounts.views.view_account")
 
 
+#handles form uploads
+@login_required
 def model_form_upload(request):
     if request.method == 'POST':
         username = request.user.username
@@ -115,6 +118,7 @@ def model_form_upload(request):
     })
 
 
+#confirms that the uploaded pdf is an official audit of CU
 def confirmAudit(auditObject):
     audit = PyPDF2.PdfFileReader(auditObject.document)
     numPages = audit.numPages
@@ -128,6 +132,7 @@ def confirmAudit(auditObject):
         return False
 
 
+#get user's course history from audit
 def readAudit(auditObject):
     audit = PyPDF2.PdfFileReader(auditObject.document)
     numPages = audit.numPages
@@ -212,9 +217,11 @@ def readAudit(auditObject):
         subject = holder[:4]
         holder = holder[4:]
         courseNum = holder[:4]
-        holder = holder[7:]
-
+        holder = holder[4:]
+        credits = holder[:3]
+        holder = holder[3:]
         holder = holder.replace('T', '')
+
         if holder[-1] == '*':
             grade = '*'
         elif (holder[-1] == '-') or (holder[-1] == '+'):
@@ -235,7 +242,19 @@ def readAudit(auditObject):
         if subject == '&&&&':
             subject = 'FARR'
 
-        holder = [term,year,subject,courseNum,grade]
+        holder = [term,year,subject,courseNum,grade,credits]
         course_history.append(holder)
     auditObject.document.close()
     return course_history
+
+
+#delete all of user's stored audit data
+@login_required
+def reset_audit(request):
+    user = request.user
+    totalAudits = UserAuditEntry.objects.all()
+    for entry in totalAudits:
+        if entry.user == user:
+            entry.delete()
+
+    return redirect('users:view_profile', user.username)

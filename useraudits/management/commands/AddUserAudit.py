@@ -232,6 +232,7 @@ def addEntries(audit, user):
     entryAdds = 0
     entryFails = 0
     for data in audit:
+        print(data)
         entry = UserAuditEntry()
         entry.user = user
         adjust_code = known_differences.get(data[2])
@@ -251,6 +252,7 @@ def addEntries(audit, user):
         entry.year = '20' + data[1]
         entry.semester = data[0]
         entry.grade = data[4]
+        entry.credits = data[5]
         try:
             with transaction.atomic():
                     entry.save()
@@ -260,7 +262,7 @@ def addEntries(audit, user):
             entryFails += 1
             continue
     print(entryAdds, "entries added;", entryFails, "entries failed")
-    print(user.id)
+
 
 
 def removeEntries(user):
