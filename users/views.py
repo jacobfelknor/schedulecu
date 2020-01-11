@@ -197,12 +197,24 @@ def readAudit(auditObject):
 
     #clean parsed data
     for i in range(len(course_data)):
+        # print(course_data[i])
         if 'SP' in course_data[i]: #handle spring course
-            course_data[i] = 'SP' + course_data[i].split('SP')[1]
+            holder = course_data[i].split('SP')
+            if len(holder) == 3:
+                course_data.append('SP' + holder[2])
+            course_data[i] = 'SP' + holder[1]
+
         if 'SU' in course_data[i]: #handle summer course
-            course_data[i] = 'SU' + course_data[i].split('SU')[1]
+            holder = course_data[i].split('SU')
+            if len(holder) == 3:
+                course_data.append('SU' + holder[2])
+            course_data[i] = 'SU' + holder[1]
+
         if 'FA' in course_data[i]: #handle fall course
-            course_data[i] = 'FA' + course_data[i].split('FA')[1]
+            holder = course_data[i].split('FA')
+            if len(holder) == 3:
+                course_data.append('FA' + holder[2])
+            course_data[i] = 'FA' + holder[1]
             
     #finish parse and store all cleaned courses in array 
     course_history = []
