@@ -7,6 +7,8 @@ from django.urls import reverse, reverse_lazy
 from django.views import generic
 from django.views.generic import CreateView, DetailView, ListView, UpdateView
 
+from useraudits.management.commands.AddUserAudit import addEntries, removeEntries
+
 from schedules.models import Schedule
 
 from .forms import UserAccountForm, UserSignUpForm, DocumentForm
@@ -98,7 +100,10 @@ def model_form_upload(request):
             if not confirmAudit(auditObject):
                 form = DocumentForm()
             else:
-                course_history = readAudit(auditObject)
+                audit = readAudit(auditObject)
+                user = request.user
+                removeEntries(user)
+                addEntries(audit, user)
                 documents = Document.objects.all()
                 for document in documents:
                     document.delete()
@@ -233,4 +238,4 @@ def readAudit(auditObject):
         holder = [term,year,subject,courseNum,grade]
         course_history.append(holder)
     auditObject.document.close()
-    return course_histor
+    return course_history
