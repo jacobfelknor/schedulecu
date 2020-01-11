@@ -14,16 +14,8 @@ class UserAuditEntry(models.Model):
     credits = models.CharField(max_length=10, blank=True)
 
     def has_audit(user):
-        totalAudits = UserAuditEntry.objects.all()
-        for entry in totalAudits:
-            if entry.user == user:
-                return True
-        return False
-
-    def get_audit(user):
-        audit = []
-        totalAudits = UserAuditEntry.objects.all()
-        for entry in totalAudits:
-            if entry.user == user:
-                audit.append(entry)
-        return audit
+        audit = UserAuditEntry.objects.filter(user=user)
+        if len(audit) > 0:
+            return True
+        else:
+            return False

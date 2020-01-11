@@ -64,18 +64,10 @@ def view_profile(request, username):
     
     if UserAuditEntry.has_audit(user):
         audit = UserAuditEntry.objects.filter(user=user)
-        auditList = UserAuditEntry.get_audit(user)
-        ctx["audit"] = auditList
-        department_obj = (
-            audit.order_by().values_list("course__department__name").distinct()
-        )
-        departments = [x[0] for x in department_obj]
-        deps = [["department", "count"]]
-        for dep in departments:
-            count = len(audit.filter(course__department__name=dep))
-            holder = [dep, count]
-            deps.append(holder)
-        ctx["pieData"] = deps
+        ctx["audit"] = audit
+        pieData, depData = getData(audit)
+        ctx["pieData"] = pieData
+        ctx["depData"] = depData
     
     return render(request, "users/view_profile.html", ctx)
 
@@ -282,3 +274,48 @@ def reset_audit(request):
             entry.delete()
 
     return redirect('users:view_profile', user.username)
+
+
+def getData(audit):
+    weights = {
+        'A' : 4.0,
+        'A-' : 3.7,
+        'B+' : 3.3,
+        'B' : 3.0,
+        'B-' : 2.7,
+        'C+' : 2.3,
+        'C' : 2.0,
+        'C-' : 1.7,
+        'D+' : 1.3,
+        'D' : 1.0,
+        'D-' : 0.7,
+        'F' : 0.0,
+    }
+    department_obj = (
+        audit.order_by().values_list("course__department__name").distinct()
+    )
+    departments = [x[0] for x in department_obj]
+    pieData = [["department", "count"]]
+    depData = []
+    for dep in departments:
+        #get data for pie chart
+        count = len(audit.filter(course__department__name=dep))
+        holder = [dep, count]
+        pieData.append(holder)
+
+        #get data for department's breakdown table
+        courses = audit.filter(course__department__name=dep)
+        depCredits = 0
+        depPoints = 0.0
+        for courseObject in courses:
+            grade = courseObject.grade
+            if grade != '*':
+                credits = float(courseObject.credits)
+                depPoints += weights[grade] * credits
+                depCredits += credits
+        gpa = round((depPoints / float(depCredits)), 2)
+        holder = [dep, count, gpa, depCredits]
+        depData.append(holder)
+    print(depData)
+    return pieData, depData
+

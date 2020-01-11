@@ -91,7 +91,7 @@
 <div class="container-fluid">
     <div class="card">
         <div class="row">
-            <div id="result_div" class="col-md-12 col-xl-12 mb-12">
+            <div id="audit_div" class="col-md-12 col-xl-12 mb-12">
                 <table class="table dt-responsive table-striped" cellspacing="0" style="text-align: center; margin-right: 100px;">
                     <thead class="thead-dark">
                         <tr>
@@ -123,8 +123,34 @@
                 </table>
             </div>
         </div>
-        <div class="col-md-6 col-xl-6 mb-6">
-            <div style="width: 100%; height: 400px;" id="donutchart"></div>
+    </div>
+    <div class="card">
+        <div class="row">
+            <div class="col-md-6 col-xl-6 mb-6">
+                <div style="width: 100%; height: 400px; margin: 10px" id="donutchart"></div>
+            </div>
+            <div class="col-md-1 col-xl-1 mb-1"></div>
+            <div id="department_div" class="col-md-5 col-xl-5 mb-5">
+                <table class="table dt-responsive table-striped" cellspacing="0" style="text-align: center;">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th class="sticky-top">Department</th>
+                            <th class="sticky-top"># Courses Taken</th>
+                            <th class="sticky-top">Avg. GPA</th>
+                            <th class="sticky-top">Credits Earned</th>
+                        </tr>
+                    </thead>
+                    <tbody style="overflow-y: scroll; height: 200px;">
+                        {% for dep in depData %}
+                        <tr>
+                            {%for object in dep %}
+                            <td>{{object}}</td>
+                            {% endfor %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>
@@ -139,7 +165,8 @@
 <script>
     $(document).ready(function () {
         // setup table scrolling
-        $("#result_div").attr("style", `height: ${screen.height * 0.5}px; overflow: auto;`);
+        $("#audit_div").attr("style", `height: ${screen.height * 0.5}px; overflow: auto;`);
+        $("#department_div").attr("style", `height: ${screen.height * 0.5}px; overflow: auto;`);
     });
 </script>
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
