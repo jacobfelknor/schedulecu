@@ -19,3 +19,12 @@ class UserAuditEntry(models.Model):
             return True
         else:
             return False
+
+
+class UserAuditInfo(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="userauditinfo")
+    gpa = models.CharField(max_length=10)
+    progress = models.CharField(max_length=10)
+    attempted = models.CharField(max_length=10)
+    earned = models.CharField(max_length=10)
+

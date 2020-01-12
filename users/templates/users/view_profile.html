@@ -8,8 +8,25 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-4 col-xl-4 mb-4">
-            <div class="card border-dark" style="width: 100%;">
-                <h1 class="card-header bg-warning">{{ user.get_full_name }}</h1>
+            <div class="card border-dark col-12">
+                <h1 class=" row card-header bg-warning">{{ user.get_full_name }}</h1>
+                <div class="row" style="background-color: black; padding-top: 10px">
+                    {% if not audit %}
+                    <span style="font-size: 1em; color: Red; padding-left: 10px; padding-right: 30px;">
+                      <i class="fas fa-exclamation-triangle"></i>
+                    </span>
+                    <span style="color: White;">
+                      <h5>You have NOT uploaded an official CU Audit!</h5>
+                    </span>
+                    {% else %}
+                    <span style="font-size: 1em; color: Lime; padding-left: 10px; padding-right: 10px;">
+                      <i class="fas fa-check-circle"></i>
+                    </span>
+                    <span style="color: White;">
+                      <h5>You have successfully uploaded an official CU Audit!</h5>
+                    </span>
+                    {% endif %}
+                </div>
                 <table class="table dt-responsive" cellspacing="0" width="100%">
                 <!-- <thead class="thead" id="material">
                 <tr>
@@ -18,10 +35,6 @@
                 </tr>
             </thead> -->
                 <tbody>
-                    <tr>
-                        <td><b>Name:</b> <br>{{ user.get_full_name }}</td>
-                        <td></td>
-                    </tr>
                     <tr>
                         <td><b>Username:</b> <br>{{ user.username }}</td>
                         <td></td>
@@ -44,16 +57,31 @@
                 </tbody>
             </table>
             </div>
+
+
+
             <div class="card border-dark" style="width: 100%;">
-                <h1 class="card-header bg-warning">CU Audit</h1>
+                <h1 class="card-header bg-warning">Your CU Audit</h1>
                 <table class="table dt-responsive" cellspacing="0" width="100%">
                 {% if audit %}
                 <tbody>
                     <tr>
-                        <td>
-                            <h1>Congrats on uploading your audit!</h1>
-                        </td>
+                        <td><b>GPA:</b> <br>{{ auditInfo.gpa }}</td>
+                        <td></td>
                     </tr>
+                    <tr>
+                        <td><b>In Progress:</b> <br>{{ auditInfo.progress }}</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td><b>Attempted:</b> <br>{{ auditInfo.attempted }}</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td><b>Earned:</b> <br>{{ auditInfo.earned }}</td>
+                        <td></td>
+                    </tr>
+
                     <tr>
                         <td>
                             <a href="{% url 'users:reset_audit' %}"><button class="btn btn-outline-dark">Reset Audit Data</button></a>
@@ -77,6 +105,11 @@
             </table>
             </div>
         </div>
+
+
+
+
+
         <div class="col-md-8 col-xl-8 mb-8">
             <div class="card border-dark" style="width: 100%;">
                 <h1 class="card-header bg-warning">Your Schedule</h1>
@@ -86,9 +119,37 @@
     </div>
 </div>
 
-
 {% if audit %}
 <div class="container-fluid">
+    <div class="card">
+        <div class="row">
+            <div class="col-md-6 col-xl-6 mb-6">
+                <div style="width: 100%; height: 400px; margin: 10px" id="donutchart"></div>
+            </div>
+            <div class="col-md-1 col-xl-1 mb-1"></div>
+            <div id="department_div" class="col-md-5 col-xl-5 mb-5">
+                <table class="table dt-responsive table-striped" cellspacing="0" style="text-align: center;">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th class="sticky-top">Department</th>
+                            <th class="sticky-top"># Courses Taken</th>
+                            <th class="sticky-top">Avg. GPA</th>
+                            <th class="sticky-top">Credits Earned</th>
+                        </tr>
+                    </thead>
+                    <tbody style="overflow-y: scroll; height: 200px;">
+                        {% for dep in depData %}
+                        <tr>
+                            {%for object in dep %}
+                            <td>{{object}}</td>
+                            {% endfor %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
     <div class="card">
         <div class="row">
             <div id="audit_div" class="col-md-12 col-xl-12 mb-12">
@@ -117,35 +178,6 @@
                             <td>{{entry.course.course_title}}</td>
                             <td>{{entry.credits}}</td>
                             <td>{{entry.grade}}</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-    <div class="card">
-        <div class="row">
-            <div class="col-md-6 col-xl-6 mb-6">
-                <div style="width: 100%; height: 400px; margin: 10px" id="donutchart"></div>
-            </div>
-            <div class="col-md-1 col-xl-1 mb-1"></div>
-            <div id="department_div" class="col-md-5 col-xl-5 mb-5">
-                <table class="table dt-responsive table-striped" cellspacing="0" style="text-align: center;">
-                    <thead class="thead-dark">
-                        <tr>
-                            <th class="sticky-top">Department</th>
-                            <th class="sticky-top"># Courses Taken</th>
-                            <th class="sticky-top">Avg. GPA</th>
-                            <th class="sticky-top">Credits Earned</th>
-                        </tr>
-                    </thead>
-                    <tbody style="overflow-y: scroll; height: 200px;">
-                        {% for dep in depData %}
-                        <tr>
-                            {%for object in dep %}
-                            <td>{{object}}</td>
-                            {% endfor %}
                         </tr>
                         {% endfor %}
                     </tbody>

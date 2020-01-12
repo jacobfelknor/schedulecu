@@ -1,7 +1,7 @@
 import html
 import os
 import numpy as np
-from useraudits.models import UserAuditEntry
+from useraudits.models import UserAuditEntry, UserAuditInfo
 from classes.models import Class, Department
 from django.db import transaction
 
@@ -228,6 +228,16 @@ known_differences = {
 }
 
 
+def addUserInfo(auditInfo, user):
+    userObject = UserAuditInfo()
+    userObject.user = user
+    userObject.progress = auditInfo[0]
+    userObject.attempted = auditInfo[1]
+    userObject.gpa = auditInfo[2]
+    userObject.earned = auditInfo[3]
+    userObject.save()
+    
+
 def addEntries(audit, user):
     entryAdds = 0
     entryFails = 0
@@ -264,8 +274,12 @@ def addEntries(audit, user):
     print(entryAdds, "entries added;", entryFails, "entries failed")
 
 
-
 def removeEntries(user):
+    userInfo = UserAuditInfo.objects.filter(user=user)
+    if userInfo:
+        userInfo.delete()
+        print("user deleted")
+
     userAudits = UserAuditEntry.objects.all()
     count = 0
     for entry in userAudits:

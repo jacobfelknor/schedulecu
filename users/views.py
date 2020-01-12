@@ -7,10 +7,10 @@ from django.urls import reverse, reverse_lazy
 from django.views import generic
 from django.views.generic import CreateView, DetailView, ListView, UpdateView
 
-from useraudits.management.commands.AddUserAudit import addEntries, removeEntries
+from useraudits.management.commands.AddUserAudit import addUserInfo, addEntries, removeEntries
 
 from schedules.models import Schedule
-from useraudits.models import UserAuditEntry
+from useraudits.models import UserAuditEntry, UserAuditInfo
 
 from .forms import UserAccountForm, UserSignUpForm, DocumentForm
 from .models import User, Document
@@ -65,6 +65,8 @@ def view_profile(request, username):
     if UserAuditEntry.has_audit(user):
         audit = UserAuditEntry.objects.filter(user=user)
         ctx["audit"] = audit
+        auditInfo = UserAuditInfo.objects.filter(user=user)[0]
+        ctx["auditInfo"] = auditInfo
         pieData, depData = getData(audit)
         ctx["pieData"] = pieData
         ctx["depData"] = depData
@@ -107,9 +109,10 @@ def model_form_upload(request):
             if not confirmAudit(auditObject):
                 form = DocumentForm()
             else:
-                audit = readAudit(auditObject)
+                audit, auditInfo = readAudit(auditObject)
                 user = request.user
                 removeEntries(user)
+                addUserInfo(auditInfo, user)
                 addEntries(audit, user)
                 documents = Document.objects.all()
                 for document in documents:
@@ -155,6 +158,20 @@ def readAudit(auditObject):
         pageText = page.extractText()
         text = pageText.split(' ')
         track = False
+
+        #grab GPA and credit hour text data
+        if i == 0:
+            info = False
+            data = []
+            for j in text:
+                if info:
+                    data.append(j)
+                    info = False
+                    break
+                if ('PROGRESS' in j) and ('ATTEMPTED' in j):
+                    data.append(j)
+                    info = True
+
         for j in text:
             if j[offset:] == 'Coursework':
                 track = True
@@ -170,6 +187,21 @@ def readAudit(auditObject):
             if find:
                 if ('SP' in j or 'SU' in j or 'FA' in j) and ('NEED' not in j) and ('999TC' not in j):
                     course_data.append(j)
+
+    #extract gpa/credit hour data
+    info = []
+    holder = data[0].split('PROGRESS')[1]
+    holder = holder.split('HOURS')
+    info.append(holder[0])
+    holder = holder[1].split('ATTEMPTED')[0]
+    info.append(holder)
+
+    holder = data[1].split('POINTS')[1]
+    holder = holder.split('GPA')
+    info.append(holder[0])
+    holder = holder[1].split('HOURS')[0]
+    holder = holder.split('EARNED:')[1]
+    info.append(holder)
 
     #change the following substrings so we correctly parse lines of text:
     #Also, parse lines at 'TermCourseCreditsGradeTitle' if said substring exists
@@ -261,18 +293,14 @@ def readAudit(auditObject):
         holder = [term,year,subject,courseNum,grade,credits]
         course_history.append(holder)
     auditObject.document.close()
-    return course_history
+    return course_history, info
 
 
 #delete all of user's stored audit data
 @login_required
 def reset_audit(request):
     user = request.user
-    totalAudits = UserAuditEntry.objects.all()
-    for entry in totalAudits:
-        if entry.user == user:
-            entry.delete()
-
+    removeEntries(user)
     return redirect('users:view_profile', user.username)
 
 
@@ -313,7 +341,12 @@ def getData(audit):
                 credits = float(courseObject.credits)
                 depPoints += weights[grade] * credits
                 depCredits += credits
-        gpa = round((depPoints / float(depCredits)), 2)
+        gpa = 0.0
+        if depCredits == 0:
+            gpa = 'N/A'
+            depCredits = 'N/A'
+        else:
+            gpa = round((depPoints / float(depCredits)), 2)
         holder = [dep, count, gpa, depCredits]
         depData.append(holder)
     print(depData)
