@@ -84,6 +84,12 @@
 
                     <tr>
                         <td>
+                            <a href="#breakdown"><button class="btn btn-outline-dark">View Breakdown</button></a>
+                        </td>
+                        <td>
+                            <a href="#history"><button class="btn btn-outline-dark">View Course History</button></a>
+                        </td>
+                        <td>
                             <a href="{% url 'users:reset_audit' %}"><button class="btn btn-outline-dark">Reset Audit Data</button></a>
                         </td>
                     </tr>
@@ -92,7 +98,7 @@
                 <tbody>
                     <tr>
                         <td>
-                            <h1>You have not upload a CU Audit</h1>
+                            <h1>You have not uploaded a CU Audit</h1>
                         </td>
                     </tr>
                     <tr>
@@ -119,10 +125,14 @@
     </div>
 </div>
 
+
+
+
 {% if audit %}
 <div class="container-fluid">
-    <div class="card">
-        <div class="row">
+    <div id="breakdown" class="card">
+        <h1 class="card-header bg-warning" style="text-align: center;">Audit Breakdown</h1>
+        <div class="row" style="padding-top: 20px;">
             <div class="col-md-6 col-xl-6 mb-6">
                 <div style="width: 100%; height: 400px; margin: 10px" id="donutchart"></div>
             </div>
@@ -150,14 +160,12 @@
             </div>
         </div>
     </div>
-    <div class="card">
+    <div id="history" class="card">
+        <h1 class="card-header bg-warning" style="text-align: center;">Course History</h1>
         <div class="row">
             <div id="audit_div" class="col-md-12 col-xl-12 mb-12">
                 <table class="table dt-responsive table-striped" cellspacing="0" style="text-align: center; margin-right: 100px;">
                     <thead class="thead-dark">
-                        <tr>
-                            <th colspan="7">Course History</th>
-                        </tr>
                         <tr>
                             <th class="sticky-top">Year</td>
                             <th class="sticky-top">Semester</td>

@@ -1,17 +1,23 @@
 {% extends 'base.html' %}
 
 {% block content %}
+
+<!-- URL for rate my professor; add {firstname} + {lastname} to url quary search-->
+<!-- https://www.ratemyprofessors.com/search.jsp?queryoption=HEADER&queryBy=teacherName&schoolName=cu+boulder&schoolID=&query=
+ -->
+
 <div class="container-fluid">
     <div class="card col-12">
-        <div class="row" style="padding-top:10px; padding-bottom: 10px;">
+        <div class="row bg-warning" style="padding-top:10px; padding-bottom: 10px;">
             <div class="col-9">
-                <h1>{{firstName}} {{lastName}}</h1>
+                <h1 style="padding-right: 15px">{{firstName}} {{lastName}}</h1>
             </div>
+
             <div class="col-3">
                 <div id="starRating" style="padding-top: 8px; align-content: right"></div>
             </div>
         </div>
-        <div class="row" style="font-size: 13px; padding-bottom: 0px;">
+        <div class="row" style="font-size: 13px; padding-top: 20px;">
             <div class="col-md-6 col-xl-2 mb-4">
                 <div class="card bg-warning shadow border-left-primary py-0">
                     <div class="card-body">
@@ -93,7 +99,12 @@
         </div>
         <br>
         <br>
-        <div class="row justify-content-md-center">
+    </div>
+</div>
+<div class="container-fluid">
+    <div class="card">
+        <h1 class="card-header bg-warning">Professor Breakdown</h1>
+        <div class="row justify-content-md-center" style="padding: 10px; padding-top: 20px;">
             <div class="col-5" style="width: 100%; height: 400px;" id="donutchart"></div>
             <div class="col-7 text-center" id="fcq_div">
                 <div class="row">
@@ -145,6 +156,7 @@
         $("#fcq_div").attr("style", `height: ${screen.height * 0.45}px; overflow: auto;`);
         $("#donutchart").attr("style", `height: ${screen.height * 0.45}px;`);
     });
+
 
     function printStars() {
         var html = '<em>Overall Rating:</em>';
