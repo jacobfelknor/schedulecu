@@ -4,7 +4,6 @@ from django.urls import reverse
 from django.conf import settings
 import os
 
-import magic
 from django.core.exceptions import ValidationError
 from django.utils.deconstruct import deconstructible
 
@@ -28,29 +27,11 @@ class User(AbstractUser):
 
 
 
-@deconstructible
-class FileValidator(object):
-    error_messages = {
-     'content_type': "Files of type %(content_type)s are not supported.",
-    }
-
-    def __init__(self, content_types=()):
-        self.content_types = content_types
-
-    def __call__(self, data):
-        if self.content_types:
-            content_type = magic.from_buffer(data.read(), mime=True)
-            data.seek(0)
-
-            if content_type not in self.content_types:
-                params = { 'content_type': content_type }
-                raise ValidationError(self.error_messages['content_type'],'content_type', params)
-
-    def __eq__(self, other):
-        return (
-            isinstance(other, FileValidator) and
-            self.content_types == other.content_types
-        )
+def validate_file(value):
+    ext = os.path.splitext(value.name)[1]  # [0] returns path+filename
+    valid_extensions = ['.pdf']
+    if not ext.lower() in valid_extensions:
+        raise ValidationError(u'Unsupported file extension.')
 
 
 def update_filename(instance, filename):
@@ -60,7 +41,6 @@ def update_filename(instance, filename):
 
 
 class Document(models.Model):
-    validate_file = FileValidator(content_types=('application/pdf',))
     document = models.FileField(upload_to=update_filename, validators=[validate_file])
     uploaded_at = models.DateTimeField(auto_now_add=True)
 
