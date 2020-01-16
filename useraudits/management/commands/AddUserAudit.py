@@ -1,9 +1,10 @@
-import html
 import os
+import html
 import numpy as np
-from useraudits.models import UserAuditEntry, UserAuditInfo
-from classes.models import Class, Department
 from django.db import transaction
+from classes.models import Class, Department
+from useraudits.models import UserAuditEntry, UserAuditTransferEntry, UserAuditInfo
+
 
 dept_dict = {
     "ACCT": "Accounting (ACCT)",
@@ -191,6 +192,7 @@ dept_dict = {
     "WRTG": "Writing and Rhetoric (WRTG)",
 }
 
+
 known_differences = {
     "CHE": "CHEM",
     "CAM": "CAMW",
@@ -228,21 +230,87 @@ known_differences = {
 }
 
 
-def addUserInfo(auditInfo, user):
+def getInfo(user):
+    weights = {
+        'A' : 4.0,
+        'A-' : 3.7,
+        'B+' : 3.3,
+        'B' : 3.0,
+        'B-' : 2.7,
+        'C+' : 2.3,
+        'C' : 2.0,
+        'C-' : 1.7,
+        'D+' : 1.3,
+        'D' : 1.0,
+        'D-' : 0.7,
+        'F' : 0.0,
+    }
+
+    userAudits = UserAuditEntry.objects.filter(user=user)
+    userTransfers = UserAuditTransferEntry.objects.filter(user=user)
+    
+    gpa_cu = 0.0
+    gpa_transfer = 0.0
+    gpa_complete = 0.0
+    progress = 0.0
+    attempted = 0.0
+    earned = 0.0
+    num_cu_courses = 0
+    num_transfers = 0
+
+    cu_points = 0.0
+    cu_credits = 0.0
+    transfer_points = 0.0
+    transfer_credits = 0.0
+
+    for entry in userAudits:
+        if entry.transfer == True:
+            num_transfers += 1
+            transfer_credits += entry.credits
+            transfer_points += entry.credits * weights[entry.grade]
+        else:
+            num_cu_courses += 1
+            if entry.grade == '*':
+                progress += entry.credits
+            else:
+                cu_credits += entry.credits
+                cu_points += entry.credits * weights[entry.grade]
+
+    for entry in userTransfers:
+        num_transfers += 1
+        transfer_credits += entry.credits
+        transfer_points += entry.credits * weights[entry.grade]
+
+    gpa_cu = round(cu_points / cu_credits,2)
+    gpa_transfer = round(transfer_points / transfer_credits,2)
+    earned = cu_credits + transfer_credits
+    gpa_complete = round((cu_points + transfer_points) / earned,2)
+    attempted = cu_credits
+
+    return [gpa_cu,gpa_transfer,gpa_complete,progress,attempted,earned,transfer_credits,num_cu_courses,num_transfers]
+
+
+def addUserInfo(user):
+    auditInfo = getInfo(user)
     userObject = UserAuditInfo()
     userObject.user = user
-    userObject.progress = auditInfo[0]
-    userObject.attempted = auditInfo[1]
-    userObject.gpa = auditInfo[2]
-    userObject.earned = auditInfo[3]
+    userObject.gpa_cu = auditInfo[0]
+    userObject.gpa_transfer = auditInfo[1]
+    userObject.gpa_complete = auditInfo[2]
+    userObject.progress = auditInfo[3]
+    userObject.attempted = auditInfo[4]
+    userObject.earned = auditInfo[5]
+    userObject.transfer_credits = auditInfo[6]
+    userObject.num_cu_courses = auditInfo[7]
+    userObject.num_transfers = auditInfo[8]
     userObject.save()
     
 
-def addEntries(audit, user):
+def addEntries(audit, auditTransfers, user):
     entryAdds = 0
     entryFails = 0
     for data in audit:
-        print(data)
+        # print(data)
         entry = UserAuditEntry()
         entry.user = user
         adjust_code = known_differences.get(data[2])
@@ -263,6 +331,7 @@ def addEntries(audit, user):
         entry.semester = data[0]
         entry.grade = data[4]
         entry.credits = data[5]
+        entry.transfer = data[6]
         try:
             with transaction.atomic():
                     entry.save()
@@ -273,6 +342,37 @@ def addEntries(audit, user):
             continue
     print(entryAdds, "entries added;", entryFails, "entries failed")
 
+    transferAdds = 0
+    transferFails = 0
+    for data in auditTransfers:
+        entry = UserAuditTransferEntry()
+        entry.user = user
+        adjust_code = known_differences.get(data[2])
+        if adjust_code:
+            data[2] = adjust_code
+        if dept_dict[data[2]]:
+            name = html.unescape(dept_dict[data[2]])
+        else:
+            name = data[2]
+        department = Department.objects.filter(name=name).first()
+
+        entry.department = department
+        entry.level = data[3]
+        entry.year = '20' + data[1]
+        entry.semester = data[0]
+        entry.grade = data[4]
+        entry.credits = data[5]
+
+        try:
+            with transaction.atomic():
+                    entry.save()
+                    transferAdds += 1
+        except DatabaseError:
+            print(data)
+            transferFails += 1
+            continue
+    print(transferAdds, "transfers added;", transferFails, "transfers failed")
+
 
 def removeEntries(user):
     userInfo = UserAuditInfo.objects.filter(user=user)
@@ -280,11 +380,16 @@ def removeEntries(user):
         userInfo.delete()
         print("user deleted")
 
-    userAudits = UserAuditEntry.objects.all()
+    userAudits = UserAuditEntry.objects.filter(user=user)
+    userTransfers = UserAuditTransferEntry.objects.filter(user=user)
     count = 0
-    for entry in userAudits:
-        if entry.user == user:
+    if userAudits:
+        for entry in userAudits:
+            entry.delete()
+            count += 1
+    if userTransfers:
+        for entry in userTransfers:
             entry.delete()
             count += 1
     print(count, "entries deleted")
-    print('======================')
+

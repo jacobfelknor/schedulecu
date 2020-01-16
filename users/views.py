@@ -109,11 +109,11 @@ def model_form_upload(request):
             if not confirmAudit(auditObject):
                 form = DocumentForm()
             else:
-                audit, auditInfo = readAudit(auditObject)
+                audit, auditTransfers = readAudit(auditObject)
                 user = request.user
                 removeEntries(user)
-                addUserInfo(auditInfo, user)
-                addEntries(audit, user)
+                addEntries(audit,auditTransfers, user)
+                addUserInfo(user)
                 documents = Document.objects.all()
                 for document in documents:
                     document.delete()
@@ -159,19 +159,6 @@ def readAudit(auditObject):
         text = pageText.split(' ')
         track = False
 
-        #grab GPA and credit hour text data
-        if i == 0:
-            info = False
-            data = []
-            for j in text:
-                if info:
-                    data.append(j)
-                    info = False
-                    break
-                if ('PROGRESS' in j) and ('ATTEMPTED' in j):
-                    data.append(j)
-                    info = True
-
         for j in text:
             if j[offset:] == 'Coursework':
                 track = True
@@ -185,23 +172,8 @@ def readAudit(auditObject):
                     find = True
                     classes = False
             if find:
-                if ('SP' in j or 'SU' in j or 'FA' in j) and ('NEED' not in j) and ('999TC' not in j):
+                if ('SP' in j or 'SU' in j or 'FA' in j) and ('NEED' not in j):
                     course_data.append(j)
-
-    #extract gpa/credit hour data
-    info = []
-    holder = data[0].split('PROGRESS')[1]
-    holder = holder.split('HOURS')
-    info.append(holder[0])
-    holder = holder[1].split('ATTEMPTED')[0]
-    info.append(holder)
-
-    holder = data[1].split('POINTS')[1]
-    holder = holder.split('GPA')
-    info.append(holder[0])
-    holder = holder[1].split('HOURS')[0]
-    holder = holder.split('EARNED:')[1]
-    info.append(holder)
 
     #change the following substrings so we correctly parse lines of text:
     #Also, parse lines at 'TermCourseCreditsGradeTitle' if said substring exists
@@ -242,13 +214,24 @@ def readAudit(auditObject):
             
     #finish parse and store all cleaned courses in array 
     course_history = []
+    transfer_history = []
     for i in range(len(course_data)):
         term = ''
         year = ''
         subject = ''
         courseNum = ''
         grade = ''
-        holder = course_data[i][:18]
+        trans = False
+        transfer = False
+        holder = course_data[i][:20]
+
+        if 'TC' in holder:
+            transfer = True
+            if '.0TC' in holder:
+                holder = holder.replace('.0TC','####')
+            holder = holder.replace('TC','')
+            holder = holder.replace('####','.0TC')
+        holder = holder[:18]
 
         if (holder[-1] != '-') and (holder[-1] != '+') and (holder[-1] != '*'):
             holder = holder[:-1]
@@ -266,7 +249,9 @@ def readAudit(auditObject):
         holder = holder[4:]
         courseNum = holder[:4]
         holder = holder[4:]
-        credits = holder[:3]
+        credits = float(holder[:3])
+        if '.0T' in holder:
+            trans = True
         holder = holder[3:]
         holder = holder.replace('T', '')
 
@@ -290,10 +275,13 @@ def readAudit(auditObject):
         if subject == '&&&&':
             subject = 'FARR'
 
-        holder = [term,year,subject,courseNum,grade,credits]
-        course_history.append(holder)
+        holder = [term,year,subject,courseNum,grade,credits,trans]
+        if transfer:
+            transfer_history.append(holder)
+        else:
+            course_history.append(holder)
     auditObject.document.close()
-    return course_history, info
+    return course_history, transfer_history
 
 
 #delete all of user's stored audit data
@@ -349,6 +337,6 @@ def getData(audit):
             gpa = round((depPoints / float(depCredits)), 2)
         holder = [dep, count, gpa, depCredits]
         depData.append(holder)
-    print(depData)
+    # print(depData)
     return pieData, depData
 
