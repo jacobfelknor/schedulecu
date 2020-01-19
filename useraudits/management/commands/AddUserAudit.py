@@ -281,10 +281,13 @@ def getInfo(user):
         transfer_credits += entry.credits
         transfer_points += entry.credits * weights[entry.grade]
 
-    gpa_cu = round(cu_points / cu_credits,2)
-    gpa_transfer = round(transfer_points / transfer_credits,2)
+    if cu_credits > 0:
+        gpa_cu = round(cu_points / cu_credits,2)
+    if transfer_credits > 0:
+        gpa_transfer = round(transfer_points / transfer_credits,2)
     earned = cu_credits + transfer_credits
-    gpa_complete = round((cu_points + transfer_points) / earned,2)
+    if earned > 0:
+        gpa_complete = round((cu_points + transfer_points) / earned,2)
     attempted = cu_credits
 
     return [gpa_cu,gpa_transfer,gpa_complete,progress,attempted,earned,transfer_credits,num_cu_courses,num_transfers]

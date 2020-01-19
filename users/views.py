@@ -174,6 +174,9 @@ def readAudit(auditObject):
             if find:
                 if ('SP' in j or 'SU' in j or 'FA' in j) and ('NEED' not in j):
                     course_data.append(j)
+                if 'AP:' in j:
+                    course_data.pop()
+    print(course_data)
 
     #change the following substrings so we correctly parse lines of text:
     #Also, parse lines at 'TermCourseCreditsGradeTitle' if said substring exists
@@ -221,6 +224,7 @@ def readAudit(auditObject):
         subject = ''
         courseNum = ''
         grade = ''
+        add = False
         trans = False
         transfer = False
         holder = course_data[i][:20]
@@ -232,54 +236,56 @@ def readAudit(auditObject):
             holder = holder.replace('TC','')
             holder = holder.replace('####','.0TC')
         holder = holder[:18]
+        if len(holder) == 18:
+            if (holder[-1] != '-') and (holder[-1] != '+') and (holder[-1] != '*'):
+                holder = holder[:-1]
+            if holder[:2] == 'SP':
+                term = 'Spring'
+            elif holder[:2] == 'SU':
+                term = 'Summer'
+            elif holder[:2] == 'FA':
+                term = 'Fall'
+            print(holder)
+            holder = holder[2:]
+            year = holder[:2]
+            holder = holder[2:]
+            subject = holder[:4]
+            holder = holder[4:]
+            courseNum = holder[:4]
+            holder = holder[4:]
+            credits = float(holder[:3])
+            if '.0T' in holder:
+                trans = True
+            holder = holder[3:]
+            holder = holder.replace('T', '')
 
-        if (holder[-1] != '-') and (holder[-1] != '+') and (holder[-1] != '*'):
-            holder = holder[:-1]
-        if holder[:2] == 'SP':
-            term = 'Spring'
-        elif holder[:2] == 'SU':
-            term = 'Summer'
-        elif holder[:2] == 'FA':
-            term = 'Fall'
+            if holder != '':
+                add = True
+                if holder[-1] == '*':
+                    grade = '*'
+                elif (holder[-1] == '-') or (holder[-1] == '+'):
+                    grade = holder
+                elif len(holder) == 1:
+                    grade = holder
+                else:
+                    grade = holder[:-1]
 
-        holder = holder[2:]
-        year = holder[:2]
-        holder = holder[2:]
-        subject = holder[:4]
-        holder = holder[4:]
-        courseNum = holder[:4]
-        holder = holder[4:]
-        credits = float(holder[:3])
-        if '.0T' in holder:
-            trans = True
-        holder = holder[3:]
-        holder = holder.replace('T', '')
-
-        if holder[-1] == '*':
-            grade = '*'
-        elif (holder[-1] == '-') or (holder[-1] == '+'):
-            grade = holder
-        elif len(holder) == 1:
-            grade = holder
-        else:
-            grade = holder[:-1]
-
-        if subject == '!!!!':
-            subject = 'CSPB'
-        if subject == '@@@@':
-            subject = 'LDSP'
-        if subject == '####':
-            subject = 'SPAN'
-        if subject == '$$$$':
-            subject = 'SUST'
-        if subject == '&&&&':
-            subject = 'FARR'
-
-        holder = [term,year,subject,courseNum,grade,credits,trans]
-        if transfer:
-            transfer_history.append(holder)
-        else:
-            course_history.append(holder)
+            if subject == '!!!!':
+                subject = 'CSPB'
+            if subject == '@@@@':
+                subject = 'LDSP'
+            if subject == '####':
+                subject = 'SPAN'
+            if subject == '$$$$':
+                subject = 'SUST'
+            if subject == '&&&&':
+                subject = 'FARR'
+            if add == True:
+                holder = [term,year,subject,courseNum,grade,credits,trans]
+                if transfer:
+                    transfer_history.append(holder)
+                else:
+                    course_history.append(holder)
     auditObject.document.close()
     return course_history, transfer_history
 

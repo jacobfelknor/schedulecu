@@ -3,7 +3,7 @@ from django.db import models
 from users.models import User
 from classes.models import Class, Department
 
-# Model to define the classes a user has completed. Essentially a copy of schedule
+# Model to define the classes a user has completed. If the class is a transfer, we find the equivalent cu course 
 class UserAuditEntry(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="useraudits")
     course = models.ForeignKey(Class, on_delete=models.CASCADE, related_name="useraudits")
@@ -20,7 +20,7 @@ class UserAuditEntry(models.Model):
         else:
             return False
 
-
+#if class is not a registred cu course, we save the info as department credits
 class UserAuditTransferEntry(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="usertransfers")
     year = models.CharField(max_length=10, blank=True)
@@ -30,7 +30,7 @@ class UserAuditTransferEntry(models.Model):
     grade = models.CharField(max_length=10, blank=True)
     credits = models.FloatField(default=0.0)
 
-
+#all general info on a user's audit
 class UserAuditInfo(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="userauditinfo")
     gpa_cu = models.FloatField(default=0.0)

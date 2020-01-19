@@ -10,107 +10,87 @@
         <div class="col-md-4 col-xl-4 mb-4">
             <div class="card border-dark col-12">
                 <h1 class=" row card-header bg-warning">{{ user.get_full_name }}</h1>
-                <div class="row" style="background-color: black; padding-top: 10px">
+                <div class="row" style="background-color: black; padding-top: 10px;">
                     {% if not audit %}
                     <span style="font-size: 1em; color: Red; padding-left: 10px; padding-right: 30px;">
                       <i class="fas fa-exclamation-triangle"></i>
                     </span>
                     <span style="color: White;">
-                      <h5>You have NOT uploaded an official CU Audit!</h5>
+                      <p>You have NOT uploaded an official CU Audit!</p>
                     </span>
                     {% else %}
                     <span style="font-size: 1em; color: Lime; padding-left: 10px; padding-right: 10px;">
                       <i class="fas fa-check-circle"></i>
                     </span>
                     <span style="color: White;">
-                      <h5>You have successfully uploaded an official CU Audit!</h5>
+                      <p>You have successfully uploaded an official CU Audit!</p>
                     </span>
                     {% endif %}
                 </div>
                 <table class="table dt-responsive" cellspacing="0" width="100%">
-                <!-- <thead class="thead" id="material">
-                <tr>
-                    <th></th>
-                    <th></th>
-                </tr>
-            </thead> -->
-                <tbody>
-                    <tr>
-                        <td><b>Username:</b> <br>{{ user.username }}</td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td><b>Email:</b> <br>{{ user.email }}</td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td><b>Major:</b> <br>{{ user.major }}</td>
-                    </tr>
-                    {% if user.is_superuser %}
-                    <tr>
-                        <td><b>Account Type:</b> <br>
-                            Superuser/Admin
-                        </td>
-                        <td></td>
-                    </tr>
+                    <tbody>
+                        <tr>
+                            <td><b>Username:</b> <br>{{ user.username }}</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td><b>Email:</b> <br>{{ user.email }}</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td><b>Major:</b> <br>{{ user.major }}</td>
+                        </tr>
+                        {% if user.is_superuser %}
+                        <tr>
+                            <td><b>Account Type:</b> <br>
+                                Superuser/Admin
+                            </td>
+                            <td></td>
+                        </tr>
+                        {% endif %}
+                        {% if audit %}
+                        <tr>
+                            <td><b>GPA:</b> <br>{{ auditInfo.gpa_cu }}</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td><b>In Progress:</b> <br>{{ auditInfo.progress }}</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td><b>Attempted:</b> <br>{{ auditInfo.attempted }}</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td><b>Earned:</b> <br>{{ auditInfo.earned }}</td>
+                            <td></td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                <a href="#breakdown"><button class="btn btn-outline-dark" style="width: 100%;">View Breakdown</button></a>
+                            </td>
+                            <td>
+                                <a href="#history"><button class="btn btn-outline-dark" style="width: 100%;">View Course History</button></a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">
+                                <a href="{% url 'users:reset_audit' %}"><button class="btn btn-outline-dark" style="width: 100%;">Reset Audit Data</button></a>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td>
+                                <a href="{% url 'users:model_form_upload' %}"><button class="btn btn-outline-dark">Upload Audit</button></a>
+                            </td>
+                        </tr>
                     {% endif %}
-                </tbody>
-            </table>
-            </div>
-
-
-
-            <div class="card border-dark" style="width: 100%;">
-                <h1 class="card-header bg-warning">Your CU Audit</h1>
-                <table class="table dt-responsive" cellspacing="0" width="100%">
-                {% if audit %}
-                <tbody>
-                    <tr>
-                        <td><b>GPA:</b> <br>{{ auditInfo.gpa_cu }}</td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td><b>In Progress:</b> <br>{{ auditInfo.progress }}</td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td><b>Attempted:</b> <br>{{ auditInfo.attempted }}</td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td><b>Earned:</b> <br>{{ auditInfo.earned }}</td>
-                        <td></td>
-                    </tr>
-
-                    <tr>
-                        <td>
-                            <a href="#breakdown"><button class="btn btn-outline-dark">View Breakdown</button></a>
-                        </td>
-                        <td>
-                            <a href="#history"><button class="btn btn-outline-dark">View Course History</button></a>
-                        </td>
-                        <td>
-                            <a href="{% url 'users:reset_audit' %}"><button class="btn btn-outline-dark">Reset Audit Data</button></a>
-                        </td>
-                    </tr>
-                </tbody>
-                {% else %}
-                <tbody>
-                    <tr>
-                        <td>
-                            <h1>You have not uploaded a CU Audit</h1>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <a href="{% url 'users:model_form_upload' %}"><button class="btn btn-outline-dark">Upload Audit</button></a>
-                        </td>
-                    </tr>
-                </tbody>
-                {% endif %}
-            </table>
+                    </tbody>
+                </table>
             </div>
         </div>
+
 
 
 

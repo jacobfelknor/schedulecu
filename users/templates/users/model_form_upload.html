@@ -12,11 +12,11 @@
 					<tr>
 						<td>
 							<form method="post" enctype="multipart/form-data" style="padding-top: 40px;">
-								<div class="row col-12">
+								<span>
 								    {% csrf_token %}
 								    {{ form.as_p }}
-								    <button type="submit" class="btn btn-outline-dark">Upload</button>
-								</div>
+								    <button type="submit" class="btn btn-outline-dark col-2">Upload</button>
+								</span>
 					  		</form>
 					  	</td>
 		  			</tr>
